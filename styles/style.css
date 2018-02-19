@@ -1,0 +1,58 @@
+*{
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border: none;
+  /* border: 1px solid red; */
+  line-height: 1;
+
+
+
+}
+
+body {
+   text-align: center;
+
+   height: 100vh;
+}
+
+a{
+  text-decoration: none;
+}
+
+#title{
+  margin-top: 10px;
+  font-size: 70px;
+  padding: 10px;
+  display: inline-block;
+  height: 49px;
+}
+
+.sidebar{
+  height: auto;
+  width: 300px;
+  vertical-align: top;
+  margin-top: 30px;
+}
+
+.ilb{
+  display: inline-block;
+}
+
+.il{
+  display: inline;
+}
+
+.score{
+
+  font-size: 20px;
+  padding: 10px;
+}
+
+.fa{
+  font-size: 32px;
+}
+
+#view {
+
+}
