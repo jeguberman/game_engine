@@ -2,14 +2,16 @@ import Game from './lib/Game/game';
 import merge from 'lodash/merge';
 
 
-
 const trueGame = ()=>{
   const view = document.getElementById('view');
   let ctx = view.getContext('2d');
   const game = new Game({ctx});
+  // debugger
   view.width = game.view_width;
   view.height = game.view_height;
   game.start();
+
+
 };
 
 const falseGame = () => {
