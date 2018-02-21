@@ -581,7 +581,8 @@ var Game = function () {
     _classCallCheck(this, Game);
 
     this.modules = new Set();
-    (0, _merge2.default)(this, new _timeManager2.default(), new _objectManager2.default(), new _physicsManager2.default(),
+    (0, _merge2.default)(this, new _timeManager2.default(), new _objectManager2.default(),
+    // new PhysicsManager(),
     // new CollisionManager(),
     new _renderer2.default()
     // new Controller()
@@ -3508,9 +3509,7 @@ var mockModuleA = function mockModuleA() {
   return {
     name: "mockModule",
     arbVal: "from mockModuleA",
-    moduleStep: function moduleStep() {
-      console.log(this.arbVal);
-    },
+    // moduleStep: function(){console.log(this.arbVal);},
     updateState: function updateState() {
       this.state = "Spin";
     }
@@ -3575,7 +3574,7 @@ var baseObj = function baseObj(options) {
         this.verifyModuleName(newObj);
         var trueName = this.name;
         this.modules.add(newObj.name);
-        this.moduleSteps.push(newObj.moduleStep);
+        this.verifyModuleStep(newObj);
         (0, _merge2.default)(this, newObj);
         this.name = trueName;
       }
@@ -3585,6 +3584,13 @@ var baseObj = function baseObj(options) {
       //verify newObj has property "name", or else throw an error
       if (!newObj.name) {
         throw { message: "Game Object " + this.name + " tried to receive unnamed object ", object: newObj };
+      }
+    },
+
+    verifyModuleStep: function verifyModuleStep(newObj) {
+      //if module has a function called moduleStep, add it to the list of steps, or else do nothing
+      if (newObj.moduleStep) {
+        this.moduleSteps.push(newObj.moduleStep);
       }
     }
 
