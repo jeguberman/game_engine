@@ -581,7 +581,6 @@ var Game = function () {
     _classCallCheck(this, Game);
 
     this.modules = new Set();
-
     (0, _merge2.default)(this, new _timeManager2.default(), new _objectManager2.default(), new _physicsManager2.default(),
     // new CollisionManager(),
     new _renderer2.default()
@@ -3334,7 +3333,7 @@ var ObjectManager = function ObjectManager() {
 
     updateAllObjectStates: function updateAllObjectStates() {
       this.allObjects.forEach(function (obj) {
-        return obj.updateState();
+        return obj.step();
       });
     }
   };
@@ -3446,7 +3445,7 @@ var _game = __webpack_require__(15);
 
 var _game2 = _interopRequireDefault(_game);
 
-var _mock_obj = __webpack_require__(110);
+var _mock_obj = __webpack_require__(105);
 
 var _mock_obj2 = _interopRequireDefault(_mock_obj);
 
@@ -3469,7 +3468,60 @@ function mockGame() {
 exports.default = mockGame;
 
 /***/ }),
-/* 105 */,
+/* 105 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _base_object = __webpack_require__(106);
+
+var _base_object2 = _interopRequireDefault(_base_object);
+
+var _mock_sprite = __webpack_require__(107);
+
+var _mock_sprite2 = _interopRequireDefault(_mock_sprite);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// import Sprite from '../components/animation/sprite.js';
+
+var mockObjA = new _base_object2.default();
+var mockObjB = new _base_object2.default();
+mockObjA.addModule(_mock_sprite2.default);
+mockObjB.addModule(_mock_sprite2.default);
+
+var options = {
+  name: "mockObj",
+  dx: 150,
+  dy: 50,
+  collision_width: 40,
+  collision_height: 40
+
+};
+mockObjA.mergeWith(options);
+
+options.dx = 200;
+mockObjB.mergeWith(options);
+
+var mockModuleA = function mockModuleA() {
+  return {
+    name: "mockModule",
+    arbVal: "from mockModuleA",
+    moduleStep: function moduleStep() {
+      console.log(this.arbVal);
+    },
+    updateState: function updateState() {
+      this.state = "Spin";
+    }
+  };
+};
+
+mockObjA.addModule(mockModuleA());
+
+module.exports = { a: mockObjA, b: mockObjB };
+
+/***/ }),
 /* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3493,24 +3545,44 @@ var baseObj = function baseObj(options) {
     collision_height: 32,
     state: "standRight",
 
+    step: function step() {
+      this.updateState();
+      this.runModuleSteps();
+    },
+
+    runModuleSteps: function runModuleSteps() {
+      var _this = this;
+
+      this.moduleSteps.forEach(function (func) {
+        func.bind(_this)();
+      });
+    },
+
+    updateState: function updateState() {
+      throw { message: "Individual objects must contain custom definitions for updateState function.", object: this };
+    },
+
     mergeWith: function mergeWith(newObj) {
+      //merge with new object without making a record in modules, for late added options hashes
       if (newObj) {
         (0, _merge2.default)(this, newObj);
       }
-    }, //merge with new object without making a record in modules, for late added options hashes
+    },
 
     addModule: function addModule(newObj) {
+      //merge with object and add object name to modules list.
       if (newObj) {
         this.verifyModuleName(newObj);
         var trueName = this.name;
         this.modules.add(newObj.name);
-        this.moduleSteps.push(newObj.step);
+        this.moduleSteps.push(newObj.moduleStep);
         (0, _merge2.default)(this, newObj);
         this.name = trueName;
       }
-    }, //merge with object and add object name to modules list.
+    },
 
     verifyModuleName: function verifyModuleName(newObj) {
+      //verify newObj has property "name", or else throw an error
       if (!newObj.name) {
         throw { message: "Game Object " + this.name + " tried to receive unnamed object ", object: newObj };
       }
@@ -3540,7 +3612,9 @@ var _animation = __webpack_require__(109);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Spin = new _animation.AnimationCycle("Spin");
+var StandRight = new _animation.AnimationCycle("standRight");
 
+StandRight.createCel({ sX: 400, sY: 0, draw_width: 40, draw_height: 40 }); //0
 Spin.createCel({ sX: 400, sY: 0, draw_width: 40, draw_height: 40 }); //0
 Spin.createCel({ sX: 5, sY: 0, draw_width: 37, draw_height: 40 }); //1
 Spin.createCel({ sX: 51, sY: 0, draw_width: 31, draw_height: 40 }); //2
@@ -3553,7 +3627,7 @@ Spin.createCel({ sX: 317, sY: 0, draw_width: 31, draw_height: 40 }); //8
 Spin.createCel({ sX: 357, sY: 0, draw_width: 38, draw_height: 40 }); //9
 
 var CoinSprite = new _sprite2.default({ src: './assets/coin_test.png' });
-
+// CoinSprite.add(StandRight);
 CoinSprite.add(Spin);
 
 module.exports = CoinSprite;
@@ -3610,7 +3684,7 @@ var Sprite = function Sprite(options) {
       return this.animations[string];
     },
 
-    step: function step() {
+    moduleStep: function moduleStep() {
 
       var currentCel = this.animations[this.state].advance();
       (0, _merge2.default)(this, currentCel);
@@ -3721,65 +3795,6 @@ var AnimationCycle = exports.AnimationCycle = function () {
 
   return AnimationCycle;
 }();
-
-/***/ }),
-/* 110 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _base_object = __webpack_require__(106);
-
-var _base_object2 = _interopRequireDefault(_base_object);
-
-var _mock_sprite = __webpack_require__(107);
-
-var _mock_sprite2 = _interopRequireDefault(_mock_sprite);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-// import Sprite from '../components/animation/sprite.js';
-
-var mockObjA = new _base_object2.default();
-var mockObjB = new _base_object2.default();
-mockObjA.addModule(_mock_sprite2.default);
-mockObjB.addModule(_mock_sprite2.default);
-
-var options = {
-  name: "mockObj",
-  dx: 150,
-  dy: 50,
-  collision_width: 40,
-  collision_height: 40,
-  updateState: function updateState() {
-    var _this = this;
-
-    this.state = "Spin";
-
-    this.moduleSteps.forEach(function (func) {
-      func.bind(_this)();
-    });
-  }
-};
-mockObjA.mergeWith(options);
-
-options.dx = 200;
-mockObjB.mergeWith(options);
-
-var mockModuleA = function mockModuleA() {
-  return {
-    name: "mockModule",
-    arbVal: "from mockModuleA",
-    step: function step() {
-      console.log(this.arbVal);
-    }
-  };
-};
-
-mockObjA.addModule(mockModuleA());
-
-module.exports = { a: mockObjA, b: mockObjB };
 
 /***/ })
 /******/ ]);
