@@ -1,4 +1,4 @@
-// import Game from './lib/Game/game';
+import Game from './lib/game/game';
 import mockGame from './lib/mocks/mock_game';
 import merge from 'lodash/merge';
 
@@ -10,7 +10,6 @@ const trueGame = ()=>{
   view.width = game.view_width;
   view.height = game.view_height;
   game.start();
-
 };
 
 const falseGame = () => {
