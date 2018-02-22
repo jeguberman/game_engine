@@ -46,3 +46,19 @@ The capital-G-Game-Object is largely the same in structure but less dynamic in i
 The Time Manager, animation manager, and future physics manager are so deeply ingrained, they aren't really separate classes right now. The state managers need the time manager to tell them when to manipulate the state, and the time manager has nothing to command without the other modules. For this reason, I am thinking of splitting the game into two tiers.
 
 Tier one would be the module manager, the game manager and the object manager. Tier two would be any other manager, time, physics, collision and controls. If you scale back and see the engine merely as a program, then the object manager is just the state manager, the module manager is the linker, and the time manager is just the thing that dispatches the functions. This is the core of a program though, isn't it? So all other managers which are brought in by module, and dispatched by time to manage the objects, would be lower tier. So I'll have to refactor, c'est la vie.
+
+# February 22nd
+
+While trying to implement debug information into a new DOM I realized my object manager is totally unprepared to handle anything that isn't a tangible game object. So I'm trying to implement what my mentor refers to as an "event bus".
+
+Normally, what I would do is have higher order classes send function calls to lower order classes, but this means they have to know about each other.
+
+Instead, there will be some kind of "event space". The higher order functions will send events as objects to this event space, and the lower order functions will watch the event space for the events. This way lower order and higher order classes needn't know about each other. I will try to implement this after the current version of the debugger.
+
+---
+
+the debugger is in. I made the debugger an ingame object with a standard step function which gets called once per animation frame. When the function is called, it adds a current time object to an array, then removes any elements of the array which are more than 1 second from the element just added. This way all elements of the array should represent all frames created in the last second. then I just return array length.
+
+To keep time complexity low, I unshift the now time object to the front of the array, and pop off the invalid entries from the end, since the number of pops is O(n) and the look up for pop is O(1). So while the push of now is O(n) (because unshifting might involve movement of every element, depending on implementation)there are only two O(n) time processes in the function.
+
+I had to rework other things a little bit.  

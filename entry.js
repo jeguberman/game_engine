@@ -2,7 +2,6 @@ import Game from './lib/game/game';
 import mockGame from './lib/mocks/mock_game';
 import merge from 'lodash/merge';
 
-
 const trueGame = ()=>{
   const view = document.getElementById('view');
   const game = new Game();
