@@ -3609,21 +3609,21 @@ function mockGame() {
   view.width = game.view_width;
   view.height = game.view_height;
 
+  game.addObject(new _mock_obj2.default(1, 1));
   game.addObject(new _mock_obj2.default());
-  game.addObject(new _mock_obj2.default());
-  game.addObject(new _mock_obj2.default());
-  game.addObject(new _mock_obj2.default());
-  game.addObject(new _mock_obj2.default());
-  game.addObject(new _mock_obj2.default());
-  game.addObject(new _mock_obj2.default());
-  game.addObject(new _mock_obj2.default());
-  game.addObject(new _mock_obj2.default());
+  game.addObject(new _mock_obj2.default(0, 2));
+  game.addObject(new _mock_obj2.default(2, 0));
+  game.addObject(new _mock_obj2.default(2, 2));
+  game.addObject(new _mock_obj2.default(4, 4));
+  game.addObject(new _mock_obj2.default(1, 3));
+  game.addObject(new _mock_obj2.default(2, 4));
+  game.addObject(new _mock_obj2.default(4, 2));
+  game.addObject(new _mock_obj2.default(3, 1));
+  game.addObject(new _mock_obj2.default(3, 3));
+  game.addObject(new _mock_obj2.default(4, 0));
+  game.addObject(new _mock_obj2.default(0, 4));
 
   game.addObject(new _debugger2.default());
-  var a = new _mock_obj2.default();
-  var b = new _mock_obj2.default();
-
-  debugger;
 
   // game.addObject(mockObj);
 
@@ -3662,14 +3662,18 @@ var mockModule = function mockModule() {
 };
 
 var mockObj = function mockObj() {
+  var n = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+  var m = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+
   var _mockObj = new _base_object2.default();
+
   _mockObj.mergeWith(new mockModule());
   _mockObj.addModule(new _mock_sprite2.default());
 
   var options = {
     name: "mockObj",
-    dx: 40,
-    dy: 40,
+    dx: 0 + n * 40,
+    dy: 0 + m * 40,
     collision_width: 40,
     collision_height: 40
   };
@@ -3749,7 +3753,7 @@ var Sprite = function Sprite(options) {
     drawCollision: function drawCollision(ctx) {
       ctx.save();
       ctx.fillStyle = "#00eeff";
-      ctx.fillRect(this.dx, this.dy, this.collision_width, this.collision_height);
+      // ctx.fillRect(this.dx, this.dy, this.collision_width, this.collision_height);
       ctx.restore();
     },
 
@@ -3759,7 +3763,7 @@ var Sprite = function Sprite(options) {
       ctx.save();
       ctx.translate(this.dx + this.collision_width * 0.5, this.dy + this.collision_height * 0.5);
       ctx.fillStyle = "red";
-      ctx.fillRect(-this.draw_width * 0.5, -this.draw_height * 0.5, this.draw_width, this.draw_height);
+      // ctx.fillRect((-this.draw_width * 0.5), (-this.draw_height * 0.5), this.draw_width, this.draw_height);
       ctx.drawImage(this.image, this.sX, this.sY, this.draw_width, this.draw_height, -this.draw_width * 0.5, -this.draw_height * 0.5, this.draw_width, this.draw_height);
       ctx.restore();
     },
