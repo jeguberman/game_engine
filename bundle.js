@@ -544,65 +544,50 @@ module.exports = isArrayLike;
 "use strict";
 
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _renderer = __webpack_require__(32);
-
-var _renderer2 = _interopRequireDefault(_renderer);
-
-var _controller = __webpack_require__(100);
-
-var _controller2 = _interopRequireDefault(_controller);
-
 var _objectManager = __webpack_require__(101);
 
 var _objectManager2 = _interopRequireDefault(_objectManager);
-
-var _physicsManager = __webpack_require__(102);
-
-var _physicsManager2 = _interopRequireDefault(_physicsManager);
 
 var _timeManager = __webpack_require__(103);
 
 var _timeManager2 = _interopRequireDefault(_timeManager);
 
-var _merge = __webpack_require__(1);
+var _module_manager = __webpack_require__(113);
 
-var _merge2 = _interopRequireDefault(_merge);
+var _module_manager2 = _interopRequireDefault(_module_manager);
+
+var _renderer = __webpack_require__(110);
+
+var _renderer2 = _interopRequireDefault(_renderer);
+
+var _controller = __webpack_require__(111);
+
+var _controller2 = _interopRequireDefault(_controller);
+
+var _physicsManager = __webpack_require__(112);
+
+var _physicsManager2 = _interopRequireDefault(_physicsManager);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 // import Player from './player/player';
 
-var Game = function () {
-  function Game() {
-    _classCallCheck(this, Game);
+var EngineCore = function EngineCore() {
+  var _engine = new _module_manager2.default({ name: "game" });
+  _engine.mergeWith(new _timeManager2.default());
+  _engine.mergeWith(new _objectManager2.default());
+  return _engine;
+};
 
-    this.modules = new Set();
-    (0, _merge2.default)(this, new _timeManager2.default(), new _objectManager2.default(),
-    // new PhysicsManager(),
-    // new CollisionManager(),
-    new _renderer2.default()
-    // new Controller()
-    );
-  }
-
-  _createClass(Game, [{
-    key: 'addModule',
-    value: function addModule(module) {
-      if (module) {}
-    }
-  }, {
-    key: 'start',
-    value: function start() {
-      this.startClock(); //time_manager
-    }
-  }]);
-
-  return Game;
-}();
+var Game = function Game() {
+  var _game = new EngineCore();
+  _game.addModules(new _renderer2.default()
+  // new PhysicsManager(),
+  // new CollisionManager(),
+  // new Controller()
+  );
+  return _game;
+};
 
 module.exports = Game;
 
@@ -1052,68 +1037,7 @@ var switcher = function switcher(n) {
 document.addEventListener('DOMContentLoaded', switcher(0));
 
 /***/ }),
-/* 32 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _merge = __webpack_require__(1);
-
-var _merge2 = _interopRequireDefault(_merge);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var Renderer = function Renderer(options) {
-
-  options = (0, _merge2.default)({
-    width: 16 * 60,
-    height: 16 * 40,
-    ctx: null
-  }, options);
-
-  return {
-    ctx: options.ctx,
-    view_width: options.width,
-    view_height: options.height,
-
-    testRender: function testRender() {
-      var ctx = this.ctx;
-      ctx.clearRect(0, 0, this.view_width, this.view_height);
-      ctx.fillStyle = ctx.fillStyle === "#0000ff" ? "ff000" : "#0000ff";
-      ctx.fillRect(0, 0, this.view_width, this.view_height);
-    },
-
-    render: function render() {
-      this.renderView();
-      this.renderFrame();
-    },
-
-    renderView: function renderView() {
-      var ctx = this.ctx;
-      ctx.clearRect(0, 0, this.view_width, this.view_height);
-      ctx.fillStyle = ctx.fillStyle === "#000000";
-      ctx.fillRect(0, 0, this.view_width, this.view_height);
-    },
-
-    renderFrame: function renderFrame(time) {
-      var _this = this;
-
-      this.allObjects.forEach(function (obj) {
-        return obj.draw(_this.ctx);
-      });
-    },
-
-    setContext: function setContext(context) {
-      this.ctx = context;
-    }
-
-  };
-};
-
-module.exports = Renderer;
-
-/***/ }),
+/* 32 */,
 /* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3250,38 +3174,7 @@ module.exports = isIterateeCall;
 
 
 /***/ }),
-/* 100 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var Controller = function Controller() {
-  return {
-    bindKeys: function bindKeys() {
-      var _this = this;
-
-      document.addEventListener('keydown', function (e) {
-        _this.handleKeydown(e.key);
-      });
-      document.addEventListener('keyup', function (e) {
-        _this.handleKeyup(e.key);
-      });
-    },
-
-    handleKeyup: function handleKeyup(key) {
-      console.log("up " + key);
-    },
-
-    handleKeydown: function handleKeydown(key) {
-      console.log("down " + key);
-    }
-  };
-};
-
-module.exports = Controller;
-
-/***/ }),
+/* 100 */,
 /* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3343,41 +3236,7 @@ var ObjectManager = function ObjectManager() {
 module.exports = ObjectManager;
 
 /***/ }),
-/* 102 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var PhysicsManager = function PhysicsManager() {
-  return {
-    gravity: 0.0,
-    termVel: 20,
-
-    calculatePhysics: function calculatePhysics() {
-      this.postulate();
-      this.checkCollisions();
-      this.updatePositions();
-    },
-
-    postulate: function postulate() {
-      //calculate what the game will look like in the next physics frame
-    },
-
-    checkCollisions: function checkCollisions() {
-      //calculate collisions, if colliions are unresolved, repostulate
-    },
-
-    updatePositions: function updatePositions() {
-      //actualize next physics state
-    }
-
-  };
-};
-
-module.exports = PhysicsManager;
-
-/***/ }),
+/* 102 */,
 /* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3456,6 +3315,7 @@ function mockGame() {
   var view = document.getElementById('view');
 
   var game = new _game2.default();
+
   game.setContext(view.getContext('2d'));
   view.width = game.view_width;
   view.height = game.view_height;
@@ -3463,7 +3323,7 @@ function mockGame() {
   game.addObject(_mock_obj2.default.a);
   // game.addObject(mockObj);
 
-  return game.start();
+  return game.startClock();
 }
 // import * as Objects from './drawn_object.js';
 exports.default = mockGame;
@@ -3801,6 +3661,207 @@ var AnimationCycle = exports.AnimationCycle = function () {
 
   return AnimationCycle;
 }();
+
+/***/ }),
+/* 110 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _merge = __webpack_require__(1);
+
+var _merge2 = _interopRequireDefault(_merge);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Renderer = function Renderer(options) {
+
+  options = (0, _merge2.default)({
+    width: 16 * 60,
+    height: 16 * 40,
+    ctx: null
+  }, options);
+
+  return {
+    name: "renderer",
+    ctx: options.ctx,
+    view_width: options.width,
+    view_height: options.height,
+
+    testRender: function testRender() {
+      var ctx = this.ctx;
+      ctx.clearRect(0, 0, this.view_width, this.view_height);
+      ctx.fillStyle = ctx.fillStyle === "#0000ff" ? "ff000" : "#0000ff";
+      ctx.fillRect(0, 0, this.view_width, this.view_height);
+    },
+
+    render: function render() {
+      this.renderView();
+      this.renderFrame();
+    },
+
+    renderView: function renderView() {
+      var ctx = this.ctx;
+      ctx.clearRect(0, 0, this.view_width, this.view_height);
+      ctx.fillStyle = ctx.fillStyle === "#000000";
+      ctx.fillRect(0, 0, this.view_width, this.view_height);
+    },
+
+    renderFrame: function renderFrame(time) {
+      var _this = this;
+
+      this.allObjects.forEach(function (obj) {
+        return obj.draw(_this.ctx);
+      });
+    },
+
+    setContext: function setContext(context) {
+      this.ctx = context;
+    }
+
+  };
+};
+
+module.exports = Renderer;
+
+/***/ }),
+/* 111 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var Controller = function Controller() {
+  return {
+    bindKeys: function bindKeys() {
+      var _this = this;
+
+      document.addEventListener('keydown', function (e) {
+        _this.handleKeydown(e.key);
+      });
+      document.addEventListener('keyup', function (e) {
+        _this.handleKeyup(e.key);
+      });
+    },
+
+    handleKeyup: function handleKeyup(key) {
+      console.log("up " + key);
+    },
+
+    handleKeydown: function handleKeydown(key) {
+      console.log("down " + key);
+    }
+  };
+};
+
+module.exports = Controller;
+
+/***/ }),
+/* 112 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var PhysicsManager = function PhysicsManager() {
+  return {
+    gravity: 0.0,
+    termVel: 20,
+
+    calculatePhysics: function calculatePhysics() {
+      this.postulate();
+      this.checkCollisions();
+      this.updatePositions();
+    },
+
+    postulate: function postulate() {
+      //calculate what the game will look like in the next physics frame
+    },
+
+    checkCollisions: function checkCollisions() {
+      //calculate collisions, if colliions are unresolved, repostulate
+    },
+
+    updatePositions: function updatePositions() {
+      //actualize next physics state
+    }
+
+  };
+};
+
+module.exports = PhysicsManager;
+
+/***/ }),
+/* 113 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _merge = __webpack_require__(1);
+
+var _merge2 = _interopRequireDefault(_merge);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var moduleManager = function moduleManager(options) {
+  var _moduleManager = {
+    modules: new Set(),
+
+    mergeWith: function mergeWith(newObj) {
+      //merge with new object without making a record in modules, for late added options hashes, but whatever
+      if (newObj) {
+        (0, _merge2.default)(this, newObj);
+      }
+    },
+
+    addModule: function addModule(newObj) {
+      //merge with object and add object name to modules list.
+      if (newObj) {
+        this.verifyModuleName(newObj);
+        var trueName = this.name;
+        this.modules.add(newObj.name);
+        this.verifyModuleStep(newObj);
+        (0, _merge2.default)(this, newObj);
+        this.name = trueName;
+      }
+    },
+
+    addModules: function addModules() {
+      var _this = this;
+
+      for (var _len = arguments.length, newObjs = Array(_len), _key = 0; _key < _len; _key++) {
+        newObjs[_key] = arguments[_key];
+      }
+
+      newObjs.forEach(function (obj) {
+        return _this.addModule(obj);
+      });
+    },
+
+    verifyModuleName: function verifyModuleName(newObj) {
+      //verify newObj has property "name", or else throw an error
+      if (!newObj.name) {
+        throw { message: "Module Manager " + this.name + " tried to receive unnamed object ", object: newObj };
+      }
+    },
+
+    verifyModuleStep: function verifyModuleStep(newObj) {
+      //if module has a function called moduleStep, add it to the list of steps, or else do nothing
+      if (newObj.moduleStep) {
+        this.moduleSteps.push(newObj.moduleStep);
+      }
+    }
+
+  };
+  _moduleManager.verifyModuleName(options);
+
+  _moduleManager.mergeWith(options);
+  return _moduleManager;
+};
+
+module.exports = moduleManager;
 
 /***/ })
 /******/ ]);
