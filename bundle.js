@@ -3610,8 +3610,21 @@ function mockGame() {
   view.height = game.view_height;
 
   game.addObject(new _mock_obj2.default());
+  game.addObject(new _mock_obj2.default());
+  game.addObject(new _mock_obj2.default());
+  game.addObject(new _mock_obj2.default());
+  game.addObject(new _mock_obj2.default());
+  game.addObject(new _mock_obj2.default());
+  game.addObject(new _mock_obj2.default());
+  game.addObject(new _mock_obj2.default());
+  game.addObject(new _mock_obj2.default());
 
   game.addObject(new _debugger2.default());
+  var a = new _mock_obj2.default();
+  var b = new _mock_obj2.default();
+
+  debugger;
+
   // game.addObject(mockObj);
 
   return game.startClock();
@@ -3651,7 +3664,7 @@ var mockModule = function mockModule() {
 var mockObj = function mockObj() {
   var _mockObj = new _base_object2.default();
   _mockObj.mergeWith(new mockModule());
-  _mockObj.addModule(_mock_sprite2.default);
+  _mockObj.addModule(new _mock_sprite2.default());
 
   var options = {
     name: "mockObj",
@@ -3698,9 +3711,11 @@ Spin.createCel({ sX: 277, sY: 0, draw_width: 22, draw_height: 40 }); //7
 Spin.createCel({ sX: 317, sY: 0, draw_width: 31, draw_height: 40 }); //8
 Spin.createCel({ sX: 357, sY: 0, draw_width: 38, draw_height: 40 }); //9
 
-var CoinSprite = new _sprite2.default({ src: './assets/coin_test.png' });
-// CoinSprite.add(StandRight);
-CoinSprite.add(Spin);
+var CoinSprite = function CoinSprite() {
+  var _coinSprite = new _sprite2.default({ src: './assets/coin_test.png' });
+  _coinSprite.add(Spin);
+  return _coinSprite;
+};
 
 module.exports = CoinSprite;
 
@@ -3782,9 +3797,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.AnimationCycle = undefined;
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 exports.cel = cel;
 
 var _merge = __webpack_require__(1);
@@ -3793,43 +3805,33 @@ var _merge2 = _interopRequireDefault(_merge);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 function cel(options) {
   return (0, _merge2.default)({ sX: 0, sY: 0, sW: 16, sH: 16, frameCount: 5 }, options);
 }
 
-var AnimationCycle = exports.AnimationCycle = function () {
-  function AnimationCycle() {
-    var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+var AnimationCycle = exports.AnimationCycle = function AnimationCycle() {
+  var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
 
-    _classCallCheck(this, AnimationCycle);
+  return {
+    cels: [],
+    celIdx: 0,
+    frameIdx: 0,
+    name: name,
+    rightFace: true,
 
-    this.cels = [];
-    this.celIdx = 0;
-    this.frameIdx = 0;
-    this.name = name;
-    this.rightFace = true;
-  }
-
-  _createClass(AnimationCycle, [{
-    key: 'push',
-    value: function push(newCel) {
+    push: function push(newCel) {
       this.cels.push(newCel);
-    }
-  }, {
-    key: 'add',
-    value: function add(newCel) {
+    },
+
+    add: function add(newCel) {
       this.cels.push(newCel);
-    }
-  }, {
-    key: 'currentCel',
-    value: function currentCel() {
+    },
+
+    currentCel: function currentCel() {
       return this.cels[this.celIdx];
-    }
-  }, {
-    key: 'incrementIndex',
-    value: function incrementIndex() {
+    },
+
+    incrementIndex: function incrementIndex() {
       this.frameIdx += 1;
       if (this.frameIdx > this.currentCel().frameCount) {
         this.frameIdx = 0;
@@ -3838,31 +3840,27 @@ var AnimationCycle = exports.AnimationCycle = function () {
           this.celIdx = 0;
         }
       }
-    }
-  }, {
-    key: 'advance',
-    value: function advance() {
+    },
+
+    advance: function advance() {
       this.incrementIndex();
       return this.currentCel();
-    }
-  }, {
-    key: 'spawnCel',
-    value: function spawnCel() {
+    },
+
+    spawnCel: function spawnCel() {
       var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
       return cel(options);
-    }
-  }, {
-    key: 'createCel',
-    value: function createCel() {
+    },
+
+    createCel: function createCel() {
       var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
       this.add(cel(options));
     }
-  }]);
 
-  return AnimationCycle;
-}();
+  };
+};
 
 /***/ }),
 /* 111 */
