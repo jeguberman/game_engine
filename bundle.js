@@ -568,10 +568,6 @@ var _physicsManager = __webpack_require__(112);
 
 var _physicsManager2 = _interopRequireDefault(_physicsManager);
 
-var _merge = __webpack_require__(1);
-
-var _merge2 = _interopRequireDefault(_merge);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // import Player from './player/player';
