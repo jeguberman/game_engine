@@ -16,3 +16,5 @@ Eventually it would be nice to have scrolling and save states and angular collis
 ### a note on deploying to gitlab
 
 just because my tutorial has a narrator explaining what the steps are, that doesn't mean the narrator needs to actually give the details on the steps, nor is it critically important that the speaker need be more clear than a russian stroke victim sucking on a grapefruit
+
+I'm like almost 100% certain I don't need this step anyway, since every file that matters is hmtl, css or javascript
