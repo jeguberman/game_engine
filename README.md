@@ -12,3 +12,7 @@ Phase 1: Create an engine capable of supporting a game with
   Basically to recreate my javascript project from my time at App Academy, but with cleaner, clearer code. game.johnguberman.com
 
 Eventually it would be nice to have scrolling and save states and angular collision, but eventually it's like, just use a game engine like phaser, amirite?
+
+### a note on deploying to gitlab
+
+just because my tutorial has a narrator explaining what the steps are, that doesn't mean the narrator needs to actually give the details on the steps, nor is it critically important that the speaker need be more clear than a russian stroke victim sucking on a grapefruit
