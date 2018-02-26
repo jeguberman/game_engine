@@ -3609,19 +3609,19 @@ function mockGame() {
   view.width = game.view_width;
   view.height = game.view_height;
 
+  game.addObject(new _mock_obj2.default(0, 0));
   game.addObject(new _mock_obj2.default(1, 1));
-  game.addObject(new _mock_obj2.default());
   game.addObject(new _mock_obj2.default(0, 2));
   game.addObject(new _mock_obj2.default(2, 0));
   game.addObject(new _mock_obj2.default(2, 2));
-  game.addObject(new _mock_obj2.default(4, 4));
   game.addObject(new _mock_obj2.default(1, 3));
-  game.addObject(new _mock_obj2.default(2, 4));
-  game.addObject(new _mock_obj2.default(4, 2));
   game.addObject(new _mock_obj2.default(3, 1));
   game.addObject(new _mock_obj2.default(3, 3));
   game.addObject(new _mock_obj2.default(4, 0));
   game.addObject(new _mock_obj2.default(0, 4));
+  game.addObject(new _mock_obj2.default(2, 4));
+  game.addObject(new _mock_obj2.default(4, 2));
+  game.addObject(new _mock_obj2.default(4, 4));
 
   game.addObject(new _debugger2.default());
 
