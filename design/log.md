@@ -59,6 +59,10 @@ Instead, there will be some kind of "event space". The higher order functions wi
 
 the debugger is in. I made the debugger an ingame object with a standard step function which gets called once per animation frame. When the function is called, it adds a current time object to an array, then removes any elements of the array which are more than 1 second from the element just added. This way all elements of the array should represent all frames created in the last second. then I just return array length.
 
-To keep time complexity low, I unshift the now time object to the front of the array, and pop off the invalid entries from the end, since the number of pops is O(n) and the look up for pop is O(1). So while the push of now is O(n) (because unshifting might involve movement of every element, depending on implementation)there are only two O(n) time processes in the function.
+To keep time complexity lower, I unshift the now time object to the front of the array, and pop off the invalid entries from the end, since the number of pops is O(n) and the look up for pop is O(1). So while the push of now is O(n) (because unshifting might involve movement of every element, depending on implementation)there are only two O(n) time processes in the function.
 
-I had to rework other things a little bit.  
+# February 27th
+
+I've given up on the event bus. The more I learn about it, the more I'm convinced it isn't appropriate for what I'm doing. The idea is sound, but I'm not willing to break my whole project trying to implement something I don't understand.
+
+I'm adding the controller. Controller has it's own debug information, but now it's functionally different from my animation frames per second controller. Thinking of making a debug module for the Game Class Object. 

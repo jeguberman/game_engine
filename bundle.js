@@ -104,6 +104,21 @@ module.exports = isObject;
 /* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
+var freeGlobal = __webpack_require__(18);
+
+/** Detect free variable `self`. */
+var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
+
+/** Used as a reference to the global object. */
+var root = freeGlobal || freeSelf || Function('return this')();
+
+module.exports = root;
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
 var baseMerge = __webpack_require__(36),
     createAssigner = __webpack_require__(94);
 
@@ -143,21 +158,6 @@ var merge = createAssigner(function(object, source, srcIndex) {
 });
 
 module.exports = merge;
-
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var freeGlobal = __webpack_require__(18);
-
-/** Detect free variable `self`. */
-var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
-
-/** Used as a reference to the global object. */
-var root = freeGlobal || freeSelf || Function('return this')();
-
-module.exports = root;
 
 
 /***/ }),
@@ -581,11 +581,10 @@ var EngineCore = function EngineCore() {
 
 var Game = function Game() {
   var _game = new EngineCore();
-  _game.addModules(new _renderer2.default()
+  _game.addModules(new _controller2.default(),
   // new PhysicsManager(),
   // new CollisionManager(),
-  // new Controller()
-  );
+  new _renderer2.default());
   return _game;
 };
 
@@ -596,7 +595,7 @@ module.exports = Game;
 /***/ (function(module, exports, __webpack_require__) {
 
 var getNative = __webpack_require__(10),
-    root = __webpack_require__(2);
+    root = __webpack_require__(1);
 
 /* Built-in method references that are verified to be native. */
 var Map = getNative(root, 'Map');
@@ -608,7 +607,7 @@ module.exports = Map;
 /* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var root = __webpack_require__(2);
+var root = __webpack_require__(1);
 
 /** Built-in value references. */
 var Symbol = root.Symbol;
@@ -825,7 +824,7 @@ module.exports = isLength;
 /* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(module) {var root = __webpack_require__(2),
+/* WEBPACK VAR INJECTION */(function(module) {var root = __webpack_require__(1),
     stubFalse = __webpack_require__(82);
 
 /** Detect free variable `exports`. */
@@ -999,81 +998,42 @@ module.exports = identity;
 "use strict";
 
 
-var _merge = __webpack_require__(1);
+var _merge = __webpack_require__(2);
 
 var _merge2 = _interopRequireDefault(_merge);
+
+var _module_manager = __webpack_require__(35);
+
+var _module_manager2 = _interopRequireDefault(_module_manager);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var baseObj = function baseObj(options) {
+
   options = (0, _merge2.default)({
     name: "baseObj"
   }, options);
 
-  var _baseObj = {
-    modules: new Set(),
-    moduleSteps: [],
+  var _baseObj = new _module_manager2.default(options);
+
+  _baseObj.mergeWith({
     dx: 0,
     dy: 0,
     collision_width: 32,
     collision_height: 32,
-    state: "standRight",
+    state: "default",
 
     step: function step() {
-      this.updateState();
       this.runModuleSteps();
-    },
-
-    runModuleSteps: function runModuleSteps() {
-      var _this = this;
-
-      // debugger
-      this.moduleSteps.forEach(function (func) {
-        func.bind(_this)();
-      });
+      this.updateState();
     },
 
     updateState: function updateState() {
       // throw {message: "Individual Game Objects must contain custom definitions for updateState function. " + this.name, object: this, trueMessage: "No they don't, this is going to be separated into a state manager for physical game objects. This doesn't pertain to non-entities like the debug module"};
-    },
-
-    mergeWith: function mergeWith(newObj) {
-      //merge with new object without making a record in modules, for late added options hashes
-      if (newObj) {
-        this.verifyModuleStep(newObj);
-        (0, _merge2.default)(this, newObj);
-      }
-    },
-
-    addModule: function addModule(newObj) {
-      //merge with object and add object name to modules list.
-      if (newObj) {
-        this.verifyModuleName(newObj);
-        var trueName = this.name;
-        this.modules.add(newObj.name);
-        this.verifyModuleStep(newObj);
-        (0, _merge2.default)(this, newObj);
-        this.name = trueName;
-      }
-    },
-
-    verifyModuleName: function verifyModuleName(newObj) {
-      //verify newObj has property "name", or else throw an error
-      if (!newObj.name) {
-        throw { message: "Game Object " + this.name + " tried to receive unnamed object ", object: newObj };
-      }
-    },
-
-    verifyModuleStep: function verifyModuleStep(newObj) {
-      //if module has a function called moduleStep, add it to the list of steps, or else do nothing
-      if (newObj.moduleStep) {
-        this.moduleSteps.push(newObj.moduleStep);
-      }
     }
 
-  };
+  });
 
-  _baseObj.mergeWith(options);
   return _baseObj;
 };
 
@@ -1094,7 +1054,7 @@ var _mock_game = __webpack_require__(106);
 
 var _mock_game2 = _interopRequireDefault(_mock_game);
 
-var _merge = __webpack_require__(1);
+var _merge = __webpack_require__(2);
 
 var _merge2 = _interopRequireDefault(_merge);
 
@@ -1202,25 +1162,34 @@ var TimeManager = function TimeManager() {
       requestAnimationFrame(this.updateGameState.bind(this));
     },
 
+    // updateGameState: function(time){
+    //   this.timeDelta = time - this.lastTime;
+    //   this.updateAllObjectStates();//objectManager
+    //   // this.physicsContainer(time);
+    //   this.rendererContainer();
+    //   this.lastTime = time;
+    //   requestAnimationFrame(this.updateGameState.bind(this));
+    // },
+
     updateGameState: function updateGameState(time) {
       this.timeDelta = time - this.lastTime;
       this.updateAllObjectStates(); //objectManager
-      this.physicsContainer(time);
-      this.rendererContainer();
+      this.runModuleSteps();
       this.lastTime = time;
       requestAnimationFrame(this.updateGameState.bind(this));
     },
 
-    physicsContainer: function physicsContainer(time) {
-      var now = void 0;
-      while (now - time >= this.framesInASecond) {
-        this.calculatePhysics(); //physicsManager
-        now = Date.now;
-      }
-    },
-    rendererContainer: function rendererContainer() {
-      this.render(); //renderer
-    },
+    // physicsContainer(time){
+    //   let now;
+    //   while( now - time >= this.framesInASecond ){
+    //     this.calculatePhysics();//physicsManager
+    //     now = Date.now;
+    //   }
+    // },
+
+    // rendererContainer(){
+    //   this.render();//renderer
+    // },
 
 
     // helper methods
@@ -1245,15 +1214,16 @@ module.exports = TimeManager;
 "use strict";
 
 
-var _merge = __webpack_require__(1);
+var _merge = __webpack_require__(2);
 
 var _merge2 = _interopRequireDefault(_merge);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var moduleManager = function moduleManager(options) {
+var ModuleManager = function ModuleManager(options) {
   var _moduleManager = {
-    modules: new Set(),
+    modules: {},
+    moduleSteps: [],
 
     mergeWith: function mergeWith(newObj) {
       //merge with new object without making a record in modules, for late added options hashes, but whatever
@@ -1267,7 +1237,7 @@ var moduleManager = function moduleManager(options) {
       if (newObj) {
         this.verifyModuleName(newObj);
         var trueName = this.name;
-        this.modules.add(newObj.name);
+        this.modules[newObj.name] = newObj.state;
         this.verifyModuleStep(newObj);
         (0, _merge2.default)(this, newObj);
         this.name = trueName;
@@ -1298,6 +1268,14 @@ var moduleManager = function moduleManager(options) {
       if (newObj.moduleStep) {
         this.moduleSteps.push(newObj.moduleStep);
       }
+    },
+
+    runModuleSteps: function runModuleSteps() {
+      var _this2 = this;
+
+      this.moduleSteps.forEach(function (func) {
+        func.bind(_this2)();
+      });
     }
 
   };
@@ -1307,7 +1285,7 @@ var moduleManager = function moduleManager(options) {
   return _moduleManager;
 };
 
-module.exports = moduleManager;
+module.exports = ModuleManager;
 
 /***/ }),
 /* 36 */
@@ -1843,7 +1821,7 @@ module.exports = isMasked;
 /* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var root = __webpack_require__(2);
+var root = __webpack_require__(1);
 
 /** Used to detect overreaching core-js shims. */
 var coreJsData = root['__core-js_shared__'];
@@ -2416,7 +2394,7 @@ module.exports = baseMergeDeep;
 /* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(module) {var root = __webpack_require__(2);
+/* WEBPACK VAR INJECTION */(function(module) {var root = __webpack_require__(1);
 
 /** Detect free variable `exports`. */
 var freeExports = typeof exports == 'object' && exports && !exports.nodeType && exports;
@@ -2502,7 +2480,7 @@ module.exports = cloneArrayBuffer;
 /* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var root = __webpack_require__(2);
+var root = __webpack_require__(1);
 
 /** Built-in value references. */
 var Uint8Array = root.Uint8Array;
@@ -3452,7 +3430,7 @@ module.exports = isIterateeCall;
 "use strict";
 
 
-var _merge = __webpack_require__(1);
+var _merge = __webpack_require__(2);
 
 var _merge2 = _interopRequireDefault(_merge);
 
@@ -3472,14 +3450,7 @@ var Renderer = function Renderer(options) {
     view_width: options.width,
     view_height: options.height,
 
-    testRender: function testRender() {
-      var ctx = this.ctx;
-      ctx.clearRect(0, 0, this.view_width, this.view_height);
-      ctx.fillStyle = ctx.fillStyle === "#0000ff" ? "ff000" : "#0000ff";
-      ctx.fillRect(0, 0, this.view_width, this.view_height);
-    },
-
-    render: function render() {
+    moduleStep: function moduleStep() {
       this.renderView();
       this.renderFrame();
     },
@@ -3516,7 +3487,13 @@ module.exports = Renderer;
 
 
 var Controller = function Controller() {
-  return {
+  var controlDebug = document.getElementById("controlDebug");
+  controlDebug.innerHTML = "Inputs: ";
+  var _controller = {
+    name: "controller",
+    inputs: new Set(),
+    controlDebug: controlDebug,
+
     bindKeys: function bindKeys() {
       var _this = this;
 
@@ -3528,14 +3505,33 @@ var Controller = function Controller() {
       });
     },
 
-    handleKeyup: function handleKeyup(key) {
-      console.log("up " + key);
+    handleKeydown: function handleKeydown(key) {
+      this.inputs.add(key);
     },
 
-    handleKeydown: function handleKeydown(key) {
-      console.log("down " + key);
+    handleKeyup: function handleKeyup(key) {
+      this.inputs.delete(key);
+    },
+
+    moduleStep: function moduleStep() {
+      this.controlDebug.innerHTML = "Inputs: " + this.inputsAsString();
+    },
+
+    inputsAsString: function inputsAsString() {
+      var str = "";
+      if (this.inputs.size > 0) {
+        this.inputs.forEach(function (key) {
+          if (key === " ") {
+            key = "space";
+          }
+          str = str + key + ",";
+        });
+      }
+      return str;
     }
   };
+  _controller.bindKeys();
+  return _controller;
 };
 
 module.exports = Controller;
@@ -3608,19 +3604,21 @@ function mockGame() {
   game.setContext(view.getContext('2d'));
   view.width = game.view_width;
   view.height = game.view_height;
+  // game.bindKeys();
+
 
   game.addObject(new _mock_obj2.default(0, 0));
-  game.addObject(new _mock_obj2.default(1, 1));
-  game.addObject(new _mock_obj2.default(0, 2));
-  game.addObject(new _mock_obj2.default(2, 0));
-  game.addObject(new _mock_obj2.default(2, 2));
-  game.addObject(new _mock_obj2.default(1, 3));
-  game.addObject(new _mock_obj2.default(3, 1));
-  game.addObject(new _mock_obj2.default(3, 3));
-  game.addObject(new _mock_obj2.default(4, 0));
-  game.addObject(new _mock_obj2.default(0, 4));
-  game.addObject(new _mock_obj2.default(2, 4));
-  game.addObject(new _mock_obj2.default(4, 2));
+  // game.addObject(new mockObj(1,1));
+  // game.addObject(new mockObj(0,2));
+  // game.addObject(new mockObj(2,0));
+  // game.addObject(new mockObj(2,2));
+  // game.addObject(new mockObj(1,3));
+  // game.addObject(new mockObj(3,1));
+  // game.addObject(new mockObj(3,3));
+  // game.addObject(new mockObj(4,0));
+  // game.addObject(new mockObj(0,4));
+  // game.addObject(new mockObj(2,4));
+  // game.addObject(new mockObj(4,2));
   game.addObject(new _mock_obj2.default(4, 4));
 
   game.addObject(new _debugger2.default());
@@ -3667,7 +3665,7 @@ var mockObj = function mockObj() {
 
   var _mockObj = new _base_object2.default();
 
-  _mockObj.mergeWith(new mockModule());
+  // _mockObj.mergeWith(new mockModule());
   _mockObj.addModule(new _mock_sprite2.default());
 
   var options = {
@@ -3675,7 +3673,8 @@ var mockObj = function mockObj() {
     dx: 0 + n * 40,
     dy: 0 + m * 40,
     collision_width: 40,
-    collision_height: 40
+    collision_height: 40,
+    state: "Spin"
   };
 
   _mockObj.mergeWith(options);
@@ -3701,9 +3700,10 @@ var _animation = __webpack_require__(110);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Spin = new _animation.AnimationCycle("Spin");
-var StandRight = new _animation.AnimationCycle("standRight");
+var noSpin = new _animation.AnimationCycle("noSpin");
 
-StandRight.createCel({ sX: 400, sY: 0, draw_width: 40, draw_height: 40 }); //0
+noSpin.createCel({ sX: 400, sY: 0, draw_width: 40, draw_height: 40 }); //0
+
 Spin.createCel({ sX: 400, sY: 0, draw_width: 40, draw_height: 40 }); //0
 Spin.createCel({ sX: 5, sY: 0, draw_width: 37, draw_height: 40 }); //1
 Spin.createCel({ sX: 51, sY: 0, draw_width: 31, draw_height: 40 }); //2
@@ -3718,6 +3718,7 @@ Spin.createCel({ sX: 357, sY: 0, draw_width: 38, draw_height: 40 }); //9
 var CoinSprite = function CoinSprite() {
   var _coinSprite = new _sprite2.default({ src: './assets/coin_test.png' });
   _coinSprite.add(Spin);
+  _coinSprite.add(noSpin);
   return _coinSprite;
 };
 
@@ -3734,7 +3735,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _merge = __webpack_require__(1);
+var _merge = __webpack_require__(2);
 
 var _merge2 = _interopRequireDefault(_merge);
 
@@ -3771,6 +3772,9 @@ var Sprite = function Sprite(options) {
     add: function add(cycle) {
       this.animations[cycle.name] = cycle;
     },
+    set: function set(string) {
+      console.log("you should definitely not being seeing this");
+    },
     get: function get(string) {
       return this.animations[string];
     },
@@ -3803,7 +3807,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.AnimationCycle = undefined;
 exports.cel = cel;
 
-var _merge = __webpack_require__(1);
+var _merge = __webpack_require__(2);
 
 var _merge2 = _interopRequireDefault(_merge);
 
@@ -3887,6 +3891,8 @@ var DebugInfo = function DebugInfo() {
     // start,
     animationFrames: [],
     animationFPS: 0,
+    physicsFrames: [],
+    physicsFPS: 0,
     lastUpdate: start,
     domElement: domElement
   };
@@ -3897,7 +3903,7 @@ var DebugInfo = function DebugInfo() {
     moduleStep: function moduleStep() {
       var animationFrames = this.debug.animationFrames;
       var now = Date.now();
-      animationFrames.unshift(now); //how do we bind this to THIS object, not the caller?
+      animationFrames.unshift(now);
       while (now - animationFrames[animationFrames.length - 1] > 1000) {
         animationFrames.pop(); //assumes there are 1000 ticks in one second of Date.now object.
       }
