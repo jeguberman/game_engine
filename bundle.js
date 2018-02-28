@@ -1234,7 +1234,8 @@ var ObjectManager = function ObjectManager() {
     name: "objectsManager",
 
     addObject: function addObject(object) {
-      object.events = this.events;
+
+      object.globalEvents = this.globalEvents;
       if (object.type === "player") {
         this.allObjects.unshift(object);
       } else {
@@ -3629,7 +3630,7 @@ var mockModule = function mockModule() {
     name: "mockModule",
     arbVal: "from mockModule",
     updateState: function updateState() {
-      this.state = "Spin";
+      // this.state = "Spin";
     }
   };
 };
@@ -3641,7 +3642,6 @@ var mockObj = function mockObj() {
 
   var _mockObj = new _base_object2.default();
 
-  // _mockObj.mergeWith(new mockModule());
   _mockObj.addModules(new _mock_sprite2.default(), new _mock_controller2.default());
 
   var options = {
@@ -3654,7 +3654,6 @@ var mockObj = function mockObj() {
   };
 
   _mockObj.mergeWith(options);
-  options.dx += 40;
   return _mockObj;
 };
 
@@ -3956,10 +3955,6 @@ var gameController = function gameController() {
       });
     },
 
-    getEvents: function getEvents() {
-      return { inputs: this.inputs };
-    },
-
     handleKeydown: function handleKeydown(key) {
       this.inputs.add(key);
     },
@@ -3971,7 +3966,6 @@ var gameController = function gameController() {
     moduleStep: function moduleStep() {
       this.recordHistory();
       this.controllerDOM.innerHTML = "Inputs: <br>" + this.getHistoryTailAsString(5) + "<br/>";
-      // this.controllerDOM.innerHTML = "Inputs:<br/>" + this.inputFrameAsString(this.inputs) + "<br/>";
     },
 
     recordHistory: function recordHistory() {
@@ -3984,7 +3978,6 @@ var gameController = function gameController() {
       }
 
       var lastFrame = this.controllerHistory[this.controllerHistory.length - 1];
-      // if(this.inputs.size > 0){debugger}
 
       if ((0, _util.compareSets)(newFrame, lastFrame.frameSlice)) {
         lastFrame.frameCount += 1;
@@ -4010,6 +4003,7 @@ var gameController = function gameController() {
     },
 
     inputFrameAsString: function inputFrameAsString(frame) {
+      //converts a set to a string, specifically to be printed to the debug window
       var str = "";
       if (frame.size > 0) {
         frame.forEach(function (key) {
@@ -4021,6 +4015,10 @@ var gameController = function gameController() {
       }
       str = str.slice(0, -1) + "<br>";
       return str;
+    },
+
+    getEvents: function getEvents() {
+      return { inputs: this.inputs };
     }
   };
   _controller.bindKeys();
@@ -4031,59 +4029,13 @@ module.exports = gameController;
 
 /***/ }),
 /* 114 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
 "use strict";
-
-
-var _objController = __webpack_require__(115);
-
-var _objController2 = _interopRequireDefault(_objController);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var mockController = function mockController() {
-  var _mockController = new _objController2.default();
-  return _mockController;
-};
-
-module.exports = mockController;
+throw new Error("Module build failed: SyntaxError: Unterminated string constant (11:5)\n\n\u001b[0m \u001b[90m  9 | \u001b[39m  _mockController\u001b[33m.\u001b[39maddNewVerb(\u001b[32m\"a\"\u001b[39m\u001b[33m,\u001b[39m \u001b[36mfunction\u001b[39m(){\u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mdx \u001b[33m-=\u001b[39m \u001b[35m40\u001b[39m\u001b[33m;\u001b[39m})\u001b[33m;\u001b[39m\n \u001b[90m 10 | \u001b[39m  _mockController\u001b[33m.\u001b[39maddNew\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 11 | \u001b[39m  you\u001b[32m're tryig to make these functions get called with \"this\" bound to the gameObj at each module step\u001b[39m\n \u001b[90m    | \u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 12 | \u001b[39m  \u001b[33mVerb\u001b[39m(\u001b[32m\"space\"\u001b[39m\u001b[33m,\u001b[39m \u001b[36mfunction\u001b[39m(){\u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mstate \u001b[33m=\u001b[39m nSpin\u001b[33m;\u001b[39m})\u001b[33m;\u001b[39m\n \u001b[90m 13 | \u001b[39m\n \u001b[90m 14 | \u001b[39m\u001b[0m\n");
 
 /***/ }),
-/* 115 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _merge = __webpack_require__(1);
-
-var _merge2 = _interopRequireDefault(_merge);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var objController = function objController(options) {
-  var _objController = {
-    name: "objController",
-    // controlState: "idle",
-    state: "idle",
-    verbs: {},
-    moduleStep: function moduleStep() {},
-    addNewVerb: function addNewVerb(input, callback) {
-      if (!this.verbs.input) {
-        this.verbs[input] = callback;
-      } else {
-        throw { message: "Game Object " + this.name + " tried to overwrite action " + input };
-      }
-    }
-  };
-  _objController = (0, _merge2.default)(_objController, options);
-  return _objController;
-};
-
-module.exports = objController;
-
-/***/ }),
+/* 115 */,
 /* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -4099,12 +4051,6 @@ function compareSets(setA, setB) {
   if (setA.size !== setB.size) {
     bool = false;
   }
-
-  // let record = {
-  //   get: function(target, name) {
-  //     return target.hasOwnProperty(name) ? target[name] : 0;
-  //   }
-  // };
 
   setA.forEach(function (el) {
     if (!setB.has(el)) {
