@@ -12,7 +12,12 @@ const trueGame = ()=>{
 };
 
 const falseGame = () => {
-  mockGame();
+
+
+
+
+  const game = mockGame();
+  game.startClock();
 };
 
 
