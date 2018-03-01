@@ -681,7 +681,7 @@ var ModuleManager = function ModuleManager(options) {
       var _this3 = this;
 
       this.moduleSteps.forEach(function (func) {
-
+        // debugger
         func.bind(_this3)();
       });
     }
@@ -3618,9 +3618,9 @@ var _base_object = __webpack_require__(32);
 
 var _base_object2 = _interopRequireDefault(_base_object);
 
-var _data_by_frame = __webpack_require__(118);
+var _objFrameData = __webpack_require__(119);
 
-var _data_by_frame2 = _interopRequireDefault(_data_by_frame);
+var _objFrameData2 = _interopRequireDefault(_objFrameData);
 
 var _mock_sprite = __webpack_require__(108);
 
@@ -3661,7 +3661,7 @@ var featureMock = exports.featureMock = function featureMock() {
   var _featureMock = new mockObj(xmod, ymod);
 
   _featureMock.name = "player";
-  _featureMock.addModules(new _mock_controller2.default(), new _data_by_frame2.default());
+  _featureMock.addModules(new _mock_controller2.default(), new _objFrameData2.default());
 
   return _featureMock;
 };
@@ -4038,9 +4038,11 @@ var objController = function objController(options) {
     // state: "idle",
     verbs: {},
     moduleStep: function moduleStep() {
+      var verbs = this.verbs; //this definition was necessary because "this" wasn't working correctly inside the forEach loop. You'll want to come back to this to strengthen your understanding of "this".
       this.globalEvents.inputs.forEach(function (el) {
-        // debugger
-        this.verbs[el]();
+        if (verbs[el]) {
+          verbs[el]();
+        }
       });
     },
     addNewVerb: function addNewVerb(input, callback) {
@@ -4091,7 +4093,8 @@ function compareSets(setA, setB) {
 
 /***/ }),
 /* 117 */,
-/* 118 */
+/* 118 */,
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
