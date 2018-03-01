@@ -681,6 +681,7 @@ var ModuleManager = function ModuleManager(options) {
       var _this3 = this;
 
       this.moduleSteps.forEach(function (func) {
+
         func.bind(_this3)();
       });
     }
@@ -3561,11 +3562,9 @@ var _game2 = _interopRequireDefault(_game);
 
 var _mock_obj = __webpack_require__(107);
 
-var _mock_obj2 = _interopRequireDefault(_mock_obj);
+var Mock = _interopRequireWildcard(_mock_obj);
 
-var _debugger = __webpack_require__(111);
-
-var _debugger2 = _interopRequireDefault(_debugger);
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -3580,7 +3579,7 @@ function mockGame() {
   // game.bindKeys();
 
 
-  game.addObject(new _mock_obj2.default(0, 0));
+  // game.addObject(new Mock.mockObj(0,0));
   // game.addObject(new mockObj(1,1));
   // game.addObject(new mockObj(0,2));
   // game.addObject(new mockObj(2,0));
@@ -3592,9 +3591,8 @@ function mockGame() {
   // game.addObject(new mockObj(0,4));
   // game.addObject(new mockObj(2,4));
   // game.addObject(new mockObj(4,2));
-  game.addObject(new _mock_obj2.default(4, 4));
-
-  game.addObject(new _debugger2.default());
+  game.addObject(new Mock.mockObj(4, 4));
+  game.addObject(new Mock.featureMock());
 
   // game.addObject(mockObj);
 
@@ -3611,9 +3609,18 @@ exports.default = mockGame;
 "use strict";
 
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.featureMock = exports.mockObj = undefined;
+
 var _base_object = __webpack_require__(32);
 
 var _base_object2 = _interopRequireDefault(_base_object);
+
+var _data_by_frame = __webpack_require__(118);
+
+var _data_by_frame2 = _interopRequireDefault(_data_by_frame);
 
 var _mock_sprite = __webpack_require__(108);
 
@@ -3625,24 +3632,15 @@ var _mock_controller2 = _interopRequireDefault(_mock_controller);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var mockModule = function mockModule() {
-  return {
-    name: "mockModule",
-    arbVal: "from mockModule",
-    updateState: function updateState() {
-      // this.state = "Spin";
-    }
-  };
-};
 // import Sprite from '../components/animation/sprite.js';
 
-var mockObj = function mockObj() {
+var mockObj = exports.mockObj = function mockObj() {
   var n = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
   var m = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
 
   var _mockObj = new _base_object2.default();
 
-  _mockObj.addModules(new _mock_sprite2.default(), new _mock_controller2.default());
+  _mockObj.addModules(new _mock_sprite2.default());
 
   var options = {
     name: "mockObj",
@@ -3657,7 +3655,16 @@ var mockObj = function mockObj() {
   return _mockObj;
 };
 
-module.exports = mockObj;
+var featureMock = exports.featureMock = function featureMock() {
+  var xmod = 0;
+  var ymod = 0;
+  var _featureMock = new mockObj(xmod, ymod);
+
+  _featureMock.name = "player";
+  _featureMock.addModules(new _mock_controller2.default(), new _data_by_frame2.default());
+
+  return _featureMock;
+};
 
 /***/ }),
 /* 108 */
@@ -3846,54 +3853,7 @@ var AnimationCycle = exports.AnimationCycle = function AnimationCycle() {
 };
 
 /***/ }),
-/* 111 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _base_object = __webpack_require__(32);
-
-var _base_object2 = _interopRequireDefault(_base_object);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var DebugInfo = function DebugInfo() {
-
-  var domElement = document.getElementById("debug");
-  var start = Date.now();
-  var debug = {
-    // start,
-    animationFrames: [],
-    animationFPS: 0,
-    physicsFrames: [],
-    physicsFPS: 0,
-    lastUpdate: start,
-    domElement: domElement
-  };
-
-  var _debugInfo = new _base_object2.default({ name: "debug" });
-  _debugInfo.mergeWith({
-    debug: debug,
-    moduleStep: function moduleStep() {
-      var animationFrames = this.debug.animationFrames;
-      var now = Date.now();
-      animationFrames.unshift(now);
-      while (now - animationFrames[animationFrames.length - 1] > 1000) {
-        animationFrames.pop(); //assumes there are 1000 ticks in one second of Date.now object.
-      }
-      // if(now - this.debug.lastUpdate >= 200){
-      this.debug.domElement.innerHTML = "Animation Frames per Second: " + animationFrames.length;
-      // }
-    },
-    draw: function draw() {}
-  });
-  return _debugInfo;
-};
-
-module.exports = DebugInfo;
-
-/***/ }),
+/* 111 */,
 /* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -4029,13 +3989,75 @@ module.exports = gameController;
 
 /***/ }),
 /* 114 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-throw new Error("Module build failed: SyntaxError: Unterminated string constant (11:5)\n\n\u001b[0m \u001b[90m  9 | \u001b[39m  _mockController\u001b[33m.\u001b[39maddNewVerb(\u001b[32m\"a\"\u001b[39m\u001b[33m,\u001b[39m \u001b[36mfunction\u001b[39m(){\u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mdx \u001b[33m-=\u001b[39m \u001b[35m40\u001b[39m\u001b[33m;\u001b[39m})\u001b[33m;\u001b[39m\n \u001b[90m 10 | \u001b[39m  _mockController\u001b[33m.\u001b[39maddNew\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 11 | \u001b[39m  you\u001b[32m're tryig to make these functions get called with \"this\" bound to the gameObj at each module step\u001b[39m\n \u001b[90m    | \u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 12 | \u001b[39m  \u001b[33mVerb\u001b[39m(\u001b[32m\"space\"\u001b[39m\u001b[33m,\u001b[39m \u001b[36mfunction\u001b[39m(){\u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mstate \u001b[33m=\u001b[39m nSpin\u001b[33m;\u001b[39m})\u001b[33m;\u001b[39m\n \u001b[90m 13 | \u001b[39m\n \u001b[90m 14 | \u001b[39m\u001b[0m\n");
+
+
+var _objController = __webpack_require__(115);
+
+var _objController2 = _interopRequireDefault(_objController);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var mockController = function mockController() {
+  var _mockController = new _objController2.default();
+  _mockController.addNewVerb("d", function () {
+    // debugger
+    this.dx += 40;
+  });
+  _mockController.addNewVerb("a", function () {
+    this.dx -= 40;
+  });
+  _mockController.addNewVerb("space", function () {
+    this.state = "noSpin";
+  });
+
+  return _mockController;
+};
+
+module.exports = mockController;
 
 /***/ }),
-/* 115 */,
+/* 115 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _merge = __webpack_require__(1);
+
+var _merge2 = _interopRequireDefault(_merge);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var objController = function objController(options) {
+  var _objController = {
+    name: "objController",
+    controlState: "idle",
+    // state: "idle",
+    verbs: {},
+    moduleStep: function moduleStep() {
+      this.globalEvents.inputs.forEach(function (el) {
+        // debugger
+        this.verbs[el]();
+      });
+    },
+    addNewVerb: function addNewVerb(input, callback) {
+      if (!this.verbs.input) {
+        this.verbs[input] = callback.bind(this);
+      } else {
+        throw { message: "Game Object " + this.name + " tried to overwrite action " + input };
+      }
+    }
+  };
+  _objController = (0, _merge2.default)(_objController, options);
+  return _objController;
+};
+
+module.exports = objController;
+
+/***/ }),
 /* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -4066,6 +4088,50 @@ function compareSets(setA, setB) {
 
   return bool;
 }
+
+/***/ }),
+/* 117 */,
+/* 118 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _base_object = __webpack_require__(32);
+
+var _base_object2 = _interopRequireDefault(_base_object);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var objFrameData = function objFrameData() {
+
+  var domElement = document.getElementById("objFrameData");
+  // debugger
+  var start = Date.now();
+  var _objFrameData = {
+    name: "objFrameData",
+    frameData: {
+      animationFrames: [],
+      animationFPS: 0,
+      physicsFrames: [],
+      physicsFPS: 0,
+      lastUpdate: start,
+      domElement: domElement
+    },
+    moduleStep: function moduleStep() {
+      var animationFrames = this.frameData.animationFrames;
+      var now = Date.now();
+      animationFrames.unshift(now);
+      while (now - animationFrames[animationFrames.length - 1] > 1000) {
+        animationFrames.pop();
+      }
+      this.frameData.domElement.innerHTML = "Animation Frames per Second: " + animationFrames.length;
+    }
+  };
+  return _objFrameData;
+};
+
+module.exports = objFrameData;
 
 /***/ })
 /******/ ]);
