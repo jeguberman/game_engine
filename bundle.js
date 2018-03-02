@@ -1272,12 +1272,18 @@ var ModuleManager = function ModuleManager(options) {
 
       this.moduleSteps.forEach(function (func) {
         // debugger
-        func.bind(_this3)();
+        func.call(_this3);
       });
     },
 
     moduleState: function moduleState(moduleName) {
       return this.modules[string];
+    },
+
+    stepDebug: function stepDebug(condition) {
+      if (eval(condition)) {
+        debugger;
+      };
     }
 
   };
@@ -3443,6 +3449,7 @@ var EventManager = function EventManager() {
     name: "eventManager",
     globalEvents: {},
     newModuleVerification: function newModuleVerification(newObj) {
+      //check for and implement subscriptions
       if (newObj.getEvents) {
         this.globalEvents = (0, _merge2.default)(this.globalEvents, newObj.getEvents());
       }
@@ -3728,11 +3735,11 @@ function mockGame() {
   // game.addObject(new mockObj(2,4));
   // game.addObject(new mockObj(4,2));
   // game.addObject(new Mock.mockObj(4,4));
-  game.addObject(new Mock.featureMock());
+  game.addObject(new Mock.featureMock(4, 4));
   // document.addEventListener('keydown',(e)=>{
   //   game.allObjects[0].dx += 40;
   // });
-
+  dbAdd("feature", game.allObjects[0]);
 
   // game.addObject(mockObj);
 
@@ -3855,51 +3862,54 @@ var _merge = __webpack_require__(3);
 
 var _merge2 = _interopRequireDefault(_merge);
 
-var _exceptions = __webpack_require__(119);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+// import { OptionsException } from '../../../util/exceptions';
+
 //abstractly, a verb is the action which is performed when the player presses a button. https://www.youtube.com/watch?v=7daTGyVZ60I
+
 
 var core = exports.core = function core() {
   var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
 
-  if (!options.hasOwnProperty("owner")) {
-    // throw OptionsException(options, "no owner provided to new verb");
+  function funcWrapper(callBack) {
+    function _funcWrapper() {
+
+      // let eligible = true;
+      // if(eligible){
+      //   try{
+      callBack.call(this);
+      //   }
+      //   catch(err){
+      //     console.err("something")
+      //   }
+      // }
+    };
+    return _funcWrapper;
   }
 
-  if (options.hasOwnProperty("fullFunc")) {
-    throw (0, _exceptions.OptionsException)(options, "can not override function wrapper fullFunc");
-  }
+  var setFunc = function setFunc() {
+    if (options.hasOwnProperty("func")) {
+      options.func = funcWrapper(options.func);
+    } else {
+      console.error("No function was provided to verb.");
+      console.trace();
+    }
+  };
+
+  var func = setFunc();
 
   var _core = {
     name: "unamedVerb",
     input: "Escape",
-    type: "core",
-    elligible: true,
-
-    func: function func() {
-      throw { message: 'No function was provided to verb ' + this.name };
-    },
-
-    fullFunc: function fullFunc() {
-      // debugger
-      // dbAdd("verbFullFunc",this)
-      // if(!this.elligible){ //wtf: see below
-      this.func.call(this.owner);
-      // }
-    }
+    type: "verbCore",
+    eligible: true
   };
   (0, _merge2.default)(_core, options);
-  dbAdd("_core", _core);
+
   return _core;
 };
-
-//wtf this.elligible is true, check it in the debugger if you don't believe me. But this function only works if we add the not modifier. As far as I'm aware, this is
-//if(false){
-//  console.log("foo");
-//} => "foo"
 
 /***/ }),
 /* 111 */
@@ -3933,15 +3943,9 @@ var _mock_controller = __webpack_require__(117);
 
 var _mock_controller2 = _interopRequireDefault(_mock_controller);
 
-var _verb = __webpack_require__(110);
-
-var Verb = _interopRequireWildcard(_verb);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// import Sprite from '../components/animation/sprite.js';
+// import * as Verb from '../objects/modules/controller/verb';
 
 var mockObj = exports.mockObj = function mockObj() {
   var n = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
@@ -3963,43 +3967,16 @@ var mockObj = exports.mockObj = function mockObj() {
   _mockObj.mergeWith(options);
   return _mockObj;
 };
+// import Sprite from '../components/animation/sprite.js';
 
 var featureMock = exports.featureMock = function featureMock() {
   var xmod = 0;
   var ymod = 0;
   var _featureMock = new mockObj(xmod, ymod);
-  dbAdd("_featureMockA", _featureMock);
-  dbAdd("mock", _featureMock);
+
   _featureMock.name = "player";
   _featureMock.type = "player";
   _featureMock.addModules(new _mock_controller2.default(), new _objData2.default(), new _objFrameData2.default());
-  dbAdd("_featureMockB", _featureMock);
-
-  // var opt = {
-  //   // owner: _featureMock,
-  //   input: "d",
-  //   func: function(){
-  //     console.log([this.name]);
-  //     this.dx += 40;
-  //   },
-  //   name: "moveRight"
-  // };
-
-  // const v = new Verb.core({
-  //   // owner: _featureMock,
-  //   input: "d",
-  //   func: function(){
-  //     console.log([this.name]);
-  //     this.dx += 40;
-  //   },
-  //   name: "moveRight"
-  // });
-  // dbAdd("v",v);
-  // // dbEval(`v.owner.name = "player 2"`);
-  // // debugger
-  // _featureMock.addVerb(v);
-  // dbAdd("_featureMockC",_featureMock);
-
 
   return _featureMock;
 };
@@ -4178,12 +4155,6 @@ var objAnimator = function objAnimator(options) {
     add: function add(cycle) {
       this.animations[cycle.name] = cycle;
     },
-    set: function set(string) {
-      console.log("you should definitely not being seeing this");
-    },
-    get: function get(string) {
-      return this.animations[string];
-    },
 
     moduleStep: function moduleStep() {
       if (!this.animations[this.modules.objAnimator]) {
@@ -4191,6 +4162,14 @@ var objAnimator = function objAnimator(options) {
       }
       var currentCel = this.animations[this.modules.objAnimator].advance();
       (0, _merge2.default)(this, currentCel);
+      delete this.frameCount;
+    },
+
+    set: function set(string) {
+      console.log("you should definitely not being seeing this");
+    },
+    get: function get(string) {
+      return this.animations[string];
     },
 
     getAnimations: function getAnimations() {
@@ -4298,25 +4277,46 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var v = new Verb.core({
-  // owner: _featureMock,
-  input: "d",
-  func: function func() {
-    console.log([this.name]);
-    this.dx += 40;
-  },
-  name: "moveRight"
-});
-
 var mockController = function mockController() {
   var _mockController = new _objController2.default();
 
+  var v = new Verb.core({
+    name: "moveRight",
+    input: "d",
+
+    func: function func() {
+      // debugger
+      //alright buddy here's what you're doing next. Refactor the event queue. Currently it's broken up into slices, but it should be tuples, you hear me? Tuples. the first value is the KIND of event and the second is the payload. Anybody concerned with the events is looking at ALL the events.
+
+      //now how should an event be structured?
+      //a set of objects? {type, payload}
+      //a single key value pair? {type: payload}, this won't work, you could only have one of each type or you'd basically be doing slices again
+      //a parsable string? "type:[paylod]"
+      //should the event queue be an array? A set? Array makes the most sense to me
+      //because we're always going to be iterating, an array is best. the hash-tuple also seems to be what I want.
+      //maybe the game object should automatically filter events, modules could have "subscriptions". This way the ENTIRE event queue only needs to be iterated over once, though the sub event queues would be once per object
+      var evn = this.globalEvents;
+      if (!evn.hasOwnProperty("eligible")) {
+        evn.eligible = true;
+      }
+      function eligibate() {
+        evn.eligible = true;
+      }
+      function elgTimer() {}
+
+      // debugger
+      if (evn.eligible) {
+
+        console.log([this.name]);
+        this.dx += 40;
+
+        evn.eligible = false;
+
+        setTimeout(eligibate, 200);
+      }
+    }
+  });
   _mockController.addVerb(v);
-
-  // _mockController.addNewVerb(" ", function(){
-  //   this.modules.objAnimator = this.modules.objAnimator === "Spin" ? "noSpin" : "Spin";
-  // });
-
 
   return _mockController;
 };
@@ -4334,13 +4334,9 @@ var _merge = __webpack_require__(3);
 
 var _merge2 = _interopRequireDefault(_merge);
 
-var _verb2 = __webpack_require__(110);
-
-var Verb = _interopRequireWildcard(_verb2);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// import * as Verb from './verb';
 
 var objController = function objController(options) {
   var _objController = {
@@ -4349,16 +4345,16 @@ var objController = function objController(options) {
     verbs: {},
 
     moduleStep: function moduleStep() {
-      // this.debuggerS();
+      // this.stepDebug('this.globalEvents.inputs.size > 0');
       this.globalEvents.inputs.forEach(function (input) {
         if (this.verbs[input]) {
-          this.verbs[input].fullFunc();
+          this.verbs[input].func.call(this);
         }
       }, this);
     },
 
     spawnVerb: function spawnVerb(options) {
-      (0, _merge2.default)(options, { owner: this });
+      // merge(options,{owner:this});
       _verb = new Verb.core(options);
       return _verb;
     },
@@ -4370,21 +4366,16 @@ var objController = function objController(options) {
 
     addVerb: function addVerb(newVerb) {
       if (!this.verbs[newVerb.input]) {
-        newVerb.owner = this;
+        // newVerb.owner = this;
         this.verbs[newVerb.input] = newVerb; //.fullFunc//.bind(newVerb);
       } else {
         throw {
-          message: 'Game Object ' + this.name + ' tried to overwrite action',
+          message: "Game Object " + this.name + " tried to overwrite action",
           data: { newVerb: newVerb.name, input: newVerb.input }
         };
       }
-    },
-
-    debuggerS: function debuggerS() {
-      if (this.globalEvents.inputs.size > 0) {
-        debugger;
-      }
     }
+
   };
 
   _objController = (0, _merge2.default)(_objController, options);
@@ -4392,58 +4383,6 @@ var objController = function objController(options) {
 };
 
 module.exports = objController;
-
-/***/ }),
-/* 119 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.OptionsException = OptionsException;
-// function objException(errObj){
-//   return
-// }
-
-// export function VerbException(){
-//   return {
-//     message: "no owner provided to new verb",
-//     data: {
-//       name: options.name ? options.name : "unnamedVerb"
-//     }
-//   };
-// }
-
-function OptionsException(options, message) {
-  // debugger
-  var _optionsException = {
-    message: message,
-    data: {
-      name: options.name ? options.name : "unnamedVerb",
-      options: options,
-      receiver: this
-    }
-  };
-  console.trace();
-
-  // let _optionsException = new Error(message);
-  // _optionsException.data = {};
-
-  return _optionsException;
-}
-
-// function verifyProperties(options, ...props){
-//   props.forEach( (property) => {
-//     if(!options[property]){
-//       throw new objException("")
-//     }
-//   } );
-// }
-
-// module.exports = OptionsException;
 
 /***/ })
 /******/ ]);
