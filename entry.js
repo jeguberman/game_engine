@@ -1,18 +1,35 @@
+import dbSetUp from './lib/util/debugUtil';
 import Game from './lib/game/game';
 import mockGame from './lib/mocks/mock_game';
 import merge from 'lodash/merge';
 
 const trueGame = ()=>{
-  const view = document.getElementById('view');
-  const game = new Game();
-  game.setContext(view.getContext('2d'));
-  view.width = game.view_width;
-  view.height = game.view_height;
-  game.start();
+  const game = mockGame();
+  dbAdd("game",game);
+  game.startClock();
 };
 
 const falseGame = () => {
-  mockGame();
+
+const MM = {
+    modules:{},
+    addModule:function(newMod){
+      this.modules[newMod.name]=newMod.state;
+    },
+    moduleState: function(moduleName){
+      return this.modules[moduleName];
+    }
+};
+
+MM.addModule({name:"test",state:"before"});
+
+console.log(MM.modules.test);
+MM.modules.test = "after";
+console.log(MM.modules.test);
+console.log(MM.moduleState("test"));
+
+
+
 };
 
 
@@ -24,4 +41,4 @@ const switcher = (n) => {
   }
 };
 
-document.addEventListener('DOMContentLoaded', switcher(0));
+document.addEventListener('DOMContentLoaded', switcher(1));

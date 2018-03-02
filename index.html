@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <title>
-    Game Engine
+    Black Triangle
   </title>
 
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -12,18 +12,24 @@
    <link href="./styles/style.css" rel='stylesheet' type='text/css'/>
 </head>
 <body>
-  <div id="title">Game Engine</div>
+  <div id="title">Black Triangle</div>
   <div id="author">by John Guberman</div>
   <ul id="to do" class="ilb sidebar">
-    <div id="debug">debugger</div><br/>
+    <div id="objFrameData">debuggerFrame</div><br/>
+    <div id="objData">debuggerObj</div><br/>
+    <div id="controlDebug">debuggerInput</div><br>
     ToDos
 
 
 
-    <li>create a debug UI that shows state like player speed and enemy count</li>
-    <li>create an event manager</li>
+
+    <li>refactor obj animator to follow new state</li>
+    <li>refactor dbug util and debug object modules</li>
+    <li>don't nest events in event queue</li>
+    <li>create a module class out of components all modules have in common</li>
     <li>create colliding object</li>
-    <li>create controlled object</li>
+    <li>create control dependent animation states</li>
+    <li>refactor sprites to accept piskel json objects</li>
   </ul>
 
   <canvas id="view" width=350 height=775></canvas>
@@ -37,6 +43,9 @@
   </li>
   <li>
     <a href="#"> lodash</a>
+  </li>
+  <li>
+    <a href="https://www.piskelapp.com">Piskel</a>
   </li>
 
   </ul>

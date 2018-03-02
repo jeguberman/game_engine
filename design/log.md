@@ -59,6 +59,47 @@ Instead, there will be some kind of "event space". The higher order functions wi
 
 the debugger is in. I made the debugger an ingame object with a standard step function which gets called once per animation frame. When the function is called, it adds a current time object to an array, then removes any elements of the array which are more than 1 second from the element just added. This way all elements of the array should represent all frames created in the last second. then I just return array length.
 
-To keep time complexity low, I unshift the now time object to the front of the array, and pop off the invalid entries from the end, since the number of pops is O(n) and the look up for pop is O(1). So while the push of now is O(n) (because unshifting might involve movement of every element, depending on implementation)there are only two O(n) time processes in the function.
+To keep time complexity lower, I unshift the now time object to the front of the array, and pop off the invalid entries from the end, since the number of pops is O(n) and the look up for pop is O(1). So while the push of now is O(n) (because unshifting might involve movement of every element, depending on implementation)there are only two O(n) time processes in the function.
 
-I had to rework other things a little bit.  
+# February 27th
+
+I've given up on the event bus. The more I learn about it, the more I'm convinced it isn't appropriate for what I'm doing. The idea is sound, but I'm not willing to break my whole project trying to implement something I don't understand.
+
+I'm adding the controller. Controller has it's own debug information, but now it's functionally different from my animation frames per second controller. Thinking of making a debug module for the Game Class Object, but not right now. Right now I want to get the controller working.
+
+# March 1st
+
+So many changes! And I didn't log any of them. Most fortuitously this log is for me and nobody else.
+
+I implemented an event manager after all. I'm not calling it an event bus for fear of technical inaccuracy, which... I know, a manager is something different as well, but this is consistent with everything else I have.
+
+The event manager at it's core is just an object literal called global events. When a new module is added to the module manager after the eventManager, the moduleManager checks the new module for it's own internal events, and adds it to the globalEvents.
+
+The program has organically grown a relationship between the game and the internal objects. Because both the game and the internal objects are the same class at their core (module managers) each Game Module I add ends up with a corresponding Object Module. In a sense, each component can be thought of as a pair of components, which I like, because it feels like I'm correctly moving in the direction of component based modularity. My components are still interdependent, but less so than before. When the time comes, it will be easier to take it further away from the interdependency of the present.
+
+I'm abandoning single state for all modules on the game object, and I'm instead giving each object it's own state. This means a considerable amount of refactoring, but again, modularity over interdependence.
+
+Of course, with all this modularity, I've noticed a lot of repeating patterns. In the future, I will make a module class which the modules are built on top of, for the module manager to take hold of.
+
+----
+##BUG
+I have managed to create a state where pressing a button changes an animation state. some problems
+1: for some reason "space" isn't working in my input manager
+2: holding a button triggers the effect once per frame
+3: the spin animation continues from where it left off instead of starting fresh
+4: there was.... something else.
+
+1: probably involves just combing through the controller and determing exactly how I communicated space
+2: I'm going to have to bear in my mind the different KINDS of button interactions there are
+  a: tap
+  b: long press
+  c: hold
+  d: multi-tap
+  e: time-window-tap
+I'd prefer to have an in-module way to deal with different kinds of button presses, rather than defining new functions with new states every single time I create a new verb.
+
+3: this will likely mean refactoring the animation which is not a priority right now
+
+looking at it more closely, I'm betting it would be smarter to have the gameControlManager bind the event handlers to the object rather than creating this mock of event space, but I'm keeping it as is for now. Truthfully I should be using the browser's event manager, I think that will help with problem number 2, so I'll tackle problem 1 first, then look into better ways of managing the event handlers
+
+1: indeed, the only time the space bar event is "space" and not " " is in the feedback element of the controller.
