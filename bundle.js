@@ -60,102 +60,15 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 30);
+/******/ 	return __webpack_require__(__webpack_require__.s = 33);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports) {
-
-/**
- * Checks if `value` is the
- * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
- * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
- *
- * @static
- * @memberOf _
- * @since 0.1.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is an object, else `false`.
- * @example
- *
- * _.isObject({});
- * // => true
- *
- * _.isObject([1, 2, 3]);
- * // => true
- *
- * _.isObject(_.noop);
- * // => true
- *
- * _.isObject(null);
- * // => false
- */
-function isObject(value) {
-  var type = typeof value;
-  return value != null && (type == 'object' || type == 'function');
-}
-
-module.exports = isObject;
-
-
-/***/ }),
-/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var freeGlobal = __webpack_require__(17);
-
-/** Detect free variable `self`. */
-var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
-
-/** Used as a reference to the global object. */
-var root = freeGlobal || freeSelf || Function('return this')();
-
-module.exports = root;
-
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports) {
-
-/**
- * Checks if `value` is object-like. A value is object-like if it's not `null`
- * and has a `typeof` result of "object".
- *
- * @static
- * @memberOf _
- * @since 4.0.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
- * @example
- *
- * _.isObjectLike({});
- * // => true
- *
- * _.isObjectLike([1, 2, 3]);
- * // => true
- *
- * _.isObjectLike(_.noop);
- * // => false
- *
- * _.isObjectLike(null);
- * // => false
- */
-function isObjectLike(value) {
-  return value != null && typeof value == 'object';
-}
-
-module.exports = isObjectLike;
-
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var baseMerge = __webpack_require__(35),
-    createAssigner = __webpack_require__(93);
+var baseMerge = __webpack_require__(37),
+    createAssigner = __webpack_require__(95);
 
 /**
  * This method is like `_.assign` except that it recursively merges own and
@@ -196,14 +109,101 @@ module.exports = merge;
 
 
 /***/ }),
+/* 1 */
+/***/ (function(module, exports) {
+
+/**
+ * Checks if `value` is the
+ * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
+ * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+ * @example
+ *
+ * _.isObject({});
+ * // => true
+ *
+ * _.isObject([1, 2, 3]);
+ * // => true
+ *
+ * _.isObject(_.noop);
+ * // => true
+ *
+ * _.isObject(null);
+ * // => false
+ */
+function isObject(value) {
+  var type = typeof value;
+  return value != null && (type == 'object' || type == 'function');
+}
+
+module.exports = isObject;
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var freeGlobal = __webpack_require__(20);
+
+/** Detect free variable `self`. */
+var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
+
+/** Used as a reference to the global object. */
+var root = freeGlobal || freeSelf || Function('return this')();
+
+module.exports = root;
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports) {
+
+/**
+ * Checks if `value` is object-like. A value is object-like if it's not `null`
+ * and has a `typeof` result of "object".
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+ * @example
+ *
+ * _.isObjectLike({});
+ * // => true
+ *
+ * _.isObjectLike([1, 2, 3]);
+ * // => true
+ *
+ * _.isObjectLike(_.noop);
+ * // => false
+ *
+ * _.isObjectLike(null);
+ * // => false
+ */
+function isObjectLike(value) {
+  return value != null && typeof value == 'object';
+}
+
+module.exports = isObjectLike;
+
+
+/***/ }),
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var listCacheClear = __webpack_require__(37),
-    listCacheDelete = __webpack_require__(38),
-    listCacheGet = __webpack_require__(39),
-    listCacheHas = __webpack_require__(40),
-    listCacheSet = __webpack_require__(41);
+var listCacheClear = __webpack_require__(39),
+    listCacheDelete = __webpack_require__(40),
+    listCacheGet = __webpack_require__(41),
+    listCacheHas = __webpack_require__(42),
+    listCacheSet = __webpack_require__(43);
 
 /**
  * Creates an list cache object.
@@ -307,9 +307,9 @@ module.exports = eq;
 /* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var Symbol = __webpack_require__(16),
-    getRawTag = __webpack_require__(49),
-    objectToString = __webpack_require__(50);
+var Symbol = __webpack_require__(19),
+    getRawTag = __webpack_require__(51),
+    objectToString = __webpack_require__(52);
 
 /** `Object#toString` result references. */
 var nullTag = '[object Null]',
@@ -353,7 +353,7 @@ module.exports = nativeCreate;
 /* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isKeyable = __webpack_require__(64);
+var isKeyable = __webpack_require__(66);
 
 /**
  * Gets the data for `map`.
@@ -377,8 +377,8 @@ module.exports = getMapData;
 /* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseIsNative = __webpack_require__(47),
-    getValue = __webpack_require__(54);
+var baseIsNative = __webpack_require__(49),
+    getValue = __webpack_require__(56);
 
 /**
  * Gets the native function at `key` of `object`.
@@ -401,7 +401,7 @@ module.exports = getNative;
 /***/ (function(module, exports, __webpack_require__) {
 
 var baseGetTag = __webpack_require__(7),
-    isObject = __webpack_require__(0);
+    isObject = __webpack_require__(1);
 
 /** `Object#toString` result references. */
 var asyncTag = '[object AsyncFunction]',
@@ -443,7 +443,7 @@ module.exports = isFunction;
 /* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var defineProperty = __webpack_require__(19);
+var defineProperty = __webpack_require__(22);
 
 /**
  * The base implementation of `assignValue` and `assignMergeValue` without
@@ -503,7 +503,7 @@ module.exports = function(module) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var isFunction = __webpack_require__(11),
-    isLength = __webpack_require__(24);
+    isLength = __webpack_require__(27);
 
 /**
  * Checks if `value` is array-like. A value is considered array-like if it's
@@ -541,8 +541,226 @@ module.exports = isArrayLike;
 /* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
+var _merge = __webpack_require__(0);
+
+var _merge2 = _interopRequireDefault(_merge);
+
+var _module_manager = __webpack_require__(17);
+
+var _module_manager2 = _interopRequireDefault(_module_manager);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var baseObj = function baseObj(options) {
+
+  options = (0, _merge2.default)({
+    name: "baseObj",
+    type: "baseObj"
+  }, options);
+
+  var _baseObj = new _module_manager2.default(options);
+
+  _baseObj.mergeWith({
+    dx: 0,
+    dy: 0,
+    collision_width: 32,
+    collision_height: 32,
+    state: "default",
+
+    step: function step() {
+      this.runModuleSteps();
+      this.updateState();
+    },
+
+    updateState: function updateState() {
+      // throw {message: "Individual Game Objects must contain custom definitions for updateState function. " + this.name, object: this, trueMessage: "No they don't, this is going to be separated into a state manager for physical game objects. This doesn't pertain to non-entities like the debug module"};
+    }
+
+  });
+
+  return _baseObj;
+};
+
+module.exports = baseObj;
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _objectManager = __webpack_require__(35);
+
+var _objectManager2 = _interopRequireDefault(_objectManager);
+
+var _timeManager = __webpack_require__(36);
+
+var _timeManager2 = _interopRequireDefault(_timeManager);
+
+var _module_manager = __webpack_require__(17);
+
+var _module_manager2 = _interopRequireDefault(_module_manager);
+
+var _eventManager = __webpack_require__(104);
+
+var _eventManager2 = _interopRequireDefault(_eventManager);
+
+var _renderer = __webpack_require__(105);
+
+var _renderer2 = _interopRequireDefault(_renderer);
+
+var _gameController = __webpack_require__(106);
+
+var _gameController2 = _interopRequireDefault(_gameController);
+
+var _physicsManager = __webpack_require__(108);
+
+var _physicsManager2 = _interopRequireDefault(_physicsManager);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// import Player from './player/player';
+
+var EngineCore = function EngineCore() {
+  var _engine = new _module_manager2.default({ name: "game" });
+  _engine.addModules(new _timeManager2.default(), new _eventManager2.default(), new _objectManager2.default());
+  return _engine;
+};
+
+var Game = function Game() {
+  var _game = new EngineCore();
+  // debugger
+  _game.addModules(new _gameController2.default(),
+  // new PhysicsManager(),
+  // new CollisionManager(),
+  new _renderer2.default());
+  return _game;
+};
+
+module.exports = Game;
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _merge = __webpack_require__(0);
+
+var _merge2 = _interopRequireDefault(_merge);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var ModuleManager = function ModuleManager(options) {
+  var _moduleManager = {
+    modules: {},
+    moduleSteps: [],
+    moduleVerifications: [],
+
+    mergeWith: function mergeWith(newObj) {
+      //merge with new object without making a record in modules, for late added options hashes, but whatever
+      if (newObj) {
+        (0, _merge2.default)(this, newObj);
+      }
+    },
+
+    addModule: function addModule(newObj) {
+      //merge with object and add object name to modules list.
+      if (newObj) {
+        this.verifyModuleName(newObj);
+        var trueName = this.name;
+        this.modules[newObj.name] = newObj.initialState;
+        delete newObj.initialState;
+        this.addModuleVerifications(newObj);
+        this.runModuleVerifications(newObj);
+        this.verifyModuleStep(newObj);
+
+        (0, _merge2.default)(this, newObj);
+        this.name = trueName;
+      }
+    },
+
+    addModules: function addModules() {
+      var _this = this;
+
+      for (var _len = arguments.length, newObjs = Array(_len), _key = 0; _key < _len; _key++) {
+        newObjs[_key] = arguments[_key];
+      }
+
+      newObjs.forEach(function (obj) {
+        return _this.addModule(obj);
+      });
+    },
+
+    verifyModuleName: function verifyModuleName(newObj) {
+      //verify newObj has property "name", or else throw an error
+      if (!newObj.name) {
+        throw { message: "Module Manager " + this.name + " tried to receive unnamed object ", object: newObj };
+      }
+    },
+
+    addModuleVerifications: function addModuleVerifications(newObj) {
+      if (newObj.newModuleVerification) {
+        this.moduleVerifications.push(newObj.newModuleVerification);
+        delete newObj.newModuleVerification;
+      }
+    },
+
+    runModuleVerifications: function runModuleVerifications(newObj) {
+      var _this2 = this;
+
+      this.moduleVerifications.forEach(function (func) {
+        func.bind(_this2)(newObj);
+      });
+    },
+
+    verifyModuleStep: function verifyModuleStep(newObj) {
+      //if module has a function called moduleStep, add it to the list of steps, or else do nothing
+      if (newObj.moduleStep) {
+        this.moduleSteps.push(newObj.moduleStep);
+        delete newObj.moduleStep;
+      }
+    },
+
+    runModuleSteps: function runModuleSteps() {
+      var _this3 = this;
+
+      this.moduleSteps.forEach(function (func) {
+        // debugger
+        func.call(_this3);
+      });
+    },
+
+    moduleState: function moduleState(moduleName) {
+      return this.modules[string];
+    },
+
+    stepDebug: function stepDebug(condition) {
+      if (eval(condition)) {
+        debugger;
+      };
+    }
+
+  };
+
+  _moduleManager.verifyModuleName(options);
+  _moduleManager.mergeWith(options);
+  return _moduleManager;
+};
+
+module.exports = ModuleManager;
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
 var getNative = __webpack_require__(10),
-    root = __webpack_require__(1);
+    root = __webpack_require__(2);
 
 /* Built-in method references that are verified to be native. */
 var Map = getNative(root, 'Map');
@@ -551,10 +769,10 @@ module.exports = Map;
 
 
 /***/ }),
-/* 16 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var root = __webpack_require__(1);
+var root = __webpack_require__(2);
 
 /** Built-in value references. */
 var Symbol = root.Symbol;
@@ -563,7 +781,7 @@ module.exports = Symbol;
 
 
 /***/ }),
-/* 17 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {/** Detect free variable `global` from Node.js. */
@@ -571,10 +789,10 @@ var freeGlobal = typeof global == 'object' && global && global.Object === Object
 
 module.exports = freeGlobal;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(48)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(50)))
 
 /***/ }),
-/* 18 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var baseAssignValue = __webpack_require__(12),
@@ -600,7 +818,7 @@ module.exports = assignMergeValue;
 
 
 /***/ }),
-/* 19 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var getNative = __webpack_require__(10);
@@ -617,10 +835,10 @@ module.exports = defineProperty;
 
 
 /***/ }),
-/* 20 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var overArg = __webpack_require__(78);
+var overArg = __webpack_require__(80);
 
 /** Built-in value references. */
 var getPrototype = overArg(Object.getPrototypeOf, Object);
@@ -629,7 +847,7 @@ module.exports = getPrototype;
 
 
 /***/ }),
-/* 21 */
+/* 24 */
 /***/ (function(module, exports) {
 
 /** Used for built-in method references. */
@@ -653,11 +871,11 @@ module.exports = isPrototype;
 
 
 /***/ }),
-/* 22 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseIsArguments = __webpack_require__(79),
-    isObjectLike = __webpack_require__(2);
+var baseIsArguments = __webpack_require__(81),
+    isObjectLike = __webpack_require__(3);
 
 /** Used for built-in method references. */
 var objectProto = Object.prototype;
@@ -695,7 +913,7 @@ module.exports = isArguments;
 
 
 /***/ }),
-/* 23 */
+/* 26 */
 /***/ (function(module, exports) {
 
 /**
@@ -727,7 +945,7 @@ module.exports = isArray;
 
 
 /***/ }),
-/* 24 */
+/* 27 */
 /***/ (function(module, exports) {
 
 /** Used as references for various `Number` constants. */
@@ -768,11 +986,11 @@ module.exports = isLength;
 
 
 /***/ }),
-/* 25 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(module) {var root = __webpack_require__(1),
-    stubFalse = __webpack_require__(81);
+/* WEBPACK VAR INJECTION */(function(module) {var root = __webpack_require__(2),
+    stubFalse = __webpack_require__(83);
 
 /** Detect free variable `exports`. */
 var freeExports = typeof exports == 'object' && exports && !exports.nodeType && exports;
@@ -813,12 +1031,12 @@ module.exports = isBuffer;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13)(module)))
 
 /***/ }),
-/* 26 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseIsTypedArray = __webpack_require__(83),
-    baseUnary = __webpack_require__(84),
-    nodeUtil = __webpack_require__(85);
+var baseIsTypedArray = __webpack_require__(85),
+    baseUnary = __webpack_require__(86),
+    nodeUtil = __webpack_require__(87);
 
 /* Node.js helper references. */
 var nodeIsTypedArray = nodeUtil && nodeUtil.isTypedArray;
@@ -846,11 +1064,11 @@ module.exports = isTypedArray;
 
 
 /***/ }),
-/* 27 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var arrayLikeKeys = __webpack_require__(89),
-    baseKeysIn = __webpack_require__(91),
+var arrayLikeKeys = __webpack_require__(91),
+    baseKeysIn = __webpack_require__(93),
     isArrayLike = __webpack_require__(14);
 
 /**
@@ -884,7 +1102,7 @@ module.exports = keysIn;
 
 
 /***/ }),
-/* 28 */
+/* 31 */
 /***/ (function(module, exports) {
 
 /** Used as references for various `Number` constants. */
@@ -912,7 +1130,7 @@ module.exports = isIndex;
 
 
 /***/ }),
-/* 29 */
+/* 32 */
 /***/ (function(module, exports) {
 
 /**
@@ -939,37 +1157,54 @@ module.exports = identity;
 
 
 /***/ }),
-/* 30 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _game = __webpack_require__(31);
+var _debugUtil = __webpack_require__(34);
+
+var _debugUtil2 = _interopRequireDefault(_debugUtil);
+
+var _game = __webpack_require__(16);
 
 var _game2 = _interopRequireDefault(_game);
 
-var _mock_game = __webpack_require__(107);
+var _mock_game = __webpack_require__(109);
 
 var _mock_game2 = _interopRequireDefault(_mock_game);
 
-var _merge = __webpack_require__(3);
+var _merge = __webpack_require__(0);
 
 var _merge2 = _interopRequireDefault(_merge);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var trueGame = function trueGame() {
-  var view = document.getElementById('view');
-  var game = new _game2.default();
-  game.setContext(view.getContext('2d'));
-  view.width = game.view_width;
-  view.height = game.view_height;
-  game.start();
+  var game = (0, _mock_game2.default)();
+  dbAdd("game", game);
+  game.startClock();
 };
 
 var falseGame = function falseGame() {
-  (0, _mock_game2.default)();
+
+  var MM = {
+    modules: {},
+    addModule: function addModule(newMod) {
+      this.modules[newMod.name] = newMod.state;
+    },
+    moduleState: function moduleState(moduleName) {
+      return this.modules[moduleName];
+    }
+  };
+
+  MM.addModule({ name: "test", state: "before" });
+
+  console.log(MM.modules.test);
+  MM.modules.test = "after";
+  console.log(MM.modules.test);
+  console.log(MM.moduleState("test"));
 };
 
 var switcher = function switcher(n) {
@@ -980,64 +1215,58 @@ var switcher = function switcher(n) {
   }
 };
 
-document.addEventListener('DOMContentLoaded', switcher(0));
+document.addEventListener('DOMContentLoaded', switcher(1));
 
 /***/ }),
-/* 31 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _objectManager = __webpack_require__(32);
+function logWarning() {
+  console.error({ message: "You forgot to remove a debug helper somewhere" });
+}
 
-var _objectManager2 = _interopRequireDefault(_objectManager);
+function dbSetUp() {
+  var n = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
 
-var _timeManager = __webpack_require__(33);
+  window.dblist = n ? new Set() : undefined;
+  window.dbAdd = function (variable, pointer) {
+    if (n) {
+      dblist.add(variable);
+      window[variable] = pointer;
+    } else {
+      logWarning();
+    }
+  };
+  window.dbEval = function (string) {
+    if (n) {
+      eval(string);
+    } else {
+      logWarning();
+    }
+  };
+  window.dbnotes = "";
 
-var _timeManager2 = _interopRequireDefault(_timeManager);
+  function addNote(string) {
+    dbnotes += string + "\n";
+  }
+  // addNote("vc is a Verb.core object who's property owner.name should be player, exists only after button press");
+  addNote("v is a verbCore instance  noted and edited before being added to featureMock");
+  addNote("_featureMockA is a mockObj noted before adding the controller or the verb");
+  addNote("_featureMockB is a mock Obj noted after adding the controller but before the verb");
+  addNote("_core is the verb after definition before return from constructor");
+  addNote("_featureMockC is a mockObj noted after adding the controller and the verb");
+  addNote("game is the game");
+}
 
-var _module_manager = __webpack_require__(34);
+dbSetUp(1);
 
-var _module_manager2 = _interopRequireDefault(_module_manager);
-
-var _renderer = __webpack_require__(103);
-
-var _renderer2 = _interopRequireDefault(_renderer);
-
-var _controller = __webpack_require__(120);
-
-var _controller2 = _interopRequireDefault(_controller);
-
-var _physicsManager = __webpack_require__(106);
-
-var _physicsManager2 = _interopRequireDefault(_physicsManager);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-// import Player from './player/player';
-
-var EngineCore = function EngineCore() {
-  var _engine = new _module_manager2.default({ name: "game" });
-  _engine.mergeWith(new _timeManager2.default());
-  _engine.mergeWith(new _objectManager2.default());
-  return _engine;
-};
-
-var Game = function Game() {
-  var _game = new EngineCore();
-  _game.addModules(new _renderer2.default()
-  // new PhysicsManager(),
-  // new CollisionManager(),
-  // new Controller()
-  );
-  return _game;
-};
-
-module.exports = Game;
+// module.exports = dbSetUp;
 
 /***/ }),
-/* 32 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1078,8 +1307,11 @@ module.exports = Game;
 var ObjectManager = function ObjectManager() {
   return {
     allObjects: [],
+    name: "objectsManager",
 
     addObject: function addObject(object) {
+
+      object.globalEvents = this.globalEvents;
       if (object.type === "player") {
         this.allObjects.unshift(object);
       } else {
@@ -1087,7 +1319,7 @@ var ObjectManager = function ObjectManager() {
       }
     },
 
-    updateAllObjectStates: function updateAllObjectStates() {
+    moduleStep: function moduleStep() {
       this.allObjects.forEach(function (obj) {
         obj.step();
       });
@@ -1098,7 +1330,7 @@ var ObjectManager = function ObjectManager() {
 module.exports = ObjectManager;
 
 /***/ }),
-/* 33 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1106,6 +1338,7 @@ module.exports = ObjectManager;
 
 var TimeManager = function TimeManager() {
   return {
+    name: "timeManager",
     lastTime: 0,
     idealDelta: 1000 / 60,
     framesInASecond: 1 / 60,
@@ -1115,25 +1348,33 @@ var TimeManager = function TimeManager() {
       requestAnimationFrame(this.updateGameState.bind(this));
     },
 
+    // updateGameState: function(time){
+    //   this.timeDelta = time - this.lastTime;
+    //   this.updateAllObjectStates();//objectManager
+    //   // this.physicsContainer(time);
+    //   this.rendererContainer();
+    //   this.lastTime = time;
+    //   requestAnimationFrame(this.updateGameState.bind(this));
+    // },
+
     updateGameState: function updateGameState(time) {
       this.timeDelta = time - this.lastTime;
-      this.updateAllObjectStates(); //objectManager
-      this.physicsContainer(time);
-      this.rendererContainer();
+      this.runModuleSteps();
       this.lastTime = time;
       requestAnimationFrame(this.updateGameState.bind(this));
     },
 
-    physicsContainer: function physicsContainer(time) {
-      var now = void 0;
-      while (now - time >= this.framesInASecond) {
-        this.calculatePhysics(); //physicsManager
-        now = Date.now;
-      }
-    },
-    rendererContainer: function rendererContainer() {
-      this.render(); //renderer
-    },
+    // physicsContainer(time){
+    //   let now;
+    //   while( now - time >= this.framesInASecond ){
+    //     this.calculatePhysics();//physicsManager
+    //     now = Date.now;
+    //   }
+    // },
+
+    // rendererContainer(){
+    //   this.render();//renderer
+    // },
 
 
     // helper methods
@@ -1152,86 +1393,15 @@ var TimeManager = function TimeManager() {
 module.exports = TimeManager;
 
 /***/ }),
-/* 34 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-
-
-var _merge = __webpack_require__(3);
-
-var _merge2 = _interopRequireDefault(_merge);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var moduleManager = function moduleManager(options) {
-  var _moduleManager = {
-    modules: new Set(),
-
-    mergeWith: function mergeWith(newObj) {
-      //merge with new object without making a record in modules, for late added options hashes, but whatever
-      if (newObj) {
-        (0, _merge2.default)(this, newObj);
-      }
-    },
-
-    addModule: function addModule(newObj) {
-      //merge with object and add object name to modules list.
-      if (newObj) {
-        this.verifyModuleName(newObj);
-        var trueName = this.name;
-        this.modules.add(newObj.name);
-        this.verifyModuleStep(newObj);
-        (0, _merge2.default)(this, newObj);
-        this.name = trueName;
-      }
-    },
-
-    addModules: function addModules() {
-      var _this = this;
-
-      for (var _len = arguments.length, newObjs = Array(_len), _key = 0; _key < _len; _key++) {
-        newObjs[_key] = arguments[_key];
-      }
-
-      newObjs.forEach(function (obj) {
-        return _this.addModule(obj);
-      });
-    },
-
-    verifyModuleName: function verifyModuleName(newObj) {
-      //verify newObj has property "name", or else throw an error
-      if (!newObj.name) {
-        throw { message: "Module Manager " + this.name + " tried to receive unnamed object ", object: newObj };
-      }
-    },
-
-    verifyModuleStep: function verifyModuleStep(newObj) {
-      //if module has a function called moduleStep, add it to the list of steps, or else do nothing
-      if (newObj.moduleStep) {
-        this.moduleSteps.push(newObj.moduleStep);
-      }
-    }
-
-  };
-  _moduleManager.verifyModuleName(options);
-
-  _moduleManager.mergeWith(options);
-  return _moduleManager;
-};
-
-module.exports = moduleManager;
-
-/***/ }),
-/* 35 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var Stack = __webpack_require__(36),
-    assignMergeValue = __webpack_require__(18),
-    baseFor = __webpack_require__(68),
-    baseMergeDeep = __webpack_require__(70),
-    isObject = __webpack_require__(0),
-    keysIn = __webpack_require__(27);
+var Stack = __webpack_require__(38),
+    assignMergeValue = __webpack_require__(21),
+    baseFor = __webpack_require__(70),
+    baseMergeDeep = __webpack_require__(72),
+    isObject = __webpack_require__(1),
+    keysIn = __webpack_require__(30);
 
 /**
  * The base implementation of `_.merge` without support for multiple sources.
@@ -1270,15 +1440,15 @@ module.exports = baseMerge;
 
 
 /***/ }),
-/* 36 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var ListCache = __webpack_require__(4),
-    stackClear = __webpack_require__(42),
-    stackDelete = __webpack_require__(43),
-    stackGet = __webpack_require__(44),
-    stackHas = __webpack_require__(45),
-    stackSet = __webpack_require__(46);
+    stackClear = __webpack_require__(44),
+    stackDelete = __webpack_require__(45),
+    stackGet = __webpack_require__(46),
+    stackHas = __webpack_require__(47),
+    stackSet = __webpack_require__(48);
 
 /**
  * Creates a stack cache object to store key-value pairs.
@@ -1303,7 +1473,7 @@ module.exports = Stack;
 
 
 /***/ }),
-/* 37 */
+/* 39 */
 /***/ (function(module, exports) {
 
 /**
@@ -1322,7 +1492,7 @@ module.exports = listCacheClear;
 
 
 /***/ }),
-/* 38 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var assocIndexOf = __webpack_require__(5);
@@ -1363,7 +1533,7 @@ module.exports = listCacheDelete;
 
 
 /***/ }),
-/* 39 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var assocIndexOf = __webpack_require__(5);
@@ -1388,7 +1558,7 @@ module.exports = listCacheGet;
 
 
 /***/ }),
-/* 40 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var assocIndexOf = __webpack_require__(5);
@@ -1410,7 +1580,7 @@ module.exports = listCacheHas;
 
 
 /***/ }),
-/* 41 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var assocIndexOf = __webpack_require__(5);
@@ -1442,7 +1612,7 @@ module.exports = listCacheSet;
 
 
 /***/ }),
-/* 42 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var ListCache = __webpack_require__(4);
@@ -1463,7 +1633,7 @@ module.exports = stackClear;
 
 
 /***/ }),
-/* 43 */
+/* 45 */
 /***/ (function(module, exports) {
 
 /**
@@ -1487,7 +1657,7 @@ module.exports = stackDelete;
 
 
 /***/ }),
-/* 44 */
+/* 46 */
 /***/ (function(module, exports) {
 
 /**
@@ -1507,7 +1677,7 @@ module.exports = stackGet;
 
 
 /***/ }),
-/* 45 */
+/* 47 */
 /***/ (function(module, exports) {
 
 /**
@@ -1527,12 +1697,12 @@ module.exports = stackHas;
 
 
 /***/ }),
-/* 46 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var ListCache = __webpack_require__(4),
-    Map = __webpack_require__(15),
-    MapCache = __webpack_require__(55);
+    Map = __webpack_require__(18),
+    MapCache = __webpack_require__(57);
 
 /** Used as the size to enable large array optimizations. */
 var LARGE_ARRAY_SIZE = 200;
@@ -1567,13 +1737,13 @@ module.exports = stackSet;
 
 
 /***/ }),
-/* 47 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var isFunction = __webpack_require__(11),
-    isMasked = __webpack_require__(51),
-    isObject = __webpack_require__(0),
-    toSource = __webpack_require__(53);
+    isMasked = __webpack_require__(53),
+    isObject = __webpack_require__(1),
+    toSource = __webpack_require__(55);
 
 /**
  * Used to match `RegExp`
@@ -1620,7 +1790,7 @@ module.exports = baseIsNative;
 
 
 /***/ }),
-/* 48 */
+/* 50 */
 /***/ (function(module, exports) {
 
 var g;
@@ -1647,10 +1817,10 @@ module.exports = g;
 
 
 /***/ }),
-/* 49 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var Symbol = __webpack_require__(16);
+var Symbol = __webpack_require__(19);
 
 /** Used for built-in method references. */
 var objectProto = Object.prototype;
@@ -1699,7 +1869,7 @@ module.exports = getRawTag;
 
 
 /***/ }),
-/* 50 */
+/* 52 */
 /***/ (function(module, exports) {
 
 /** Used for built-in method references. */
@@ -1727,10 +1897,10 @@ module.exports = objectToString;
 
 
 /***/ }),
-/* 51 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var coreJsData = __webpack_require__(52);
+var coreJsData = __webpack_require__(54);
 
 /** Used to detect methods masquerading as native. */
 var maskSrcKey = (function() {
@@ -1753,10 +1923,10 @@ module.exports = isMasked;
 
 
 /***/ }),
-/* 52 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var root = __webpack_require__(1);
+var root = __webpack_require__(2);
 
 /** Used to detect overreaching core-js shims. */
 var coreJsData = root['__core-js_shared__'];
@@ -1765,7 +1935,7 @@ module.exports = coreJsData;
 
 
 /***/ }),
-/* 53 */
+/* 55 */
 /***/ (function(module, exports) {
 
 /** Used for built-in method references. */
@@ -1797,7 +1967,7 @@ module.exports = toSource;
 
 
 /***/ }),
-/* 54 */
+/* 56 */
 /***/ (function(module, exports) {
 
 /**
@@ -1816,14 +1986,14 @@ module.exports = getValue;
 
 
 /***/ }),
-/* 55 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var mapCacheClear = __webpack_require__(56),
-    mapCacheDelete = __webpack_require__(63),
-    mapCacheGet = __webpack_require__(65),
-    mapCacheHas = __webpack_require__(66),
-    mapCacheSet = __webpack_require__(67);
+var mapCacheClear = __webpack_require__(58),
+    mapCacheDelete = __webpack_require__(65),
+    mapCacheGet = __webpack_require__(67),
+    mapCacheHas = __webpack_require__(68),
+    mapCacheSet = __webpack_require__(69);
 
 /**
  * Creates a map cache object to store key-value pairs.
@@ -1854,12 +2024,12 @@ module.exports = MapCache;
 
 
 /***/ }),
-/* 56 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var Hash = __webpack_require__(57),
+var Hash = __webpack_require__(59),
     ListCache = __webpack_require__(4),
-    Map = __webpack_require__(15);
+    Map = __webpack_require__(18);
 
 /**
  * Removes all key-value entries from the map.
@@ -1881,14 +2051,14 @@ module.exports = mapCacheClear;
 
 
 /***/ }),
-/* 57 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var hashClear = __webpack_require__(58),
-    hashDelete = __webpack_require__(59),
-    hashGet = __webpack_require__(60),
-    hashHas = __webpack_require__(61),
-    hashSet = __webpack_require__(62);
+var hashClear = __webpack_require__(60),
+    hashDelete = __webpack_require__(61),
+    hashGet = __webpack_require__(62),
+    hashHas = __webpack_require__(63),
+    hashSet = __webpack_require__(64);
 
 /**
  * Creates a hash object.
@@ -1919,7 +2089,7 @@ module.exports = Hash;
 
 
 /***/ }),
-/* 58 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var nativeCreate = __webpack_require__(8);
@@ -1940,7 +2110,7 @@ module.exports = hashClear;
 
 
 /***/ }),
-/* 59 */
+/* 61 */
 /***/ (function(module, exports) {
 
 /**
@@ -1963,7 +2133,7 @@ module.exports = hashDelete;
 
 
 /***/ }),
-/* 60 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var nativeCreate = __webpack_require__(8);
@@ -1999,7 +2169,7 @@ module.exports = hashGet;
 
 
 /***/ }),
-/* 61 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var nativeCreate = __webpack_require__(8);
@@ -2028,7 +2198,7 @@ module.exports = hashHas;
 
 
 /***/ }),
-/* 62 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var nativeCreate = __webpack_require__(8);
@@ -2057,7 +2227,7 @@ module.exports = hashSet;
 
 
 /***/ }),
-/* 63 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var getMapData = __webpack_require__(9);
@@ -2081,7 +2251,7 @@ module.exports = mapCacheDelete;
 
 
 /***/ }),
-/* 64 */
+/* 66 */
 /***/ (function(module, exports) {
 
 /**
@@ -2102,7 +2272,7 @@ module.exports = isKeyable;
 
 
 /***/ }),
-/* 65 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var getMapData = __webpack_require__(9);
@@ -2124,7 +2294,7 @@ module.exports = mapCacheGet;
 
 
 /***/ }),
-/* 66 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var getMapData = __webpack_require__(9);
@@ -2146,7 +2316,7 @@ module.exports = mapCacheHas;
 
 
 /***/ }),
-/* 67 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var getMapData = __webpack_require__(9);
@@ -2174,10 +2344,10 @@ module.exports = mapCacheSet;
 
 
 /***/ }),
-/* 68 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var createBaseFor = __webpack_require__(69);
+var createBaseFor = __webpack_require__(71);
 
 /**
  * The base implementation of `baseForOwn` which iterates over `object`
@@ -2196,7 +2366,7 @@ module.exports = baseFor;
 
 
 /***/ }),
-/* 69 */
+/* 71 */
 /***/ (function(module, exports) {
 
 /**
@@ -2227,23 +2397,23 @@ module.exports = createBaseFor;
 
 
 /***/ }),
-/* 70 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var assignMergeValue = __webpack_require__(18),
-    cloneBuffer = __webpack_require__(71),
-    cloneTypedArray = __webpack_require__(72),
-    copyArray = __webpack_require__(75),
-    initCloneObject = __webpack_require__(76),
-    isArguments = __webpack_require__(22),
-    isArray = __webpack_require__(23),
-    isArrayLikeObject = __webpack_require__(80),
-    isBuffer = __webpack_require__(25),
+var assignMergeValue = __webpack_require__(21),
+    cloneBuffer = __webpack_require__(73),
+    cloneTypedArray = __webpack_require__(74),
+    copyArray = __webpack_require__(77),
+    initCloneObject = __webpack_require__(78),
+    isArguments = __webpack_require__(25),
+    isArray = __webpack_require__(26),
+    isArrayLikeObject = __webpack_require__(82),
+    isBuffer = __webpack_require__(28),
     isFunction = __webpack_require__(11),
-    isObject = __webpack_require__(0),
-    isPlainObject = __webpack_require__(82),
-    isTypedArray = __webpack_require__(26),
-    toPlainObject = __webpack_require__(86);
+    isObject = __webpack_require__(1),
+    isPlainObject = __webpack_require__(84),
+    isTypedArray = __webpack_require__(29),
+    toPlainObject = __webpack_require__(88);
 
 /**
  * A specialized version of `baseMerge` for arrays and objects which performs
@@ -2326,10 +2496,10 @@ module.exports = baseMergeDeep;
 
 
 /***/ }),
-/* 71 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(module) {var root = __webpack_require__(1);
+/* WEBPACK VAR INJECTION */(function(module) {var root = __webpack_require__(2);
 
 /** Detect free variable `exports`. */
 var freeExports = typeof exports == 'object' && exports && !exports.nodeType && exports;
@@ -2368,10 +2538,10 @@ module.exports = cloneBuffer;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13)(module)))
 
 /***/ }),
-/* 72 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var cloneArrayBuffer = __webpack_require__(73);
+var cloneArrayBuffer = __webpack_require__(75);
 
 /**
  * Creates a clone of `typedArray`.
@@ -2390,10 +2560,10 @@ module.exports = cloneTypedArray;
 
 
 /***/ }),
-/* 73 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var Uint8Array = __webpack_require__(74);
+var Uint8Array = __webpack_require__(76);
 
 /**
  * Creates a clone of `arrayBuffer`.
@@ -2412,10 +2582,10 @@ module.exports = cloneArrayBuffer;
 
 
 /***/ }),
-/* 74 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var root = __webpack_require__(1);
+var root = __webpack_require__(2);
 
 /** Built-in value references. */
 var Uint8Array = root.Uint8Array;
@@ -2424,7 +2594,7 @@ module.exports = Uint8Array;
 
 
 /***/ }),
-/* 75 */
+/* 77 */
 /***/ (function(module, exports) {
 
 /**
@@ -2450,12 +2620,12 @@ module.exports = copyArray;
 
 
 /***/ }),
-/* 76 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseCreate = __webpack_require__(77),
-    getPrototype = __webpack_require__(20),
-    isPrototype = __webpack_require__(21);
+var baseCreate = __webpack_require__(79),
+    getPrototype = __webpack_require__(23),
+    isPrototype = __webpack_require__(24);
 
 /**
  * Initializes an object clone.
@@ -2474,10 +2644,10 @@ module.exports = initCloneObject;
 
 
 /***/ }),
-/* 77 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isObject = __webpack_require__(0);
+var isObject = __webpack_require__(1);
 
 /** Built-in value references. */
 var objectCreate = Object.create;
@@ -2510,7 +2680,7 @@ module.exports = baseCreate;
 
 
 /***/ }),
-/* 78 */
+/* 80 */
 /***/ (function(module, exports) {
 
 /**
@@ -2531,11 +2701,11 @@ module.exports = overArg;
 
 
 /***/ }),
-/* 79 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var baseGetTag = __webpack_require__(7),
-    isObjectLike = __webpack_require__(2);
+    isObjectLike = __webpack_require__(3);
 
 /** `Object#toString` result references. */
 var argsTag = '[object Arguments]';
@@ -2555,11 +2725,11 @@ module.exports = baseIsArguments;
 
 
 /***/ }),
-/* 80 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var isArrayLike = __webpack_require__(14),
-    isObjectLike = __webpack_require__(2);
+    isObjectLike = __webpack_require__(3);
 
 /**
  * This method is like `_.isArrayLike` except that it also checks if `value`
@@ -2594,7 +2764,7 @@ module.exports = isArrayLikeObject;
 
 
 /***/ }),
-/* 81 */
+/* 83 */
 /***/ (function(module, exports) {
 
 /**
@@ -2618,12 +2788,12 @@ module.exports = stubFalse;
 
 
 /***/ }),
-/* 82 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var baseGetTag = __webpack_require__(7),
-    getPrototype = __webpack_require__(20),
-    isObjectLike = __webpack_require__(2);
+    getPrototype = __webpack_require__(23),
+    isObjectLike = __webpack_require__(3);
 
 /** `Object#toString` result references. */
 var objectTag = '[object Object]';
@@ -2686,12 +2856,12 @@ module.exports = isPlainObject;
 
 
 /***/ }),
-/* 83 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var baseGetTag = __webpack_require__(7),
-    isLength = __webpack_require__(24),
-    isObjectLike = __webpack_require__(2);
+    isLength = __webpack_require__(27),
+    isObjectLike = __webpack_require__(3);
 
 /** `Object#toString` result references. */
 var argsTag = '[object Arguments]',
@@ -2752,7 +2922,7 @@ module.exports = baseIsTypedArray;
 
 
 /***/ }),
-/* 84 */
+/* 86 */
 /***/ (function(module, exports) {
 
 /**
@@ -2772,10 +2942,10 @@ module.exports = baseUnary;
 
 
 /***/ }),
-/* 85 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(module) {var freeGlobal = __webpack_require__(17);
+/* WEBPACK VAR INJECTION */(function(module) {var freeGlobal = __webpack_require__(20);
 
 /** Detect free variable `exports`. */
 var freeExports = typeof exports == 'object' && exports && !exports.nodeType && exports;
@@ -2801,11 +2971,11 @@ module.exports = nodeUtil;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13)(module)))
 
 /***/ }),
-/* 86 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var copyObject = __webpack_require__(87),
-    keysIn = __webpack_require__(27);
+var copyObject = __webpack_require__(89),
+    keysIn = __webpack_require__(30);
 
 /**
  * Converts `value` to a plain object flattening inherited enumerable string
@@ -2839,10 +3009,10 @@ module.exports = toPlainObject;
 
 
 /***/ }),
-/* 87 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var assignValue = __webpack_require__(88),
+var assignValue = __webpack_require__(90),
     baseAssignValue = __webpack_require__(12);
 
 /**
@@ -2885,7 +3055,7 @@ module.exports = copyObject;
 
 
 /***/ }),
-/* 88 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var baseAssignValue = __webpack_require__(12),
@@ -2919,15 +3089,15 @@ module.exports = assignValue;
 
 
 /***/ }),
-/* 89 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseTimes = __webpack_require__(90),
-    isArguments = __webpack_require__(22),
-    isArray = __webpack_require__(23),
-    isBuffer = __webpack_require__(25),
-    isIndex = __webpack_require__(28),
-    isTypedArray = __webpack_require__(26);
+var baseTimes = __webpack_require__(92),
+    isArguments = __webpack_require__(25),
+    isArray = __webpack_require__(26),
+    isBuffer = __webpack_require__(28),
+    isIndex = __webpack_require__(31),
+    isTypedArray = __webpack_require__(29);
 
 /** Used for built-in method references. */
 var objectProto = Object.prototype;
@@ -2974,7 +3144,7 @@ module.exports = arrayLikeKeys;
 
 
 /***/ }),
-/* 90 */
+/* 92 */
 /***/ (function(module, exports) {
 
 /**
@@ -3000,12 +3170,12 @@ module.exports = baseTimes;
 
 
 /***/ }),
-/* 91 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isObject = __webpack_require__(0),
-    isPrototype = __webpack_require__(21),
-    nativeKeysIn = __webpack_require__(92);
+var isObject = __webpack_require__(1),
+    isPrototype = __webpack_require__(24),
+    nativeKeysIn = __webpack_require__(94);
 
 /** Used for built-in method references. */
 var objectProto = Object.prototype;
@@ -3039,7 +3209,7 @@ module.exports = baseKeysIn;
 
 
 /***/ }),
-/* 92 */
+/* 94 */
 /***/ (function(module, exports) {
 
 /**
@@ -3065,11 +3235,11 @@ module.exports = nativeKeysIn;
 
 
 /***/ }),
-/* 93 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseRest = __webpack_require__(94),
-    isIterateeCall = __webpack_require__(101);
+var baseRest = __webpack_require__(96),
+    isIterateeCall = __webpack_require__(103);
 
 /**
  * Creates a function like `_.assign`.
@@ -3108,12 +3278,12 @@ module.exports = createAssigner;
 
 
 /***/ }),
-/* 94 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var identity = __webpack_require__(29),
-    overRest = __webpack_require__(95),
-    setToString = __webpack_require__(97);
+var identity = __webpack_require__(32),
+    overRest = __webpack_require__(97),
+    setToString = __webpack_require__(99);
 
 /**
  * The base implementation of `_.rest` which doesn't validate or coerce arguments.
@@ -3131,10 +3301,10 @@ module.exports = baseRest;
 
 
 /***/ }),
-/* 95 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var apply = __webpack_require__(96);
+var apply = __webpack_require__(98);
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
 var nativeMax = Math.max;
@@ -3173,7 +3343,7 @@ module.exports = overRest;
 
 
 /***/ }),
-/* 96 */
+/* 98 */
 /***/ (function(module, exports) {
 
 /**
@@ -3200,11 +3370,11 @@ module.exports = apply;
 
 
 /***/ }),
-/* 97 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseSetToString = __webpack_require__(98),
-    shortOut = __webpack_require__(100);
+var baseSetToString = __webpack_require__(100),
+    shortOut = __webpack_require__(102);
 
 /**
  * Sets the `toString` method of `func` to return `string`.
@@ -3220,12 +3390,12 @@ module.exports = setToString;
 
 
 /***/ }),
-/* 98 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var constant = __webpack_require__(99),
-    defineProperty = __webpack_require__(19),
-    identity = __webpack_require__(29);
+var constant = __webpack_require__(101),
+    defineProperty = __webpack_require__(22),
+    identity = __webpack_require__(32);
 
 /**
  * The base implementation of `setToString` without support for hot loop shorting.
@@ -3248,7 +3418,7 @@ module.exports = baseSetToString;
 
 
 /***/ }),
-/* 99 */
+/* 101 */
 /***/ (function(module, exports) {
 
 /**
@@ -3280,7 +3450,7 @@ module.exports = constant;
 
 
 /***/ }),
-/* 100 */
+/* 102 */
 /***/ (function(module, exports) {
 
 /** Used to detect hot functions by number of calls within a span of milliseconds. */
@@ -3323,13 +3493,13 @@ module.exports = shortOut;
 
 
 /***/ }),
-/* 101 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var eq = __webpack_require__(6),
     isArrayLike = __webpack_require__(14),
-    isIndex = __webpack_require__(28),
-    isObject = __webpack_require__(0);
+    isIndex = __webpack_require__(31),
+    isObject = __webpack_require__(1);
 
 /**
  * Checks if the given arguments are from an iteratee call.
@@ -3359,14 +3529,42 @@ module.exports = isIterateeCall;
 
 
 /***/ }),
-/* 102 */,
-/* 103 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _merge = __webpack_require__(3);
+var _merge = __webpack_require__(0);
+
+var _merge2 = _interopRequireDefault(_merge);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var EventManager = function EventManager() {
+  var _eventManager = {
+    name: "eventManager",
+    globalEvents: {},
+    newModuleVerification: function newModuleVerification(newObj) {
+      //check for and implement subscriptions
+      if (newObj.getEvents) {
+        this.globalEvents = (0, _merge2.default)(this.globalEvents, newObj.getEvents());
+      }
+    }
+
+  };
+  return _eventManager;
+};
+module.exports = EventManager;
+
+/***/ }),
+/* 105 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _merge = __webpack_require__(0);
 
 var _merge2 = _interopRequireDefault(_merge);
 
@@ -3386,14 +3584,7 @@ var Renderer = function Renderer(options) {
     view_width: options.width,
     view_height: options.height,
 
-    testRender: function testRender() {
-      var ctx = this.ctx;
-      ctx.clearRect(0, 0, this.view_width, this.view_height);
-      ctx.fillStyle = ctx.fillStyle === "#0000ff" ? "ff000" : "#0000ff";
-      ctx.fillRect(0, 0, this.view_width, this.view_height);
-    },
-
-    render: function render() {
+    moduleStep: function moduleStep() {
       this.renderView();
       this.renderFrame();
     },
@@ -3423,9 +3614,144 @@ var Renderer = function Renderer(options) {
 module.exports = Renderer;
 
 /***/ }),
-/* 104 */,
-/* 105 */,
 /* 106 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _util = __webpack_require__(107);
+
+var gameController = function gameController() {
+  var controllerDOM = document.getElementById("controlDebug");
+  controlDebug.innerHTML = "Inputs: ";
+  var _controller = {
+    name: "gameController",
+    inputs: new Set(),
+    controllerDOM: controllerDOM,
+    controllerHistory: [{ frameSlice: new Set("~"), frameCount: 0 }],
+
+    bindKeys: function bindKeys() {
+      var _this = this;
+
+      document.addEventListener('keydown', function (e) {
+        _this.handleKeydown(e.key);
+      });
+      document.addEventListener('keyup', function (e) {
+        _this.handleKeyup(e.key);
+      });
+    },
+
+    handleKeydown: function handleKeydown(key) {
+      this.inputs.add(key);
+      // this.globalEvents[`keyDown${key}`] = true;
+    },
+
+    handleKeyup: function handleKeyup(key) {
+      this.inputs.delete(key);
+      // delete this.globalEvents[`keyDown${key}`];
+      // this.globalEvents[`keyUp${key}`] = true;
+    },
+
+    moduleStep: function moduleStep() {
+      this.recordHistory();
+      //filter globalEvents for any keyUp events
+      this.controllerDOM.innerHTML = "Inputs: <br>" + this.getHistoryTailAsString(5) + "<br/>";
+    },
+
+    recordHistory: function recordHistory() {
+      var newFrame = new Set();
+      this.inputs.forEach(function (el) {
+        return newFrame.add(el);
+      });
+      if (newFrame.size === 0) {
+        newFrame.add("~");
+      }
+
+      var lastFrame = this.controllerHistory[this.controllerHistory.length - 1];
+
+      if ((0, _util.compareSets)(newFrame, lastFrame.frameSlice)) {
+        lastFrame.frameCount += 1;
+      } else {
+        this.controllerHistory.push({ frameSlice: newFrame, frameCount: 1 });
+      }
+    },
+
+
+    getHistoryTailAsString: function getHistoryTailAsString(n) {
+      var _this2 = this;
+
+      var history = this.controllerHistory.slice(-n).reverse();
+      var str = "";
+      history.map(function (frame) {
+        str = str + _this2.inputFrameAsString(frame.frameSlice);
+      });
+      return str;
+    },
+
+    getHistoryTail: function getHistoryTail(n) {
+      var history = this.controllerHistory.slice(-n).reverse;
+    },
+
+    inputFrameAsString: function inputFrameAsString(frame) {
+      //converts a set to a string, specifically to be printed to the debug window
+      var str = "";
+      if (frame.size > 0) {
+        frame.forEach(function (key) {
+          if (key === " ") {
+            key = "space";
+          }
+          str = str + key + ",";
+        });
+      }
+      str = str.slice(0, -1) + "<br>";
+      return str;
+    },
+
+    getEvents: function getEvents() {
+      return { inputs: this.inputs };
+    }
+  };
+  _controller.bindKeys();
+  return _controller;
+};
+
+module.exports = gameController;
+
+/***/ }),
+/* 107 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.compareSets = compareSets;
+function compareSets(setA, setB) {
+  var bool = true;
+  if (setA.size !== setB.size) {
+    bool = false;
+  }
+
+  setA.forEach(function (el) {
+    if (!setB.has(el)) {
+      bool = false;
+    }
+  });
+
+  setB.forEach(function (el) {
+    if (!setA.has(el)) {
+      bool = false;
+    }
+  });
+
+  return bool;
+}
+
+/***/ }),
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3460,7 +3786,7 @@ var PhysicsManager = function PhysicsManager() {
 module.exports = PhysicsManager;
 
 /***/ }),
-/* 107 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3470,17 +3796,15 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _game = __webpack_require__(31);
+var _game = __webpack_require__(16);
 
 var _game2 = _interopRequireDefault(_game);
 
-var _mock_obj = __webpack_require__(111);
+var _mock_obj = __webpack_require__(110);
 
-var _mock_obj2 = _interopRequireDefault(_mock_obj);
+var Mock = _interopRequireWildcard(_mock_obj);
 
-var _debugger = __webpack_require__(123);
-
-var _debugger2 = _interopRequireDefault(_debugger);
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -3492,178 +3816,309 @@ function mockGame() {
   game.setContext(view.getContext('2d'));
   view.width = game.view_width;
   view.height = game.view_height;
+  // game.bindKeys();
 
-  game.addObject(new _mock_obj2.default(0, 0));
-  game.addObject(new _mock_obj2.default(1, 1));
-  game.addObject(new _mock_obj2.default(0, 2));
-  game.addObject(new _mock_obj2.default(2, 0));
-  game.addObject(new _mock_obj2.default(2, 2));
-  game.addObject(new _mock_obj2.default(1, 3));
-  game.addObject(new _mock_obj2.default(3, 1));
-  game.addObject(new _mock_obj2.default(3, 3));
-  game.addObject(new _mock_obj2.default(4, 0));
-  game.addObject(new _mock_obj2.default(0, 4));
-  game.addObject(new _mock_obj2.default(2, 4));
-  game.addObject(new _mock_obj2.default(4, 2));
-  game.addObject(new _mock_obj2.default(4, 4));
 
-  game.addObject(new _debugger2.default());
+  // game.addObject(new Mock.mockObj(0,0));
+  // game.addObject(new mockObj(1,1));
+  // game.addObject(new mockObj(0,2));
+  // game.addObject(new mockObj(2,0));
+  // game.addObject(new mockObj(2,2));
+  // game.addObject(new mockObj(1,3));
+  // game.addObject(new mockObj(3,1));
+  // game.addObject(new mockObj(3,3));
+  // game.addObject(new mockObj(4,0));
+  // game.addObject(new mockObj(0,4));
+  // game.addObject(new mockObj(2,4));
+  // game.addObject(new mockObj(4,2));
+  // game.addObject(new Mock.mockObj(4,4));
+  game.addObject(new Mock.featureMock(4, 4));
+  // document.addEventListener('keydown',(e)=>{
+  //   game.allObjects[0].dx += 40;
+  // });
+  dbAdd("feature", game.allObjects[0]);
 
   // game.addObject(mockObj);
 
-  return game.startClock();
+  // return game.startClock();
+  return game;
 }
 
 exports.default = mockGame;
 
 /***/ }),
-/* 108 */,
-/* 109 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _merge = __webpack_require__(3);
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.featureMock = exports.mockObj = undefined;
 
-var _merge2 = _interopRequireDefault(_merge);
+var _base_object = __webpack_require__(15);
+
+var _base_object2 = _interopRequireDefault(_base_object);
+
+var _objFrameData = __webpack_require__(111);
+
+var _objFrameData2 = _interopRequireDefault(_objFrameData);
+
+var _objData = __webpack_require__(112);
+
+var _objData2 = _interopRequireDefault(_objData);
+
+var _mock_obj_animation = __webpack_require__(113);
+
+var _mock_obj_animation2 = _interopRequireDefault(_mock_obj_animation);
+
+var _mock_controller = __webpack_require__(116);
+
+var _mock_controller2 = _interopRequireDefault(_mock_controller);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var baseObj = function baseObj(options) {
-  options = (0, _merge2.default)({
-    name: "baseObj"
-  }, options);
+// import * as Verb from '../objects/modules/controller/verb';
 
-  var _baseObj = {
-    modules: new Set(),
-    moduleSteps: [],
-    dx: 0,
-    dy: 0,
-    collision_width: 32,
-    collision_height: 32,
-    state: "standRight",
+var mockObj = exports.mockObj = function mockObj() {
+  var n = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+  var m = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
 
-    step: function step() {
-      this.updateState();
-      this.runModuleSteps();
-    },
+  var _mockObj = new _base_object2.default();
 
-    runModuleSteps: function runModuleSteps() {
-      var _this = this;
+  _mockObj.addModules(new _mock_obj_animation2.default());
 
-      // debugger
-      this.moduleSteps.forEach(function (func) {
-        func.bind(_this)();
-      });
-    },
-
-    updateState: function updateState() {
-      // throw {message: "Individual Game Objects must contain custom definitions for updateState function. " + this.name, object: this, trueMessage: "No they don't, this is going to be separated into a state manager for physical game objects. This doesn't pertain to non-entities like the debug module"};
-    },
-
-    mergeWith: function mergeWith(newObj) {
-      //merge with new object without making a record in modules, for late added options hashes
-      if (newObj) {
-        this.verifyModuleStep(newObj);
-        (0, _merge2.default)(this, newObj);
-      }
-    },
-
-    addModule: function addModule(newObj) {
-      //merge with object and add object name to modules list.
-      if (newObj) {
-        this.verifyModuleName(newObj);
-        var trueName = this.name;
-        this.modules.add(newObj.name);
-        this.verifyModuleStep(newObj);
-        (0, _merge2.default)(this, newObj);
-        this.name = trueName;
-      }
-    },
-
-    verifyModuleName: function verifyModuleName(newObj) {
-      //verify newObj has property "name", or else throw an error
-      if (!newObj.name) {
-        throw { message: "Game Object " + this.name + " tried to receive unnamed object ", object: newObj };
-      }
-    },
-
-    verifyModuleStep: function verifyModuleStep(newObj) {
-      //if module has a function called moduleStep, add it to the list of steps, or else do nothing
-      if (newObj.moduleStep) {
-        this.moduleSteps.push(newObj.moduleStep);
-      }
-    }
-
+  var options = {
+    name: "mockObj",
+    dx: 1 + n * 40,
+    dy: 0 + m * 40,
+    collision_width: 40,
+    collision_height: 40,
+    state: "mockery"
   };
 
-  _baseObj.mergeWith(options);
-  return _baseObj;
+  _mockObj.mergeWith(options);
+  return _mockObj;
+};
+// import Sprite from '../components/animation/sprite.js';
+
+var featureMock = exports.featureMock = function featureMock() {
+  var xmod = 0;
+  var ymod = 0;
+  var _featureMock = new mockObj(xmod, ymod);
+
+  _featureMock.name = "player";
+  _featureMock.type = "player";
+  _featureMock.addModules(new _mock_controller2.default(), new _objData2.default(), new _objFrameData2.default());
+
+  return _featureMock;
 };
 
-module.exports = baseObj;
-
 /***/ }),
-/* 110 */,
 /* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _base_object = __webpack_require__(109);
+var _base_object = __webpack_require__(15);
 
 var _base_object2 = _interopRequireDefault(_base_object);
 
-var _mock_sprite = __webpack_require__(121);
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var _mock_sprite2 = _interopRequireDefault(_mock_sprite);
+var objFrameData = function objFrameData() {
+
+  var domElement = document.getElementById("objFrameData");
+  // debugger
+  var start = Date.now();
+  var _objFrameData = {
+    name: "objFrameData",
+    frameData: {
+      animationFrames: [],
+      animationFPS: 0,
+      physicsFrames: [],
+      physicsFPS: 0,
+      lastUpdate: start,
+      domElement: domElement
+    },
+    moduleStep: function moduleStep() {
+      var animationFrames = this.frameData.animationFrames;
+      var now = Date.now();
+      animationFrames.unshift(now);
+      while (now - animationFrames[animationFrames.length - 1] > 1000) {
+        animationFrames.pop();
+      }
+      this.frameData.domElement.innerHTML = "Animation Frames per Second: " + animationFrames.length;
+    }
+  };
+  return _objFrameData;
+};
+
+module.exports = objFrameData;
+
+/***/ }),
+/* 112 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _base_object = __webpack_require__(15);
+
+var _base_object2 = _interopRequireDefault(_base_object);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// import Sprite from '../components/animation/sprite.js';
+var objData = function objData() {
 
-var mockModule = function mockModule() {
-  return {
-    name: "mockModule",
-    arbVal: "from mockModule",
-    updateState: function updateState() {
-      this.state = "Spin";
+  var domElement = document.getElementById("objData");
+
+  // debugger
+  var start = Date.now();
+  var _objData = {
+    name: "objData",
+    objData: {
+      animationFrames: [],
+      animationFPS: 0,
+      physicsFrames: [],
+      physicsFPS: 0,
+      lastUpdate: start,
+      domElement: domElement
+    },
+    moduleStep: function moduleStep() {
+      this.objData.domElement.innerHTML = "x-coord: " + this.dx;
+    },
+    boxos: function boxos() {
+      this.dx += 40;
     }
   };
+  return _objData;
 };
 
-var mockObj = function mockObj() {
-  var n = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
-  var m = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-
-  var _mockObj = new _base_object2.default();
-
-  _mockObj.mergeWith(new mockModule());
-  _mockObj.addModule(new _mock_sprite2.default());
-
-  var options = {
-    name: "mockObj",
-    dx: 0 + n * 40,
-    dy: 0 + m * 40,
-    collision_width: 40,
-    collision_height: 40
-  };
-
-  _mockObj.mergeWith(options);
-  options.dx += 40;
-  return _mockObj;
-};
-
-module.exports = mockObj;
+module.exports = objData;
 
 /***/ }),
-/* 112 */,
-/* 113 */,
-/* 114 */,
-/* 115 */,
-/* 116 */
+/* 113 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _obj_animator = __webpack_require__(114);
+
+var _obj_animator2 = _interopRequireDefault(_obj_animator);
+
+var _animation = __webpack_require__(115);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Spin = new _animation.AnimationCycle("Spin");
+var noSpin = new _animation.AnimationCycle("noSpin");
+
+noSpin.createCel({ sX: 400, sY: 0, draw_width: 40, draw_height: 40 }); //0
+
+Spin.createCel({ sX: 400, sY: 0, draw_width: 40, draw_height: 40 }); //0
+Spin.createCel({ sX: 5, sY: 0, draw_width: 37, draw_height: 40 }); //1
+Spin.createCel({ sX: 51, sY: 0, draw_width: 31, draw_height: 40 }); //2
+Spin.createCel({ sX: 101, sY: 0, draw_width: 21, draw_height: 40 }); //3
+Spin.createCel({ sX: 149, sY: 0, draw_width: 13, draw_height: 40 }); //4
+Spin.createCel({ sX: 196, sY: 0, draw_width: 8, draw_height: 40 }); //5
+Spin.createCel({ sX: 238, sY: 0, draw_width: 13, draw_height: 40 }); //6
+Spin.createCel({ sX: 277, sY: 0, draw_width: 22, draw_height: 40 }); //7
+Spin.createCel({ sX: 317, sY: 0, draw_width: 31, draw_height: 40 }); //8
+Spin.createCel({ sX: 357, sY: 0, draw_width: 38, draw_height: 40 }); //9
+
+var mockAnimator = function mockAnimator() {
+  var _mockAnimator = new _obj_animator2.default({ src: './assets/coin_test.png' });
+  _mockAnimator.add(Spin);
+  _mockAnimator.initialState = "Spin";
+  _mockAnimator.add(noSpin);
+  return _mockAnimator;
+};
+
+module.exports = mockAnimator;
+
+/***/ }),
+/* 114 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _merge = __webpack_require__(0);
+
+var _merge2 = _interopRequireDefault(_merge);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var objAnimator = function objAnimator(options) {
+
+  var image = new Image();
+  image.src = options.src;
+  var animations = {};
+
+  return {
+    name: "objAnimator",
+    initialState: "idle",
+    image: image,
+    animations: animations,
+    drawCollision: function drawCollision(ctx) {
+      ctx.save();
+      ctx.fillStyle = "#00eeff";
+      // ctx.fillRect(this.dx, this.dy, this.collision_width, this.collision_height);
+      ctx.restore();
+    },
+
+    draw: function draw(ctx) {
+
+      this.drawCollision(ctx);
+      ctx.save();
+      ctx.translate(this.dx + this.collision_width * 0.5, this.dy + this.collision_height * 0.5);
+      ctx.fillStyle = "red";
+      // ctx.fillRect((-this.draw_width * 0.5), (-this.draw_height * 0.5), this.draw_width, this.draw_height);
+      ctx.drawImage(this.image, this.sX, this.sY, this.draw_width, this.draw_height, -this.draw_width * 0.5, -this.draw_height * 0.5, this.draw_width, this.draw_height);
+      ctx.restore();
+    },
+
+    add: function add(cycle) {
+      this.animations[cycle.name] = cycle;
+    },
+
+    moduleStep: function moduleStep() {
+      if (!this.animations[this.modules.objAnimator]) {
+        throw { message: "frame advance error", data: { this: this.name, state: this.modules.objAnimator, animations: this.animations } };
+      }
+      var currentCel = this.animations[this.modules.objAnimator].advance();
+      (0, _merge2.default)(this, currentCel);
+      delete this.frameCount;
+    },
+
+    set: function set(string) {
+      console.log("you should definitely not being seeing this");
+    },
+    get: function get(string) {
+      return this.animations[string];
+    },
+
+    getAnimations: function getAnimations() {
+      return this.animations.keys;
+    }
+  };
+}; //breadcrumbs: Elise said something about a single source of truth for state. Currently the sprite is just a store of animation data. I think what elise is getting at is closer to a redux cycle.
+
+//that is to say, the gameSpaceObject knows what the current frame and frame data is, passes that information to the sprite, and the sprite returns the frame data for the next state.
+
+exports.default = objAnimator;
+
+/***/ }),
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3675,7 +4130,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.AnimationCycle = undefined;
 exports.cel = cel;
 
-var _merge = __webpack_require__(3);
+var _merge = __webpack_require__(0);
 
 var _merge2 = _interopRequireDefault(_merge);
 
@@ -3739,80 +4194,133 @@ var AnimationCycle = exports.AnimationCycle = function AnimationCycle() {
 };
 
 /***/ }),
-/* 117 */,
-/* 118 */,
-/* 119 */,
-/* 120 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var Controller = function Controller() {
-  return {
-    bindKeys: function bindKeys() {
-      var _this = this;
+var _objController = __webpack_require__(117);
 
-      document.addEventListener('keydown', function (e) {
-        _this.handleKeydown(e.key);
-      });
-      document.addEventListener('keyup', function (e) {
-        _this.handleKeyup(e.key);
-      });
-    },
+var _objController2 = _interopRequireDefault(_objController);
 
-    handleKeyup: function handleKeyup(key) {
-      console.log("up " + key);
-    },
+var _verb = __webpack_require__(118);
 
-    handleKeydown: function handleKeydown(key) {
-      console.log("down " + key);
-    }
-  };
-};
+var Verb = _interopRequireWildcard(_verb);
 
-module.exports = Controller;
-
-/***/ }),
-/* 121 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _sprite = __webpack_require__(122);
-
-var _sprite2 = _interopRequireDefault(_sprite);
-
-var _animation = __webpack_require__(116);
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var Spin = new _animation.AnimationCycle("Spin");
-var StandRight = new _animation.AnimationCycle("standRight");
+var mockController = function mockController() {
+  var _mockController = new _objController2.default();
 
-StandRight.createCel({ sX: 400, sY: 0, draw_width: 40, draw_height: 40 }); //0
-Spin.createCel({ sX: 400, sY: 0, draw_width: 40, draw_height: 40 }); //0
-Spin.createCel({ sX: 5, sY: 0, draw_width: 37, draw_height: 40 }); //1
-Spin.createCel({ sX: 51, sY: 0, draw_width: 31, draw_height: 40 }); //2
-Spin.createCel({ sX: 101, sY: 0, draw_width: 21, draw_height: 40 }); //3
-Spin.createCel({ sX: 149, sY: 0, draw_width: 13, draw_height: 40 }); //4
-Spin.createCel({ sX: 196, sY: 0, draw_width: 8, draw_height: 40 }); //5
-Spin.createCel({ sX: 238, sY: 0, draw_width: 13, draw_height: 40 }); //6
-Spin.createCel({ sX: 277, sY: 0, draw_width: 22, draw_height: 40 }); //7
-Spin.createCel({ sX: 317, sY: 0, draw_width: 31, draw_height: 40 }); //8
-Spin.createCel({ sX: 357, sY: 0, draw_width: 38, draw_height: 40 }); //9
+  var v = new Verb.core({
+    name: "moveRight",
+    input: "d",
 
-var CoinSprite = function CoinSprite() {
-  var _coinSprite = new _sprite2.default({ src: './assets/coin_test.png' });
-  _coinSprite.add(Spin);
-  return _coinSprite;
+    func: function func() {
+      // debugger
+      //alright buddy here's what you're doing next. Refactor the event queue. Currently it's broken up into slices, but it should be tuples, you hear me? Tuples. the first value is the KIND of event and the second is the payload. Anybody concerned with the events is looking at ALL the events.
+
+      //now how should an event be structured?
+      //a set of objects? {type, payload}
+      //a single key value pair? {type: payload}, this won't work, you could only have one of each type or you'd basically be doing slices again
+      //a parsable string? "type:[paylod]"
+      //should the event queue be an array? A set? Array makes the most sense to me
+      //because we're always going to be iterating, an array is best. the hash-tuple also seems to be what I want.
+      //maybe the game object should automatically filter events, modules could have "subscriptions". This way the ENTIRE event queue only needs to be iterated over once, though the sub event queues would be once per object
+      var evn = this.globalEvents;
+      if (!evn.hasOwnProperty("eligible")) {
+        evn.eligible = true;
+      }
+      function eligibate() {
+        evn.eligible = true;
+      }
+      function elgTimer() {}
+
+      // debugger
+      if (evn.eligible) {
+
+        console.log([this.name]);
+        this.dx += 40;
+
+        evn.eligible = false;
+
+        setTimeout(eligibate, 200);
+      }
+    }
+  });
+  _mockController.addVerb(v);
+
+  return _mockController;
 };
 
-module.exports = CoinSprite;
+module.exports = mockController;
 
 /***/ }),
-/* 122 */
+/* 117 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _merge = __webpack_require__(0);
+
+var _merge2 = _interopRequireDefault(_merge);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// import * as Verb from './verb';
+
+var objController = function objController(options) {
+  var _objController = {
+    name: "objController",
+    initialState: "idle",
+    verbs: {},
+
+    moduleStep: function moduleStep() {
+      // this.stepDebug('this.globalEvents.inputs.size > 0');
+      this.globalEvents.inputs.forEach(function (input) {
+        if (this.verbs[input]) {
+          this.verbs[input].func.call(this);
+        }
+      }, this);
+    },
+
+    spawnVerb: function spawnVerb(options) {
+      // merge(options,{owner:this});
+      _verb = new Verb.core(options);
+      return _verb;
+    },
+
+    createVerb: function createVerb(options) {
+      this.addVerb(this.spawnVerb());
+    },
+
+
+    addVerb: function addVerb(newVerb) {
+      if (!this.verbs[newVerb.input]) {
+        // newVerb.owner = this;
+        this.verbs[newVerb.input] = newVerb; //.fullFunc//.bind(newVerb);
+      } else {
+        throw {
+          message: "Game Object " + this.name + " tried to overwrite action",
+          data: { newVerb: newVerb.name, input: newVerb.input }
+        };
+      }
+    }
+
+  };
+
+  _objController = (0, _merge2.default)(_objController, options);
+  return _objController;
+};
+
+module.exports = objController;
+
+/***/ }),
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3821,108 +4329,60 @@ module.exports = CoinSprite;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.core = undefined;
 
-var _merge = __webpack_require__(3);
+var _merge = __webpack_require__(0);
 
 var _merge2 = _interopRequireDefault(_merge);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var Sprite = function Sprite(options) {
+// import { OptionsException } from '../../../util/exceptions';
 
-  var image = new Image();
-  image.src = options.src;
-  var animations = {};
+//abstractly, a verb is the action which is performed when the player presses a button. https://www.youtube.com/watch?v=7daTGyVZ60I
 
-  return {
-    name: "sprite",
-    image: image,
-    animations: animations,
-    drawCollision: function drawCollision(ctx) {
-      ctx.save();
-      ctx.fillStyle = "#00eeff";
-      // ctx.fillRect(this.dx, this.dy, this.collision_width, this.collision_height);
-      ctx.restore();
-    },
 
-    draw: function draw(ctx) {
+var core = exports.core = function core() {
+  var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-      this.drawCollision(ctx);
-      ctx.save();
-      ctx.translate(this.dx + this.collision_width * 0.5, this.dy + this.collision_height * 0.5);
-      ctx.fillStyle = "red";
-      // ctx.fillRect((-this.draw_width * 0.5), (-this.draw_height * 0.5), this.draw_width, this.draw_height);
-      ctx.drawImage(this.image, this.sX, this.sY, this.draw_width, this.draw_height, -this.draw_width * 0.5, -this.draw_height * 0.5, this.draw_width, this.draw_height);
-      ctx.restore();
-    },
 
-    add: function add(cycle) {
-      this.animations[cycle.name] = cycle;
-    },
-    get: function get(string) {
-      return this.animations[string];
-    },
+  function funcWrapper(callBack) {
+    function _funcWrapper() {
 
-    moduleStep: function moduleStep() {
-      var currentCel = this.animations[this.state].advance();
-      (0, _merge2.default)(this, currentCel);
-    },
+      // let eligible = true;
+      // if(eligible){
+      //   try{
+      callBack.call(this);
+      //   }
+      //   catch(err){
+      //     console.err("something")
+      //   }
+      // }
+    };
+    return _funcWrapper;
+  }
 
-    getAnimations: function getAnimations() {
-      return this.animations.keys;
+  var setFunc = function setFunc() {
+    if (options.hasOwnProperty("func")) {
+      options.func = funcWrapper(options.func);
+    } else {
+      console.error("No function was provided to verb.");
+      console.trace();
     }
   };
-}; //breadcrumbs: Elise said something about a single source of truth for state. Currently the sprite is just a store of animation data. I think what elise is getting at is closer to a redux cycle.
 
-//that is to say, the gameSpaceObject knows what the current frame and frame data is, passes that information to the sprite, and the sprite returns the frame data for the next state.
+  var func = setFunc();
 
-exports.default = Sprite;
-
-/***/ }),
-/* 123 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _base_object = __webpack_require__(109);
-
-var _base_object2 = _interopRequireDefault(_base_object);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var DebugInfo = function DebugInfo() {
-
-  var domElement = document.getElementById("debug");
-  var start = Date.now();
-  var debug = {
-    // start,
-    animationFrames: [],
-    animationFPS: 0,
-    lastUpdate: start,
-    domElement: domElement
+  var _core = {
+    name: "unamedVerb",
+    input: "Escape",
+    type: "verbCore",
+    eligible: true
   };
+  (0, _merge2.default)(_core, options);
 
-  var _debugInfo = new _base_object2.default({ name: "debug" });
-  _debugInfo.mergeWith({
-    debug: debug,
-    moduleStep: function moduleStep() {
-      var animationFrames = this.debug.animationFrames;
-      var now = Date.now();
-      animationFrames.unshift(now); //how do we bind this to THIS object, not the caller?
-      while (now - animationFrames[animationFrames.length - 1] > 1000) {
-        animationFrames.pop(); //assumes there are 1000 ticks in one second of Date.now object.
-      }
-      // if(now - this.debug.lastUpdate >= 200){
-      this.debug.domElement.innerHTML = "Animation Frames per Second: " + animationFrames.length;
-      // }
-    },
-    draw: function draw() {}
-  });
-  return _debugInfo;
+  return _core;
 };
-
-module.exports = DebugInfo;
 
 /***/ })
 /******/ ]);
