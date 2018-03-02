@@ -17,6 +17,7 @@ const falseGame = () => {
 
 
   const game = mockGame();
+  window.game = game;
   game.startClock();
 };
 
