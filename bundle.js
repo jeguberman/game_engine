@@ -4301,7 +4301,6 @@ var objController = function objController(options) {
 
     addVerb: function addVerb(newVerb) {
       if (!this.verbs[newVerb.input]) {
-        // newVerb.owner = this;
         this.verbs[newVerb.input] = newVerb; //.fullFunc//.bind(newVerb);
       } else {
         throw {

@@ -103,3 +103,179 @@ I'd prefer to have an in-module way to deal with different kinds of button press
 looking at it more closely, I'm betting it would be smarter to have the gameControlManager bind the event handlers to the object rather than creating this mock of event space, but I'm keeping it as is for now. Truthfully I should be using the browser's event manager, I think that will help with problem number 2, so I'll tackle problem 1 first, then look into better ways of managing the event handlers
 
 1: indeed, the only time the space bar event is "space" and not " " is in the feedback element of the controller.
+
+# March 2nd
+
+finally stabilized the controller. It actually somewhat resembles my obj animation component, previously called sprite. The object controller is a database of Verb objects.
+
+Verb objects have two primary datapoints, an event to listen for called input and a function to call on that event called func.
+
+So if the programmer wanted the player object to attack with a predefined function when the A key is pressed, it might look like this;
+
+```
+var attack = new Verb({
+  name: "attack",
+  func: function(){
+      this.attack();
+    }
+  }
+})
+```
+
+Notice how the verb function called this.attack instead of this.owner.attack, or some other pointer to the gameObject. I wanted "this" at function definition to point to the gameObj itself, so the user only ever has to worry about three things when creating verbs
+
+  * A: what button do I press?
+  * B: What happens?
+  * C: What kind of verb is it? (rapidfire, cooldown, cancellable)
+
+Point C is the rub. In order to respond to whatever sort of limitations a verb has, it needs to be reflexive in order to understand the definition of those limitations. That is, this would need to point to the verb, not to the player.
+
+I hate boiler plate, so I can't just arbitrarily require that pointers be passed to the function for every new verb. I hate spaghetti code so I didn't want to have huge quantities of the player object dedicated to keeping track of what functions are eligible and what aren't. I will have to use the event Queue in the Game Level Event Manager. This isn't done yet, as of this writing. There will be two consequences of this.
+A: The need to create individual constructors or options depending on the kind of verb reqired
+B: The much needed overhaul of the event queue manager, and eventually all components (more on this later)
+
+For the sake of brevity, let us assume that the verb correctly uses the event queue in order to know if it's restricted or not. All that's left is to integrate the function so that it points to the owner of the verb and not the verb itself. This is easily achieved at function integration and call:
+
+```
+objController.addVerb(newVerb){
+  if(!this.verbs[newVerb.input]){
+    this.verbs[newVerb.input] = newVerb;//.fullFunc//.bind(newVerb);
+  }else{
+    throw{
+      message: `Game Object ${this.name} tried to overwrite action`,
+      data: {newVerb: newVerb.name, input: newVerb.input}
+      //make sure we aren't just clobbering some other preexisting action. this will likely get removed, one button push might have many effects after all
+    };
+  }
+},
+```
+
+```
+objController.moduleStep: function(){
+  this.globalEvents.inputs.forEach(function(input){
+    if(this.verbs[input]){
+      this.verbs[input].func.call(this);
+    }
+  }, this);
+},
+```
+
+Notice how the event listener is checking a specific slice of the event loop. This is likely to change. More on this later.
+
+I don't think I've written about module step yet. But eventually I will. That feature will go into the readme, because it is an implementation of an abstract algorithm which is all over my program. It would be impossible to not discuss it. The basic idea is, whenever a component is added to an object, the object searches that component for functions of certain names, and stores them in an array. Then, once per specific event, it goes down the array calling all the functions. In the case of moduleStep, this is a function that each component of each object performs once per animation frame.
+
+Very little of this ACTUALLY looks like this under the hood. It's just a bit more complicated, but part of that is because I was feeling my way through this process without much of a plan. So there's a lot of refactoring to do. I'm always asking myself what algorithms are popping up again and again, and can they be made into their own thing to be incorporated into the things that use them.
+
+Let's look at a few other things implemented today!
+
+```
+ModuleManager.stepDebug = function(condition){
+  if(eval(condition)){debugger};
+}
+```
+
+To be placed at the beginning of moduleStep. Because moduleStep is called 60 times per second per object in memory, it can be bothersome if you want to activate the debugger under specific circumstances. For example, if a player can only call a magic carpet while they are jumping and have already unlocked the carpet, you could put this at the start of your module step definition
+
+```
+gameObj.moduleStep = function(){
+  this.stepDebug("this.name === player && this.Airborne === true and this.upgrades.hasOwnProperty('magicCarpet')")
+  //normal code here//
+}
+```
+
+While trying to make the verb function respond to this as desired, I ran into some bugs which are so complex I wearied myself out trying to understand them. Hopefully I'll remember enough to write about this on sunday. For now the important thing is, I had a semi-complex network of objects pointing at each other, but nothing was pointing where it should be, and I had duplicates of objects that weren't in the game state just hanging out in memory.
+
+I had to figure out what was what, what wasn't what I thought it was, where did one object suddenly become two objects, but I didn't want to constantly be adding and deleting break points everywhere, especially because breakpoints make it easier to inspect code in specific stack frames, but can be burdensome when you want to reference other frames. Or at least, it's burdensome to the ADHD mind, which forgets what it's doing the moment it ~~changes stack frames~~ does literally anything ever.
+
+
+I wrote the following code which is executed when the DOM has finished loading.
+
+```
+window.dblist = new Set();
+
+window.dbAdd = function(variable, pointer){
+  dblist.add(variable);
+  window[variable] = pointer;
+};
+
+window.dbEval = function(string){ eval(string); };
+```
+When dbAdd is called, it puts a variable on the window so I can access the object in any scope from the console. It also writes the name of the variable to dbList so I don't have to waste time trying to remember what variables I defined. I simply type
+
+```
+dblist
+```
+
+into the console to see what pieces of the puzzle I have to work with. Remember, the ADHD mind is constantly forgetting what it's doing while it's doing it. Not just it's goals, but the state it needs to reference to attain those goals.
+
+The reason for the if statements is because
+
+I want to be able to move on as soon as I find a problem, instead of removing half a dozen glorified debugger statements littered across my code. If I take the time to remove the debuggers, I'll forget what solution I came up with by the time I have to implement it.
+
+If I implement the solution before removing the debuggers, then I have to content with debuggers in unnecessary places, and any that I forget to remove which were never called in that context. Chrome's deactive breakpoint buttons is a son of a bitch, so I don't want to wrestle with that either. I make the following changes.
+
+```
+debugMode = true;
+
+window.dblist = debugMode ? new Set() : undefined;
+function logWarning(){console.error "debuggers not removed"}
+
+window.dbAdd = function(variable, pointer){
+  if(debugMode){
+    dblist.add(variable);
+    window[variable] = pointer;
+  }else{
+    logWarning();
+  }
+};
+
+window.dbEval = function(string){
+  if(debugMode){
+    eval(string);
+  }else{
+    logWarning();
+  }
+};
+```
+
+
+By switching debug mode to off, the browser will simply bypass the intent of the functions. It does however make a note in the console so I don't forget to remove these function calls before pushing to production.
+
+I also began creating a base_module object. I noticed a lot of modules had a lot of similarities, so I decided to make a module manager for modules. I know this is not really technical talk but, it makes me very happy that I will have a module manager which manages module managers through the assistance of module managers that supply other module managers with modules. I suppose that might be what a library is. More on this later.
+
+Finally I left myself breadcrumbs which I hope will provide insight into how I will recreate the event Queue. This is stream of consiousness, and none of this has been tested, but I'm proud of it:
+
+
+from mock_controller.js
+```
+
+//alright buddy here's what you're doing next. Refactor the event queue. Currently it's broken up into slices, but it should be tuples, you hear me? Tuples. the first value is the KIND of event and the second is the payload. Anybody concerned with the events is looking at ALL the events.
+
+//now how should an event be structured?
+//a set of objects? {type, payload}
+//a single key value pair? {type: payload}, this won't work, you could only have one of each type or you'd basically be doing slices again
+//a parsable string? "type:[paylod]"
+//should the event queue be an array? A set? Array makes the most sense to me
+//because we're always going to be iterating, an array is best. the hash-tuple also seems to be what I want.
+//maybe the game object should automatically filter events, modules could have "subscriptions". This way the ENTIRE event queue only needs to be iterated over once, though the sub event queues would be once per object
+```
+
+from base_module.js
+
+```
+//each Game Level Module should itself have modularity for interacting with other modules that are added to the trunk. For example, while all my modules will need to specify subscriptions to the event loop, someone else might not use the event loop.
+
+//so instead of the new module having it's own subscription algorithms under the assumption that there will be an event queue, especially an event queue implemented THIS SPECIFIC WAY, the event manager should include module modules that it can give to new incoming moduleStep
+
+//thusly, each module package or library I guess, shall be three components
+//A: Game Level Top Tier Component
+//B: Game Module Level Mid Tier Component
+//C: Object Level Low Tier Component
+
+// tier not actually representing importance or frequency, more like.... closeness to the base, which is the Game Level Module Manager
+```
+
+now it's 9:00 at night, I have 14 hours to learn GoLang.
+
+Love Each Other;
+Goomba.
