@@ -54,6 +54,7 @@ main = global_nameSpace(){
   this.newThing = copy nameSpace this.Thing;
   this.sameThing = ref nameSpace this.newThing;
 
+
   this.Array = closed nameSpace(){
     this.lastIndex = integer 0;
     this.push = open nameSpace(any arg){
@@ -65,7 +66,9 @@ main = global_nameSpace(){
       this[this.lastIndex] = null; //well.... remove the pointer, like delete this[arg]
       return element;
     };
+
   };
+
   this.collectionOfThings = copy nameSpace this.Array();
   this.collectionOfThings.push(copy nameSpace main.Thing); //puts a new copy of thing into our array
   this.collectionOfThings.push(copy nameSpace main.newThing);
