@@ -11,22 +11,21 @@ const trueGame = ()=>{
 
 const falseGame = () => {
 
-const MM = {
-    modules:{},
-    addModule:function(newMod){
-      this.modules[newMod.name]=newMod.state;
-    },
-    moduleState: function(moduleName){
-      return this.modules[moduleName];
-    }
-};
+const thing = function(options){
+  console.log(this.type)
+  this.type = "basic";
+  this.age = 21;
+  this.mature = function (){
+    this.age += 1;
+  };
+  merge(this,options);
+}
 
-MM.addModule({name:"test",state:"before"});
+const guy = new thing({age:4});
 
-console.log(MM.modules.test);
-MM.modules.test = "after";
-console.log(MM.modules.test);
-console.log(MM.moduleState("test"));
+console.log(guy.age);
+guy.mature();
+console.log(guy.age);
 
 
 
@@ -41,4 +40,4 @@ const switcher = (n) => {
   }
 };
 
-document.addEventListener('DOMContentLoaded', switcher(1));
+document.addEventListener('DOMContentLoaded', switcher(0));
