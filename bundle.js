@@ -1189,22 +1189,21 @@ var trueGame = function trueGame() {
 
 var falseGame = function falseGame() {
 
-  var MM = {
-    modules: {},
-    addModule: function addModule(newMod) {
-      this.modules[newMod.name] = newMod.state;
-    },
-    moduleState: function moduleState(moduleName) {
-      return this.modules[moduleName];
-    }
+  var thing = function thing(options) {
+    console.log(this.type);
+    this.type = "basic";
+    this.age = 21;
+    this.mature = function () {
+      this.age += 1;
+    };
+    (0, _merge2.default)(this, options);
   };
 
-  MM.addModule({ name: "test", state: "before" });
+  var guy = new thing({ age: 4 });
 
-  console.log(MM.modules.test);
-  MM.modules.test = "after";
-  console.log(MM.modules.test);
-  console.log(MM.moduleState("test"));
+  console.log(guy.age);
+  guy.mature();
+  console.log(guy.age);
 };
 
 var switcher = function switcher(n) {
@@ -1215,7 +1214,7 @@ var switcher = function switcher(n) {
   }
 };
 
-document.addEventListener('DOMContentLoaded', switcher(1));
+document.addEventListener('DOMContentLoaded', switcher(0));
 
 /***/ }),
 /* 34 */

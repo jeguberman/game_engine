@@ -136,7 +136,7 @@ B: The much needed overhaul of the event queue manager, and eventually all compo
 
 For the sake of brevity, let us assume that the verb correctly uses the event queue in order to know if it's restricted or not. All that's left is to integrate the function so that it points to the owner of the verb and not the verb itself. This is easily achieved at function integration and call:
 
-```
+```js
 objController.addVerb(newVerb){
   if(!this.verbs[newVerb.input]){
     this.verbs[newVerb.input] = newVerb;//.fullFunc//.bind(newVerb);
@@ -150,7 +150,7 @@ objController.addVerb(newVerb){
 },
 ```
 
-```
+```js
 objController.moduleStep: function(){
   this.globalEvents.inputs.forEach(function(input){
     if(this.verbs[input]){
@@ -168,7 +168,7 @@ Very little of this ACTUALLY looks like this under the hood. It's just a bit mor
 
 Let's look at a few other things implemented today!
 
-```
+```js
 ModuleManager.stepDebug = function(condition){
   if(eval(condition)){debugger};
 }
@@ -176,7 +176,7 @@ ModuleManager.stepDebug = function(condition){
 
 To be placed at the beginning of moduleStep. Because moduleStep is called 60 times per second per object in memory, it can be bothersome if you want to activate the debugger under specific circumstances. For example, if a player can only call a magic carpet while they are jumping and have already unlocked the carpet, you could put this at the start of your module step definition
 
-```
+```js
 gameObj.moduleStep = function(){
   this.stepDebug("this.name === player && this.Airborne === true and this.upgrades.hasOwnProperty('magicCarpet')")
   //normal code here//
@@ -190,7 +190,7 @@ I had to figure out what was what, what wasn't what I thought it was, where did 
 
 I wrote the following code which is executed when the DOM has finished loading.
 
-```
+```js
 window.dblist = new Set();
 
 window.dbAdd = function(variable, pointer){
@@ -214,7 +214,7 @@ I want to be able to move on as soon as I find a problem, instead of removing ha
 
 If I implement the solution before removing the debuggers, then I have to content with debuggers in unnecessary places, and any that I forget to remove which were never called in that context. Chrome's deactive breakpoint buttons is a son of a bitch, so I don't want to wrestle with that either. I make the following changes.
 
-```
+```js
 debugMode = true;
 
 window.dblist = debugMode ? new Set() : undefined;
@@ -279,3 +279,285 @@ now it's 9:00 at night, I have 14 hours to learn GoLang.
 
 Love Each Other;
 Goomba.
+
+# March 3
+I just learned about what I suppose are normal javascript constructors. Ok wait... this is going to be undirected, and rambling.
+
+I've been constructing like this:
+
+```js
+  const Thing = function(){
+    const _thing = {
+        property: "Some value",
+      },
+
+    return _thing;
+  }
+
+  const instanceOfThing = new Thing();
+```
+
+but the documentation for new at [mdn](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/new) has an example that's more like this.
+
+```JavaScript
+function Thing (){
+    this.property = "something arbitrary";
+}
+
+const instanceOfThing = new Thing();
+```
+
+I've also seen this.
+
+```js
+var Thing = new Object();
+
+Thing.property = "like a string or something";
+
+Thing.example = "And you just add things to the object, and declaring new just makes a deep copy"
+
+const instanceOfThing = new Thing();
+```
+
+Ok, with such elegant and novel syntax, why am I writing such deeply nested and clunky code like this?
+
+```js
+  const Thing = function(){
+    const _thing = {
+        property: "some value",
+
+        func: function(){return "there were also functions."}
+      }
+
+    return _thing;
+  }
+
+  const instanceOfThing = new Thing();
+```
+
+And I'm guessing the answer is because I learned to program in ruby. "See, in ruby, the language is structured around this ethical value that writing code should be more than merely utilitarian, but also positively engaging in some way. Which is to say, it should be fun. And it is fun! It removes a LOT of the syntactical security of javascript which I think turns beginners off.
+
+```ruby
+
+class Thing
+  def initializer #called at construction
+    @property = "one way to declare an instance variable"
+  end
+
+  def func
+    "returns were implicit. Ruby functions just return the last thing they evaluated, including literals"
+  end
+
+end
+
+instance_of_thing = Thing.new
+
+```
+
+ES6 of course has similar class syntax
+
+```js
+class Thing
+  constructor(){
+    this.property = "objects are basically just fundamental datatypes"
+  }
+
+  func(){
+    this.property = "and methods are just functions that affect those datatypes."
+  }
+
+  const instanceOfThing = new Thing();
+```
+
+Ruby's syntax, which I understand is pretty common, is certainly more elegant but I feel the removal of closures obfuscates an aspect of programming which I feel is more implicit in javascript, which is that, everything is basically namespacing and lexical scoping. And ruby achieves it's writable joyride through strict enforcement of classifying namespaces and refs. The example at the mdn document I think is the best example of how coding works, or at least, should work according to the model in my mind.
+
+Programming is basically having data and modifying that data. Modifying includes creating and destroying it. It's variables and functions. Hey those are you two most common javascript datatypes!
+
+So conceptually data just sort of sits in space, and functions change the data over time. Objects ARE functions DO.
+
+But they're the same thing. How do we represent that? Consider the following ridicuous json object.
+
+
+```js
+const main = {
+  Thing:{
+    property: "var names, object properties, and getter methods are all just  pointers to their own namespaces",
+
+    func: function()=>{return "function names also are pointers. You can think of all functions as anonymous, accessed through pointers. Or I do, it works for me."}
+  },
+  instanceOfThing: Object.assign({},this.Thing) //creates a new object with all new references pointing to identical but distinct definitions as those pointed to by the first property, Thing.
+}
+```
+This is beginning to look suspiciously like namespacing, isn't it? As though each pointer was a NAME pointing to a SPACE with agreed upon lexical/semantic connections. Those lexical/semantic connections are themselves name-spaces. This is also key/value pairs.
+
+Notice I still needed to use the this pointer, a function call, and to specify that one pointer pointed to a function to be executed. We can try to solve this problem by more explicitly defining the Object namespace and all of it's properties, but eventually we are going to hit the need to specify "this is a function". In this model, all variables point to either namespaces or fundamental datatypes, so it seems to me that functions must be fundamental datatypes. But... they're fundamental datatypes that create namespaces.
+
+Similarly, if we imagine the building of main's namespace as a series of calls to getter and setter methods, we get this (using shorthand getter and setters of course.
+
+```js
+const main = {};
+main.Thing = {};
+main.Thing.property = "property points to a string, a fundamental, the string shouldn't be able to point anywhere";
+main.Thing.func = function(arg){
+  return `an ${arg} is just a word who's meaning we agreed upon when we entered the namespace. The ${arg} could be a reference or copy of another namespace or fundamental datatype`
+};
+main.Thing.otherFunc = () => {
+  this.is = "also where I get kind of confused about scoping this and the fat arrow function"
+};
+main.instanceOfThing = Object.assign({},this.Thing)
+```
+
+We still had to use visual nesting. I mean nesting of course is also an illusion, but it does demonstrate how hard it is to separate these two abstractions. They are two sides of the same conceptual coin. But I think they can be resolved.
+
+this clearly points to the current namespace, represented by the curly brackets. "In THIS namespace, instanceOfThing has congruent properties to Thing namespace". If it doesn't find the definition in it's current scope, it goes up and looks for it. How you declare your variables seems to determine lexical gatekeeping. definitions go DOWN, requests for definitions go UP.
+
+So if we agree that refs and functions are also data types, treat variable names as namespace pointers, define all datatypes in the top level scope, I THINK we can make something a little more explicit. We'll also treat each namespace as an evaluated procedural function with this, I'm just gonna bang this out now. It's almost 2:00am, I'll try and write more clearly in the morning.
+
+
+```go
+
+nameSpace = {
+  this.= = open nameSpace(string arg1, any arg2){
+    this[arg1] = arg2; //this.set
+  };
+  this._ = open nameSpace(string arg1){
+    return this[arg1]; //this.get
+  };
+}//check proxies and handlers, there might be operator overwriting, like in ruby
+
+
+main = global_nameSpace(){
+  main = this; //available to all sub namespaces, regardless of gatekeeping
+
+  this.Thing = closed nameSpace(){
+    this.property = string "this isn't a namespace. It's a fundamental.";
+    this.getProperty = open nameSpace(){
+      return this.property;
+    };
+    this.setProperty = open nameSpace(string arg){
+      this.property = arg;
+    };
+    this.func = open nameSpace(){
+      this.property = string "this will go up to the next closed gate it finds and search for definitions there";
+    };
+  };
+
+  this.instanceOfThing = copy nameSpace this.Thing; //creates a new namespace with identical definitions.
+
+//...
+```
+
+So that worked out kind of nicely. There's a load of boiler plate and assumptions on what will and won't work, but there are things I really like about it.
+
+1. the distinction between space (variables) and time (functions) is resolved (namespace). There ARE no functions or variables here. There's just namespaces, which are procedurally generated, lexically bound programs over time.
+
+Notice that in the last line we haven't explicitly created a new namespace with internal semantics. That is to say, for the first time in our model, the code written in the editor doesn't accurately represent the code as it's organized in memory, more specifically our abstract representation of memory. To explicitly mirror that allocation, we would have to copy everything after 'this.Thing =' up to the this.Thing's closing delineator (an equally indented closing curly boi };)
+
+```go
+//...
+  this.newThing = copy nameSpace this.Thing;
+  this.sameThing = ref nameSpace this.newThing;
+//hmm....
+```
+further complicating this explication is the reference. I mean it's not REALLY a complication, this an abstract model of an abstract model. But would we represent this as anything called on sameThing is transported to newThing, do we copy newThing's name space and just have all the variables point to event listeners in newThing? It doesn't matter.
+
+```
+
+  this.Array = closed nameSpace(){
+    this.lastIndex = integer 0;
+    this.push = open nameSpace(any arg){
+      this[lastIndex] = (arg)
+      this.lastIndex + 1;
+    };
+    this.pop = open nameSpace(){
+      element =  copy nameSpace this[this.lastIndex];
+      this[this.lastIndex] = null; //well.... remove the pointer, like delete this[arg]
+      return element;
+    };
+  };//I"m deeply amused by the creation of an array in this model, since the only way I know to programmatically create this model is with a hash map, and the only way I know how to create a hash map is with hash functions and an array.
+  this.collectionOfThings = copy nameSpace this.Array();
+  this.collectionOfThings.push(copy nameSpace main.Thing); //puts a new copy of thing into our array
+  this.collectionOfThings.push(copy nameSpace main.newThing);
+  this.collectionOfThings.push(ref nameSpace main.newThing);
+  this.collectionOfThings[this.collectionOfThings.lastIndex].property = "Can I change this property from here?";
+  this.collectionOfThings.push(copy nameSpace main.newThing);
+  this._ = global.isEqual(
+    this.things[this.things.lastIndex].property, this.things[this.things.lastIndex - 2].property
+  );
+  };
+  this.lastThingInCollection = this.collectionOfThings.pop();
+};
+```
+
+if I am correct, then declaration of the TYPE of variable (var, let, const) determines whether or not references to the variable are allowed to move past open and closed gates. If I can solve this model, then I think I will have mastered lexical scoping in javascript
+
+```go
+main = global_nameSpace(){
+  main = this;
+  this.topVar = var string "so who";
+  this.topConst = const string "has access";
+  this.topLet = let string "to what?";
+
+  this.topFunc = open nameSpace(){
+    this.VQT = ref string this.topVar
+    this.VCT = ref string this.topConst
+    this.VLT = ref string this.topLet
+
+    this.VQB = ref string this.bottomVar
+    this.VCB = ref string this.bottomConst
+    this.VLB = ref string this.bottomLet
+
+    this.bottomFunc = open nameSpace(){
+      this.bottomVar = var string "and where";
+      this.bottomConst = const string "is this";
+      this.bottomLet = let string "resolved?";
+
+      this.VQT = ref string this.topVar
+      this.VCT = ref string this.topConst
+      this.VLT = ref string this.topLet
+    };
+  };
+};
+```
+
+So, I'm writing the way I'm writing because to me it most closely resembles this model of namespacing I've created in my mind, with the conceits that I feel are appropriate. I'm not consantly having to use the "this." pointer, which is unsightly and gauche to my ruby trained eyes, and I still have the ability to pass option hashes which, I honestly don't understand why option hashes and defaults aren't everybody's goto standard for argument passing and parameter definition.
+
+Now that I'm more tangibly aware of these models, I suspect my style will change. I also suspect I'm going to like go.
+
+Let's close out by picking on ruby one last time.
+
+
+
+```ruby
+
+class Thing
+  def initializer #called at construction
+    self.property = "another way to declare an instance variable"
+    @pros = [];
+    @cons = [];
+  end
+
+  def so_this_is_a_function_call
+    "In the case of class and object methods, you don\'t need the reflexive pointer #{self} when calling a method within the object. In fact this is mandatory for private methods"
+  end
+
+  def and_this_is_also_a_function_call(arg1, arg2)
+    "Furthermore, in ruby, functions don't need to close their arguments in parentheses when called"
+  end
+
+  def and_this_too_is_a_function_call(*args)
+    "Furthermore, in rails, you don't need to close your hashes, even when nesting. And ruby gets pretty.... creative when it comes to syntax for JSON-like objects and interning strings"
+  end
+
+  def call_all_methods
+    so_this_is_a_function_call
+    and_this_is_a_function_call with, args
+    and_this_too_is_a_function_call in: :rails, with: args: and: :deeply_nested_args_at_that
+    "So I would mark this up as a con, for readability"
+  end
+
+end
+
+```
+Love Each Other,
+Goomba
