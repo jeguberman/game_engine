@@ -11,11 +11,35 @@ const trueGame = ()=>{
 const falseGame = () => {
 
 
-  window.addEventListener("gamepadconnected", function(e) {
-    console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.",
-      e.gamepad.index, e.gamepad.id,
-      e.gamepad.buttons.length, e.gamepad.axes.length);
-  });
+let gp = navigator.getGamepads()[0];
+
+function spaceFunc(e){
+  console.log("anything");
+  if(e.key===" ")
+  {console.log("space");}
+  if(e.key==="a")
+  {console.log("a");}
+}
+
+document.addEventListener('keydown', spaceFunc);
+
+setInterval(
+  ()=>{
+    if(navigator.getGamepads()[0].buttons[0].pressed){
+      let i = new Event('keydown');
+      let ii = new Event('keydown');
+      i.key = " ";
+      ii.key="a";
+      document.dispatchEvent(i);
+      console.log("middle");
+      document.dispatchEvent(ii);
+    }
+  },
+  100
+);
+
+
+
 
 
 
