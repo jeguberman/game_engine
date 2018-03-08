@@ -561,3 +561,28 @@ end
 ```
 Love Each Other,
 Goomba
+
+# March 8th
+
+From now on "game objects" will be called "actors". I understand this is an industry norm and also it is way easier to distinguish between individual game objects and the monolithic Game Object.
+
+I've decided to just use the browsers event queue. I did this for two reasons:
+1: The purpose of this exercise is predominately to become more familiar with javascript programming. In trying to implement my own event queue I learned a lot about using the event queue available to me.
+2: Implementing my own event queue was proving to be really really hard.
+
+So right now just the controller is using the event queue. The controller isn't done. Nothing is done. But hopefully I can cut a lot of fat off of this project by using the browser event queue. So let's talk about what the controller manager is doing now.
+
+turns out, modern browsers have an event for when a video game controller, called gamepad, is connected to a computer with the browser window open. You don't have to actually trigger this event, there's a global object called the navigator which has the "getGamepads" function, returns an array of gamepad objects.
+
+This is distinct from keypress events. Keydown events fire continuously while a key is pressed down, and the keyup event fires during keyup. I'm not sure HOW it does this, if it actually watches for a loss in pressure on the key or merely notices when a keydown which was present last eventframe is gone.
+
+So I have to artificially poll the controller once per gameframe, and if a key is pressed, I dispatch a keydown event for the key I want to map to that button. with EventTarget.dispatchEvent();
+
+I saw an opportunity, and now in fact the keydown events dispatch custom events who's values are the xbox controller buttons I want mapped to those keys. Which is ridiculous because the xboxController object dispatches a keydown event, and the keydown handler dispatches a custom event made to resemble an xbox controller. I'll clean it up later, but I wanted to get working on the log.
+
+I still have to figure out how to make verbs only occur under certain conditions, such as a ducking footsie in a fighting game, which is dependent on the objects state being in "duck".
+
+currently, each actor has a map of modules to state, but that's different from the actor's general state (ducking, on fire, invincible). I'm thinking that should be it's own object literal, and once per game frame, each object will send out an event with it's own state. Maybe not, I don't know. But the animator, physics, collision and controller will be dependent on these states, they need to be constantly updated.
+
+Use your heart for good,
+Goomba
