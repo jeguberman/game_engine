@@ -29,7 +29,7 @@ Thus far the Game Object and individual... er... gameObjects, work very similarl
 
 Instead of using ES2015's classes, I'm simply creating JavaScript objects, sometimes called pojos but essentially hash-maps. Each object is eventually merged onto an aggregate object, which will eventually be the equivalent of a class.
 
-At first I thought I wasn't going to need a separate object, but at the end of the day, it helps to have a manager. So each object starts with a base object, returned by the function baseObj. The base object has state and functions to allow it to add other objects I'm calling modules.
+At first I thought I wasn't going to need a separate object, but at the end of the day, it helps to have a manager. So each object starts with a base object, returned by the function actor. The base object has state and functions to allow it to add other objects I'm calling modules.
 
 The base object has a function to add the instance of the module. If the module doesn't have a "name" property, the base throws an error and the program crashes. At first I did this because there was a time where I thought I needed a record of all modules that were added. I don't *need* this anymore, but it is the sort of thing which is helpful for debugging. I have no intention of removing this before I declare the project done, because again, this is for me, not for distribution or anything.
 
@@ -41,7 +41,7 @@ When the module is added to the base, the moduleStep function is added to an arr
 
 As of this writing, there is only one module, animations, and thus only one array. Don't worry! I'll fix it later. I hope.
 
-The capital-G-Game-Object is largely the same in structure but less dynamic in implementation. The three primary components are the Time manager, the object Manager, and the Renderer, which I should change to animation manager for thematic cohesion. GameModules are CapitalizedCamelCase, as opposed to gameObjModules, which are lower-case camel cased, to distinguish importance and heiarchy. This is also why I chose to make the Game Module Manager in ES6 class syntax, to denote importance. Perhaps I will do the same with the baseObj. I haven't had to manipulate prototype pointers yet and I've only had minor bumps around the playful definition of "this".
+The capital-G-Game-Object is largely the same in structure but less dynamic in implementation. The three primary components are the Time manager, the object Manager, and the Renderer, which I should change to animation manager for thematic cohesion. GameModules are CapitalizedCamelCase, as opposed to gameObjModules, which are lower-case camel cased, to distinguish importance and heiarchy. This is also why I chose to make the Game Module Manager in ES6 class syntax, to denote importance. Perhaps I will do the same with the actor. I haven't had to manipulate prototype pointers yet and I've only had minor bumps around the playful definition of "this".
 
 The Time Manager, animation manager, and future physics manager are so deeply ingrained, they aren't really separate classes right now. The state managers need the time manager to tell them when to manipulate the state, and the time manager has nothing to command without the other modules. For this reason, I am thinking of splitting the game into two tiers.
 

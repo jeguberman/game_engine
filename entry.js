@@ -5,27 +5,18 @@ import merge from 'lodash/merge';
 
 const trueGame = ()=>{
   const game = mockGame();
-  dbAdd("game",game);
   game.startClock();
 };
 
 const falseGame = () => {
 
-const thing = function(options){
-  console.log(this.type)
-  this.type = "basic";
-  this.age = 21;
-  this.mature = function (){
-    this.age += 1;
-  };
-  merge(this,options);
-}
 
-const guy = new thing({age:4});
+  window.addEventListener("gamepadconnected", function(e) {
+    console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.",
+      e.gamepad.index, e.gamepad.id,
+      e.gamepad.buttons.length, e.gamepad.axes.length);
+  });
 
-console.log(guy.age);
-guy.mature();
-console.log(guy.age);
 
 
 
@@ -40,4 +31,4 @@ const switcher = (n) => {
   }
 };
 
-document.addEventListener('DOMContentLoaded', switcher(0));
+document.addEventListener('DOMContentLoaded', switcher(1));
