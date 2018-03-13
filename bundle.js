@@ -609,40 +609,32 @@ var Verb = function Verb(options) {
 
     name: "unnamedVerb",
 
-    requirements: [function () {
-      return false;
-    }],
+    requirements: [],
     cooldown: false,
     func: function func() {},
     priority: 1,
     subscriptions: {},
     targets: {},
 
-    // setFunc: function(func){this.func = func.bind(this);},
     setFunc: function setFunc(func) {
       this.func = func;
     },
+
     setTrigger: function setTrigger(func) {
       if (typeof func !== "function") {
         throw "Verb Triggers must be event handling functions";
       }
       this.requirements[0] = func;
     },
-    setKeydownTrigger: function setKeydownTrigger(input) {
-      this.setTrigger(function (e) {
-        // debugger
-        return e.detail.keydown === input;
-      });
-    },
+
     getTrigger: function getTrigger() {
       return this.requirements[0];
     },
+
     newSubscription: function newSubscription(type) {
       var callBack = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.func;
 
-      // this.subscriptions[key] = callBack;
       document.addEventListener(type, callBack.bind(this));
-      // if(this.subscriptions[e.key]){}
     },
 
     beginCoolDown: function beginCoolDown() {
@@ -660,20 +652,25 @@ var Verb = function Verb(options) {
     },
 
     handleEvent: function handleEvent(e) {
-      if (!this.requirements.every(function (r) {
-        return r(e);
+      var _this = this;
+
+      if (this.requirements.length === 0) {
+        console.log("no requirements");
+      }
+      if (this.requirements.every(function (r) {
+        return r.bind(_this)(e);
       })) {
         this.func.call(this);
       }
     },
 
-    initializeSubscriptions: function initializeSubscriptions() {},
-
-    addRequirement: function addRequirement(requirement) {
-      var state = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
-    },
-
-    checkRequirements: function checkRequirements(name, func) {}
+    addRequirement: function addRequirement(func) {
+      if (typeof func !== "function") {
+        throw "requirements must be boolean functions";
+      } else {
+        this.requirements.push(func);
+      }
+    }
 
   };
   (0, _merge2.default)(_verb, options);
@@ -3844,20 +3841,20 @@ var gameController = function gameController() {
 
     getGamepadInputs: function getGamepadInputs() {
 
-      if (this.gamepadConnected) {
-        var kd = new Event('keydown');
-        var ku = new Event('keyup');
-        var buttons = navigator.getGamepads()[0].buttons;
-        for (var i in buttons) {
-          if (buttons[i].pressed) {
-            kd.key = xboxIndexToKey[i];
-            document.dispatchEvent(kd);
-          } else {
-            ku.key = xboxIndexToKey[i];
-            document.dispatchEvent(ku);
-          }
-        }
-      }
+      // if(this.gamepadConnected){
+      //   let kd = new Event('keydown');
+      //   let ku = new Event('keyup');
+      //   let buttons = navigator.getGamepads()[0].buttons;
+      //   for(var i in buttons){
+      //     if(buttons[i].pressed){
+      //       kd.key = xboxIndexToKey[i];
+      //       document.dispatchEvent(kd);
+      //     } else {
+      //       ku.key = xboxIndexToKey[i];
+      //       document.dispatchEvent(ku);
+      //     }
+      //   }
+      // }
     },
 
     onNewActor: function onNewActor(actor) {
@@ -4069,7 +4066,6 @@ var featureMock = exports.featureMock = function featureMock() {
 
   _featureMock.name = "player";
   _featureMock.type = "player";
-  var mc = new _mock_controller2.default();
 
   _featureMock.addModules(new _mock_controller2.default(), new _objData2.default(), new _objFrameData2.default());
 
@@ -4407,7 +4403,7 @@ function hop(coord, dir) {
   return function () {
     if (!this.cooldown) {
       eval(cmd);
-      this.beginCoolDown(75);
+      this.beginCoolDown();
     }
   };
 }
@@ -4415,29 +4411,44 @@ function hop(coord, dir) {
 var moveVerb = function moveVerb(name, axis, dir) {
   var _v = new _verb2.default({ name: name });
   _v.setFunc(hop(axis, dir));
-  _v.setKeydownTrigger(name);
+  _v.setTrigger(function (e) {
+    return e.detail.keydown === name;
+  });
   return _v;
 };
 
 var right = new moveVerb("right", "x", "+");
-// let right = new Verb({name:'right'});
-// right.setFunc( hop("x","+") );
-// right.setButtonTrigger("right");
+right.addRequirement(function () {
+  var owner = this.targets.owner;
+  return owner.dx + owner.collision_width < 960;
+});
 
 var left = new moveVerb("left", "x", "-");
-// let left = new Verb({name:'left'});
-// left.setFunc( hop("x","-") );
+left.addRequirement(function () {
+  var owner = this.targets.owner;
+  return owner.dx > 0;
+});
 
-var up = new _verb2.default({ name: 'up' });
-up.setFunc(hop("y", "+"));
+var down = new moveVerb("down", "y", "+");
+down.addRequirement(function () {
+  var owner = this.targets.owner;
+  return owner.dy + owner.collision_height < 640;
+});
 
-var down = new _verb2.default({ name: 'down' });
-down.setFunc(hop("y", "-"));
+var up = new moveVerb("up", "y", "-");
+up.addRequirement(function () {
+  var owner = this.targets.owner;
+  return owner.dy > 0;
+});
+
+var spinFaster = new _verb2.default({ name: "spinFaster" });
+spinFaster.setFunc(function (e) {
+  this.targets.owner.modules.objAnimator = "fastSpin";
+});
 
 var mockController = function mockController() {
   var _mockController = new _actorController2.default();
-  _mockController.addVerbs(right, left); //, up, down);
-  // _mockController.verbs.right.p = "pee";
+  _mockController.addVerbs(right, left, up, down, spinFaster);
   return _mockController;
 };
 
@@ -4516,15 +4527,11 @@ var actorController = function actorController(options) {
     },
 
     componentDidMount: function componentDidMount() {
+
       var verbs = Object.values(this.verbs);
-      // debugger
       verbs.forEach(function (verb) {
-        // verb.func = verb.func.bind(this);
         verb.addTarget("owner", this);
       }, this);
-      // for(var verb in this.verbs){
-      //   newVerb = this.verbs
-      // }
     },
 
     spawnVerb: function spawnVerb(options) {
