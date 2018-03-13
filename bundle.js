@@ -711,6 +711,7 @@ var _physicsManager2 = _interopRequireDefault(_physicsManager);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var EngineCore = function EngineCore() {
+
   var _engine = new _module_manager2.default({ name: "game" });
   _engine.addModules(new _timeManager2.default(),
   // new EventManager(),
@@ -719,12 +720,14 @@ var EngineCore = function EngineCore() {
 };
 
 var Game = function Game() {
+  bootLog("creating Game Engine");
   var _game = new EngineCore();
 
   _game.addModules(new _gameController2.default(),
   // new PhysicsManager(),
   // new CollisionManager(),
   new _renderer2.default());
+  bootLog("game engine complete");
   return _game;
 };
 
@@ -744,6 +747,7 @@ var _merge2 = _interopRequireDefault(_merge);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var ModuleManager = function ModuleManager(options) {
+  bootLog("creating new Module Manager: " + options.name);
   var _moduleManager = {
     modules: {},
     moduleSteps: [],
@@ -758,9 +762,9 @@ var ModuleManager = function ModuleManager(options) {
 
     addModule: function addModule(newObj) {
       //merge with object and add object name to modules list.
+      bootLog("[" + this.name + "] begins incorporating new module [" + newObj.name + "]");
       if (newObj) {
         //why???
-        // this.stepDebug(newObj.name === 'actorController')
         this.verifyModuleName(newObj);
         this.modules[newObj.name] = newObj.initialState;
 
@@ -773,6 +777,7 @@ var ModuleManager = function ModuleManager(options) {
         (0, _merge2.default)(this, newObj);
         this.name = trueName;
         this.ifComponentDidMount(newObj);
+        bootLog("[" + this.name + "] finishes incorporating new module [" + newObj.name + "]");
       }
     },
 
@@ -1287,10 +1292,24 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var trueGame = function trueGame() {
   var game = (0, _mock_game2.default)();
-  game.startClock();
+  game.startClock(); //time Manager
 };
 
-var falseGame = function falseGame() {};
+var falseGame = function falseGame() {
+
+  function SFillArray(val) {
+    var ar = [];
+    return function _fillArray(val) {
+      ar.push(val);
+      console.log(ar);
+    };
+  }
+
+  var fillArray = new SFillArray();
+
+  fillArray(1);
+  fillArray(12);
+};
 
 var switcher = function switcher(n) {
   if (n) {
@@ -1338,14 +1357,24 @@ function dbSetUp() {
   function addNote(string) {
     dbnotes += string + "\n";
   }
-  // addNote("vc is a Verb.core object who's property owner.name should be player, exists only after button press");
-  addNote("v is a verbCore instance  noted and edited before being added to featureMock");
-  addNote("_featureMockA is a mockObj noted before adding the controller or the verb");
-  addNote("_featureMockB is a mock Obj noted after adding the controller but before the verb");
-  addNote("_core is the verb after definition before return from constructor");
-  addNote("_featureMockC is a mockObj noted after adding the controller and the verb");
-  addNote("game is the game");
 }
+
+function _bootLog() {
+  var bootLog = [];
+  window.getLog = bootLog;
+
+  return function (string) {
+    var timeObj = new Date();
+    var timeDiff = timeObj - bootLog[bootLog.length - 1];
+    bootLog.push({
+      string: string,
+      timeObj: timeObj,
+      timeDiff: timeDiff });
+    console.log(string + " @ " + timeObj.toLocaleTimeString());
+  };
+}
+
+window.bootLog = new _bootLog();
 
 dbSetUp(1);
 
@@ -1430,6 +1459,7 @@ var TimeManager = function TimeManager() {
     framesInASecond: 1 / 60,
 
     startClock: function startClock() {
+      bootLog("starting Game Clock");
       this.resetClock();
       requestAnimationFrame(this.updateGameState.bind(this));
     },
@@ -3743,6 +3773,7 @@ var gameController = function gameController() {
     bindKeys: function bindKeys() {
       var _this = this;
 
+      bootLog(this.name + " sets key bindings");
       var self = this;
       document.addEventListener('keydown', function (e) {
         return _this.handleKeydown(e);
@@ -4043,6 +4074,7 @@ var mockObj = exports.mockObj = function mockObj() {
   var n = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
   var m = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
 
+  bootLog('ceating new mock object');
   var _mockObj = new _actor2.default();
 
   _mockObj.addModules(new _mock_obj_animation2.default());
@@ -4063,8 +4095,9 @@ var mockObj = exports.mockObj = function mockObj() {
 var featureMock = exports.featureMock = function featureMock() {
   var xmod = 0;
   var ymod = 0;
+  bootLog('creating new feature mock');
   var _featureMock = new mockObj(xmod, ymod);
-
+  bootLog('changing name of ' + _featureMock.name + ' to [player]');
   _featureMock.name = "player";
   _featureMock.type = "player";
 
