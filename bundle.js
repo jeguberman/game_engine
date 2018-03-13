@@ -599,8 +599,6 @@ var _merge2 = _interopRequireDefault(_merge);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// import { OptionsException } from '../../../util/exceptions';
-
 //abstractly, a verb is the action which is performed when the player presses a button. https://www.youtube.com/watch?v=7daTGyVZ60I
 
 var Verb = function Verb(options) {
@@ -3762,10 +3760,8 @@ var gameController = function gameController() {
     },
 
     handleKeydown: function handleKeydown(e) {
-
       if (KeyToButton[e.key]) {
         this.inputs.add(KeyToButton[e.key]);
-
         this.dispatchControllerEvent({ keydown: KeyToButton[e.key] });
       }
     },
@@ -4073,27 +4069,6 @@ var featureMock = exports.featureMock = function featureMock() {
   _featureMock.type = "player";
 
   _featureMock.addModules(new _mock_controller2.default(), new _objData2.default(), new _objFrameData2.default());
-
-  // let spinFaster = new Verb({name:"spinFaster"});
-  // spinFaster.setFunc(function(e){
-  //   if( e.detail.keydown === "a" ){
-  //     this.targets.owner.modules.objAnimator = "fastSpin";
-  //   }
-  // });
-  // spinFaster.newSubscription("controllerAction");
-  //
-  // let spinSlower = new Verb({name:"spinSlower"});
-  // spinSlower.setFunc(function(e){
-  //   if( e.detail.keyup === "a" ){
-  //     let state = this.targets.owner.modules.objAnimator;
-  //     this.targets.owner.modules.objAnimator = "Spin";
-  //   }
-  // });
-  // spinSlower.newSubscription("controllerAction");
-
-
-  // _featureMock.addVerbs(spinFaster, spinSlower);
-
 
   _featureMock.initializeActorController();
   return _featureMock;
@@ -4496,34 +4471,16 @@ var actorController = function actorController(options) {
     verbs: {},
     events: {},
 
-    addListener: function addListener() {
-      // let func = this.handleGameAction.bind(this);
-      // document.addEventListener("gameAction",func);
-    },
-
-    handleListener: function handleListener(e) {},
-
     handleControllerAction: function handleControllerAction(e) {
-      // verbs[e.detail].call(this);
-      // debugger
       Object.values(this.verbs).forEach(function (verb) {
         verb.handleEvent(e);
       });
     },
 
     addVerb: function addVerb(newVerb) {
-      // debugger
-      // var dbname = newVerb.name + "Mounted";
-      // if(!this.verbs[dbname]){
-      //   this.verbs[dbname] = newVerb;
       var neoVerb = Object.assign({}, newVerb);
-      // for(let verb in neoVerb.verbs){
-      //   verb.func
-      // }
       if (!this.verbs[newVerb.name]) {
         this.verbs[newVerb.name] = neoVerb;
-        // debugger
-        // newVerb.intitializeSubscriptions();
       } else {
         throw {
           message: 'Game Object ' + this.name + ' tried to overwrite action',
@@ -4567,8 +4524,6 @@ var actorController = function actorController(options) {
   };
 
   (0, _merge2.default)(_actorController, options);
-  _actorController.handleControllerAction.bind(_actorController);
-  // document.addEventListener("controllerAction",_actorController.handleControllerAction.bind( _actorController ));
   return _actorController;
 };
 
