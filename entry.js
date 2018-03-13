@@ -11,38 +11,6 @@ const trueGame = ()=>{
 const falseGame = () => {
 
 
-let gp = navigator.getGamepads()[0];
-
-function spaceFunc(e){
-  console.log("anything");
-  if(e.key===" ")
-  {console.log("space");}
-  if(e.key==="a")
-  {console.log("a");}
-}
-
-document.addEventListener('keydown', spaceFunc);
-
-setInterval(
-  ()=>{
-    if(navigator.getGamepads()[0].buttons[0].pressed){
-      let i = new Event('keydown');
-      let ii = new Event('keydown');
-      i.key = " ";
-      ii.key="a";
-      document.dispatchEvent(i);
-      console.log("middle");
-      document.dispatchEvent(ii);
-    }
-  },
-  100
-);
-
-
-
-
-
-
 
 };
 

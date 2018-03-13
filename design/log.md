@@ -586,3 +586,8 @@ currently, each actor has a map of modules to state, but that's different from t
 
 Use your heart for good,
 Goomba
+
+# March 13th
+Always always abandoning features. But at least it's usually for a good reason.
+
+I was fairly adament that I wanted 
