@@ -3738,6 +3738,7 @@ var gameController = function gameController() {
       frameSlice: new Set("~"),
       frameCount: 0
     }],
+    gamepadLastStep: new Set(),
     subscriptions: {},
     gamepadConnected: false,
 
@@ -3841,20 +3842,28 @@ var gameController = function gameController() {
 
     getGamepadInputs: function getGamepadInputs() {
 
-      // if(this.gamepadConnected){
-      //   let kd = new Event('keydown');
-      //   let ku = new Event('keyup');
-      //   let buttons = navigator.getGamepads()[0].buttons;
-      //   for(var i in buttons){
-      //     if(buttons[i].pressed){
-      //       kd.key = xboxIndexToKey[i];
-      //       document.dispatchEvent(kd);
-      //     } else {
-      //       ku.key = xboxIndexToKey[i];
-      //       document.dispatchEvent(ku);
-      //     }
-      //   }
-      // }
+      if (this.gamepadConnected) {
+        var kd = new Event('keydown');
+        var ku = new Event('keyup');
+        var buttons = navigator.getGamepads()[0].buttons;
+        for (var i in buttons) {
+          if (buttons[i].pressed) {
+            kd.key = xboxIndexToKey[i];
+            this.gamepadLastStep.add(xboxIndexToButton[i]);
+            document.dispatchEvent(kd);
+          } else {
+
+            if (i == 0) {
+
+              if (this.gamepadLastStep.has(xboxIndexToButton[i])) {
+                this.gamepadLastStep.delete(xboxIndexToButton[i]);
+                ku.key = xboxIndexToKey[i];
+                document.dispatchEvent(ku);
+              }
+            }
+          }
+        }
+      }
     },
 
     onNewActor: function onNewActor(actor) {
