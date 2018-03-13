@@ -635,7 +635,7 @@ var Verb = function Verb(options) {
       var callBack = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.func;
 
       document.addEventListener(type, callBack.bind(this));
-    },
+    }, //not every verb will be tied to the playerActor. Maybe, for example, if the user pressed printscreen, a component will begin recording screenshots for 1800 frames(30 seconds). This would be an example of a game level verb. Also... maybe the user wants to pause during  cutscene or something, to select the skip cutscene option, because unskippable cutscenes are the worst
 
     beginCoolDown: function beginCoolDown() {
       var ms = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 10;
@@ -3852,14 +3852,10 @@ var gameController = function gameController() {
             this.gamepadLastStep.add(xboxIndexToButton[i]);
             document.dispatchEvent(kd);
           } else {
-
-            if (i == 0) {
-
-              if (this.gamepadLastStep.has(xboxIndexToButton[i])) {
-                this.gamepadLastStep.delete(xboxIndexToButton[i]);
-                ku.key = xboxIndexToKey[i];
-                document.dispatchEvent(ku);
-              }
+            if (this.gamepadLastStep.has(xboxIndexToButton[i])) {
+              this.gamepadLastStep.delete(xboxIndexToButton[i]);
+              ku.key = xboxIndexToKey[i];
+              document.dispatchEvent(ku);
             }
           }
         }
@@ -4454,10 +4450,23 @@ var spinFaster = new _verb2.default({ name: "spinFaster" });
 spinFaster.setFunc(function (e) {
   this.targets.owner.modules.objAnimator = "fastSpin";
 });
+spinFaster.setTrigger(function (e) {
+  // debugger
+  return e.detail.keydown === "a";
+});
+
+var spinSlower = new _verb2.default({ name: "spinSlower" });
+spinSlower.setFunc(function (e) {
+  this.targets.owner.modules.objAnimator = "Spin";
+});
+spinSlower.setTrigger(function (e) {
+  // debugger
+  return e.detail.keyup === "a";
+});
 
 var mockController = function mockController() {
   var _mockController = new _actorController2.default();
-  _mockController.addVerbs(right, left, up, down, spinFaster);
+  _mockController.addVerbs(right, left, up, down, spinFaster, spinSlower);
   return _mockController;
 };
 
