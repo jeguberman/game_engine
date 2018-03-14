@@ -538,7 +538,53 @@ module.exports = isArrayLike;
 
 
 /***/ }),
-/* 15 */,
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _merge = __webpack_require__(0);
+
+var _merge2 = _interopRequireDefault(_merge);
+
+var _module_manager = __webpack_require__(18);
+
+var _module_manager2 = _interopRequireDefault(_module_manager);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var actor = function actor(options) {
+
+  options = (0, _merge2.default)({
+    name: "actor",
+    type: "actor"
+  }, options);
+
+  var _actor = new _module_manager2.default(options);
+
+  _actor.mergeWith({
+    collision_width: 32,
+    collision_height: 32,
+    state: "default",
+
+    step: function step() {
+      this.runModuleSteps();
+      this.updateState();
+    },
+
+    updateState: function updateState() {
+      // throw {message: "Individual Game Objects must contain custom definitions for updateState function. " + this.name, object: this, trueMessage: "No they don't, this is going to be separated into a state manager for physical game objects. This doesn't pertain to non-entities like the debug module"};
+    }
+
+  });
+
+  return _actor;
+};
+
+module.exports = actor;
+
+/***/ }),
 /* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -656,9 +702,9 @@ var _gameController = __webpack_require__(105);
 
 var _gameController2 = _interopRequireDefault(_gameController);
 
-var _physicsManager = __webpack_require__(107);
+var _physicsComponent = __webpack_require__(107);
 
-var _physicsManager2 = _interopRequireDefault(_physicsManager);
+var _physicsComponent2 = _interopRequireDefault(_physicsComponent);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -673,9 +719,7 @@ var Game = function Game() {
   devLog.log("creating Game Engine");
   var _game = new EngineCore();
 
-  _game.addModules(new _gameController2.default(),
-  // new PhysicsManager(),
-  // new CollisionManager(),
+  _game.addModules(new _gameController2.default(), new _physicsComponent2.default(), // new CollisionManager(),
   new _renderer2.default());
   devLog.log("game engine complete");
   return _game;
@@ -1278,7 +1322,7 @@ document.addEventListener('DOMContentLoaded', switcher(1));
 var ActorManager = function ActorManager() {
 
   return {
-    name: "objectsManager",
+    name: "actorManager",
     actors: { all: [] },
     stepFunctions: [],
 
@@ -1300,10 +1344,10 @@ var ActorManager = function ActorManager() {
     },
 
     moduleStep: function moduleStep() {
-      var _this2 = this;
-
       this.actors.all.forEach(function (obj) {
-        _this2.stepFunctions.forEach(function (func) {});
+        // this.stepFunctions.forEach( (func) => {
+        //
+        // });
         obj.step();
       });
     },
@@ -3578,280 +3622,43 @@ module.exports = Renderer;
 
 /***/ }),
 /* 105 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
 "use strict";
-
-
-var _util = __webpack_require__(106);
-
-var gameController = function gameController() {
-  var KeyToButton = {
-    "k": "a",
-    "l": "b",
-    "j": "x",
-    "i": "y",
-
-    "u": "lb",
-    "o": "rb",
-    "7": "lt",
-    "9": "rt",
-
-    "`": "select",
-    "Escape": "start",
-
-    "-": "lclick",
-    "=": "rclick",
-
-    "w": "up",
-    "s": "down",
-    "a": "left",
-    "d": "right"
-  };
-  var ButtonToKey = {
-    "a": "k",
-    "b": "l",
-    "x": "j",
-    "y": "i",
-
-    "lb": "u",
-    "rb": "o",
-    "lt": "7",
-    "rt": "9",
-
-    "select": "`",
-    "start": "Escape",
-
-    "-": "lclick",
-    "=": "rclick",
-
-    "up": "w",
-    "down": "s",
-    "left": "a",
-    "right": "d"
-  };
-  var xboxIndexToKey = ["k", "l", "j", "i", "u", "o", "7", "9", "`", "Escape", "-", "=", "w", "s", "a", "d"];
-  var xboxIndexToButton = ["a", "b", "x", "y", "lb", "rb", "lt", "rt", "select", "start", "lclick", "rclick", "up", "down", "left", "right"];
-  var controllerDOM = document.getElementById("controlDebug");
-
-  var _controller = {
-    name: "gameController",
-    actorComponent: "actorController",
-    inputs: new Set(),
-    controllerDOM: controllerDOM,
-    controllerHistory: [{
-      frameSlice: new Set("~"),
-      frameCount: 0
-    }],
-    gamepadLastStep: new Set(),
-    subscriptions: {},
-    gamepadConnected: false,
-
-    bindKeys: function bindKeys() {
-      var _this = this;
-
-      devLog.log(this.name + " sets key bindings");
-      var self = this;
-      document.addEventListener('keydown', function (e) {
-        return _this.handleKeydown(e);
-      });
-      document.addEventListener('keyup', function (e) {
-        return _this.handleKeyup(e);
-      });
-      window.addEventListener('gamepadconnected', function (e) {
-        return _this.handleGamepadConnected(e);
-      });
-
-      window.addEventListener('gamepaddisconnected', function (e) {
-        return _this.handleGamepadDisconnected(e);
-      });
-    },
-
-    handleKeydown: function handleKeydown(e) {
-      if (KeyToButton[e.key]) {
-        this.inputs.add(KeyToButton[e.key]);
-        this.dispatchControllerEvent({ keydown: KeyToButton[e.key] });
-      }
-    },
-
-    dispatchControllerEvent: function dispatchControllerEvent(detail) {
-      document.dispatchEvent(new CustomEvent('controllerAction', { detail: detail }));
-    },
-
-    handleKeyup: function handleKeyup(e) {
-      if (KeyToButton[e.key]) {
-        this.inputs.delete(KeyToButton[e.key]);
-        this.dispatchControllerEvent({ keyup: KeyToButton[e.key] });
-      }
-    },
-
-    handleGamepadConnected: function handleGamepadConnected(e) {
-      console.log("Gamepad connected at index %d: %s", e.gamepad.index, e.gamepad.id);
-      this.gamepadConnected = true; //extremely unhappy about this use of global variables. More trouble binding this I suppose
-    },
-    handleGamepadDisconnected: function handleGamepadDisconnected(e) {
-      console.log("Gamepad disconnected at index %d: %s", e.gamepad.index, e.gamepad.id);
-      if (navigator.getGamepads()[0] === null) {
-        this.gamepadConnected = false;
-      }
-    },
-    recordHistory: function recordHistory() {
-      var newFrame = new Set();
-      this.inputs.forEach(function (el) {
-        return newFrame.add(el);
-      });
-      if (newFrame.size === 0) {
-        newFrame.add("~");
-      }
-
-      var lastFrame = this.controllerHistory[this.controllerHistory.length - 1];
-
-      if ((0, _util.compareSets)(newFrame, lastFrame.frameSlice)) {
-        lastFrame.frameCount += 1;
-      } else {
-        this.controllerHistory.push({ frameSlice: newFrame, frameCount: 1 });
-      }
-    },
-
-
-    getHistoryTailAsString: function getHistoryTailAsString(n) {
-      var _this2 = this;
-
-      var history = this.controllerHistory.slice(-n).reverse();
-      var str = "";
-      history.map(function (frame) {
-        str = str + _this2.inputFrameAsString(frame.frameSlice);
-      });
-      return str;
-    },
-
-    getHistoryTail: function getHistoryTail(n) {
-      var history = this.controllerHistory.slice(-n).reverse;
-    },
-
-    inputFrameAsString: function inputFrameAsString(frame) {
-      //converts a set to a string, specifically to be printed to the debug window
-      var str = "";
-      if (frame.size > 0) {
-        frame.forEach(function (key) {
-          if (key === " ") {
-            key = "space";
-          }
-          str = str + key + ",";
-        });
-      }
-      str = str.slice(0, -1) + "<br>";
-      return str;
-    },
-
-    getGamepadInputs: function getGamepadInputs() {
-
-      if (this.gamepadConnected) {
-        var kd = new Event('keydown');
-        var ku = new Event('keyup');
-        var buttons = navigator.getGamepads()[0].buttons;
-        for (var i in buttons) {
-          if (buttons[i].pressed) {
-            kd.key = xboxIndexToKey[i];
-            this.gamepadLastStep.add(xboxIndexToButton[i]);
-            document.dispatchEvent(kd);
-          } else {
-            if (this.gamepadLastStep.has(xboxIndexToButton[i])) {
-              this.gamepadLastStep.delete(xboxIndexToButton[i]);
-              ku.key = xboxIndexToKey[i];
-              document.dispatchEvent(ku);
-            }
-          }
-        }
-      }
-    },
-
-    onNewActor: function onNewActor(actor) {
-      if (actor.modules.actorController) {
-        actor.initializeSubscriptions();
-      }
-    },
-
-
-    moduleStep: function moduleStep() {
-      this.getGamepadInputs();
-      this.recordHistory();
-      this.controllerDOM.innerHTML = "Inputs: <br>" + this.getHistoryTailAsString(5) + "<br/>";
-    }
-
-  };
-  // _controller.bindKeys();
-  return _controller;
-};
-
-module.exports = gameController;
+throw new Error("Module build failed: SyntaxError: Unexpected token, expected , (137:8)\n\n\u001b[0m \u001b[90m 135 | \u001b[39m        \u001b[32m'controllerAction'\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 136 | \u001b[39m        { detail }\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 137 | \u001b[39m        well \u001b[36mthis\u001b[39m won\u001b[32m't work. you need to only dispatch events once per frame. \u001b[39m\n \u001b[90m     | \u001b[39m        \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 138 | \u001b[39m      ))\u001b[33m;\u001b[39m\n \u001b[90m 139 | \u001b[39m    }\u001b[33m,\u001b[39m\n \u001b[90m 140 | \u001b[39m\u001b[0m\n");
 
 /***/ }),
-/* 106 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.compareSets = compareSets;
-function compareSets(setA, setB) {
-  var bool = true;
-  if (setA.size !== setB.size) {
-    bool = false;
-  }
-
-  setA.forEach(function (el) {
-    if (!setB.has(el)) {
-      bool = false;
-    }
-  });
-
-  setB.forEach(function (el) {
-    if (!setA.has(el)) {
-      bool = false;
-    }
-  });
-
-  return bool;
-}
-
-/***/ }),
+/* 106 */,
 /* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var PhysicsManager = function PhysicsManager() {
-  return {
-    gravity: 0.0,
-    termVel: 20,
+var _merge = __webpack_require__(0);
 
-    calculatePhysics: function calculatePhysics() {
-      this.postulate();
-      this.checkCollisions();
-      this.updatePositions();
-    },
+var _merge2 = _interopRequireDefault(_merge);
 
-    postulate: function postulate() {
-      //calculate what the game will look like in the next physics frame
-    },
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-    checkCollisions: function checkCollisions() {
-      //calculate collisions, if colliions are unresolved, repostulate
-    },
+var physicsComponent = function physicsComponent(options) {
+  var _physicsComponent = {
+    name: "physicsComponent",
+    actorComponent: "actorPhysics"
 
-    updatePositions: function updatePositions() {
-      //actualize next physics state
-    }
+    // moduleStep: function(){
+    //   // this.actors.all.forEach( (actor)=>{
+    //   //   actor.yAcc += this.gravity;
+    //   // },this);
+    // }
+
 
   };
+  (0, _merge2.default)(_physicsComponent, options);
+  return _physicsComponent;
 };
 
-module.exports = PhysicsManager;
+module.exports = physicsComponent;
 
 /***/ }),
 /* 108 */
@@ -3921,15 +3728,15 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.featureMock = exports.mockObj = undefined;
 
-var _actor = __webpack_require__(118);
+var _actor = __webpack_require__(15);
 
 var _actor2 = _interopRequireDefault(_actor);
 
-var _objFrameData = __webpack_require__(119);
+var _objFrameData = __webpack_require__(110);
 
 var _objFrameData2 = _interopRequireDefault(_objFrameData);
 
-var _objData = __webpack_require__(120);
+var _objData = __webpack_require__(111);
 
 var _objData2 = _interopRequireDefault(_objData);
 
@@ -3941,7 +3748,11 @@ var _mock_controller = __webpack_require__(115);
 
 var _mock_controller2 = _interopRequireDefault(_mock_controller);
 
-var _verb = __webpack_require__(121);
+var _mock_physics = __webpack_require__(117);
+
+var _mock_physics2 = _interopRequireDefault(_mock_physics);
+
+var _verb = __webpack_require__(16);
 
 var _verb2 = _interopRequireDefault(_verb);
 
@@ -3954,12 +3765,14 @@ var mockObj = exports.mockObj = function mockObj() {
   devLog.log('ceating new mock object');
   var _mockObj = new _actor2.default();
 
-  _mockObj.addModules(new _mock_obj_animation2.default());
+  _mockObj.addModules(new _mock_obj_animation2.default(), new _mock_physics2.default());
 
   var options = {
     name: "mockObj",
-    dx: 0 + n * 40,
-    dy: 0 + m * 40,
+    d: {
+      x: 0 + n * 40,
+      y: 0 + m * 40
+    },
     collision_width: 40,
     collision_height: 40,
     state: "mockery"
@@ -3985,15 +3798,95 @@ var featureMock = exports.featureMock = function featureMock() {
 };
 
 /***/ }),
-/* 110 */,
-/* 111 */,
+/* 110 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _actor = __webpack_require__(15);
+
+var _actor2 = _interopRequireDefault(_actor);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var objFrameData = function objFrameData() {
+
+  var domElement = document.getElementById("objFrameData");
+  // debugger
+  var start = Date.now();
+  var _objFrameData = {
+    name: "objFrameData",
+    frameData: {
+      animationFrames: [],
+      animationFPS: 0,
+      physicsFrames: [],
+      physicsFPS: 0,
+      lastUpdate: start,
+      domElement: domElement
+    },
+    moduleStep: function moduleStep() {
+      var animationFrames = this.frameData.animationFrames;
+      var now = Date.now();
+      animationFrames.unshift(now);
+      while (now - animationFrames[animationFrames.length - 1] > 1000) {
+        animationFrames.pop();
+      }
+      this.frameData.domElement.innerHTML = "Animation Frames per Second: " + animationFrames.length;
+    }
+  };
+  return _objFrameData;
+};
+
+module.exports = objFrameData;
+
+/***/ }),
+/* 111 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _actor = __webpack_require__(15);
+
+var _actor2 = _interopRequireDefault(_actor);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var objData = function objData() {
+
+  var domElement = document.getElementById("objData");
+
+  // debugger
+  var start = Date.now();
+  var _objData = {
+    name: "objData",
+    objData: {
+      animationFrames: [],
+      animationFPS: 0,
+      physicsFrames: [],
+      physicsFPS: 0,
+      lastUpdate: start,
+      domElement: domElement
+    },
+    moduleStep: function moduleStep() {
+      // debugger
+      this.objData.domElement.innerHTML = "x-coord: " + this.des.x + "<br>\n      y-cord: " + this.des.y + "<br>\n      animationState: " + this.modules.actorAnimator;
+    }
+  };
+  return _objData;
+};
+
+module.exports = objData;
+
+/***/ }),
 /* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _actoranimator = __webpack_require__(122);
+var _actoranimator = __webpack_require__(113);
 
 var _actoranimator2 = _interopRequireDefault(_actoranimator);
 
@@ -4001,7 +3894,7 @@ var _merge = __webpack_require__(0);
 
 var _merge2 = _interopRequireDefault(_merge);
 
-var _animation = __webpack_require__(123);
+var _animation = __webpack_require__(114);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -4039,8 +3932,160 @@ var mockAnimator = function mockAnimator() {
 module.exports = mockAnimator;
 
 /***/ }),
-/* 113 */,
-/* 114 */,
+/* 113 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _merge = __webpack_require__(0);
+
+var _merge2 = _interopRequireDefault(_merge);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var actorAnimator = function actorAnimator(options) {
+
+  var image = new Image();
+  image.src = options.src;
+  var animations = {};
+
+  return {
+    name: "actorAnimator",
+    initialState: "idle",
+    image: image,
+    animations: animations,
+    drawCollision: function drawCollision(ctx) {
+      ctx.save();
+      ctx.fillStyle = "#00eeff";
+      ctx.fillRect(this.des.x, this.des.y, this.collision_width, this.collision_height);
+      ctx.restore();
+    },
+
+    draw: function draw(ctx) {
+
+      this.drawCollision(ctx);
+      ctx.save();
+      ctx.translate(this.des.x + this.collision_width * 0.5, this.des.y + this.collision_height * 0.5);
+      ctx.fillStyle = "red";
+      // ctx.fillRect((-this.draw_width * 0.5), (-this.draw_height * 0.5), this.draw_width, this.draw_height);
+      ctx.drawImage(this.image, this.sX, this.sY, this.draw_width, this.draw_height, -this.draw_width * 0.5, -this.draw_height * 0.5, this.draw_width, this.draw_height);
+      ctx.restore();
+    },
+
+    add: function add(cycle) {
+      this.animations[cycle.name] = cycle;
+    },
+
+    moduleStep: function moduleStep() {
+      // debugger
+      // if(!this.animations[this.modules.actoranimator]){
+      //   throw {message: `frame advance error`, data: {this:this.name, state: this.modules.actoranimator, animations:this.animations}};
+      // }
+      // if(this.modules.actorAnimator === "fastSpin"){debugger}
+      var currentCel = this.animations[this.modules.actorAnimator].advance();
+      (0, _merge2.default)(this, currentCel);
+      delete this.frameCount;
+    },
+
+    set: function set(string) {
+      console.log("you should definitely not being seeing this");
+    },
+    get: function get(string) {
+      return this.animations[string];
+    },
+
+    getAnimations: function getAnimations() {
+      return this.animations.keys;
+    }
+  };
+}; //breadcrumbs: Elise said something about a single source of truth for state. Currently the sprite is just a store of animation data. I think what elise is getting at is closer to a redux cycle.
+
+//that is to say, the gameSpaceObject knows what the current frame and frame data is, passes that information to the sprite, and the sprite returns the frame data for the next state.
+
+exports.default = actorAnimator;
+
+/***/ }),
+/* 114 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.AnimationCycle = undefined;
+exports.cel = cel;
+
+var _merge = __webpack_require__(0);
+
+var _merge2 = _interopRequireDefault(_merge);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function cel(options) {
+  return (0, _merge2.default)({ sX: 0, sY: 0, draw_width: 16, draw_height: 16, frameCount: 5 }, options);
+}
+
+var AnimationCycle = exports.AnimationCycle = function AnimationCycle() {
+  var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+
+  return {
+    cels: [],
+    celIdx: 0,
+    frameIdx: 0,
+    name: name,
+    rightFace: true,
+
+    push: function push(newCel) {
+      this.cels.push(newCel);
+    },
+
+    add: function add(newCel) {
+      this.cels.push(newCel);
+    },
+
+    currentCel: function currentCel() {
+      return this.cels[this.celIdx];
+    },
+
+    incrementIndex: function incrementIndex() {
+      this.frameIdx += 1;
+      if (this.frameIdx > this.currentCel().frameCount) {
+        this.frameIdx = 0;
+        this.celIdx += 1;
+        if (this.celIdx > this.cels.length - 1) {
+          this.celIdx = 0;
+        }
+      }
+    },
+
+    advance: function advance() {
+      this.incrementIndex();
+      return this.currentCel();
+    },
+
+    spawnCel: function spawnCel() {
+      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      return cel(options);
+    },
+
+    createCel: function createCel() {
+      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      this.add(cel(options));
+    }
+
+  };
+};
+
+/***/ }),
 /* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -4058,9 +4103,9 @@ var _verb2 = _interopRequireDefault(_verb);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function hop(coord, dir) {
-
-  var cmd = 'this.targets.owner.d' + coord + ' ' + dir + '= 40';
+  var cmd = 'this.targets.owner.des.' + coord + ' ' + dir + '= 40';
   return function () {
+    // debugger
     if (!this.cooldown) {
       eval(cmd);
       this.beginCoolDown();
@@ -4068,9 +4113,17 @@ function hop(coord, dir) {
   };
 }
 
+function move(axis, dir) {
+  return function () {
+    this.targets.owner.whatever = true;
+    var acc = this.targets.owner.acc[axis];
+    acc += 0.21 * dir;
+  };
+}
+
 var moveVerb = function moveVerb(name, axis, dir) {
   var _v = new _verb2.default({ name: name });
-  _v.setFunc(hop(axis, dir));
+  _v.setFunc(move(axis, dir));
   _v.setTrigger(function (e) {
     return e.detail.keydown === name;
   });
@@ -4080,25 +4133,25 @@ var moveVerb = function moveVerb(name, axis, dir) {
 var right = new moveVerb("right", "x", "+");
 right.addRequirement(function () {
   var owner = this.targets.owner;
-  return owner.dx + owner.collision_width < 960;
+  return owner.des.x + owner.collision_width < 960;
 });
 
 var left = new moveVerb("left", "x", "-");
 left.addRequirement(function () {
   var owner = this.targets.owner;
-  return owner.dx > 0;
+  return owner.des.x > 0;
 });
 
 var down = new moveVerb("down", "y", "+");
 down.addRequirement(function () {
   var owner = this.targets.owner;
-  return owner.dy + owner.collision_height < 640;
+  return owner.des.y + owner.collision_height < 640;
 });
 
 var up = new moveVerb("up", "y", "-");
 up.addRequirement(function () {
   var owner = this.targets.owner;
-  return owner.dy > 0;
+  return owner.des.y > 0;
 });
 
 var spinFaster = new _verb2.default({ name: "spinFaster" });
@@ -4115,7 +4168,6 @@ spinSlower.setFunc(function (e) {
   this.targets.owner.modules.actorAnimator = "Spin";
 });
 spinSlower.setTrigger(function (e) {
-  // debugger
   return e.detail.keyup === "a";
 });
 
@@ -4210,7 +4262,27 @@ var actorController = function actorController(options) {
 module.exports = actorController;
 
 /***/ }),
-/* 117 */,
+/* 117 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _actorPhysics = __webpack_require__(118);
+
+var _actorPhysics2 = _interopRequireDefault(_actorPhysics);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function mockPhysics() {
+  var _mockPhysics = new _actorPhysics2.default();
+
+  return _mockPhysics;
+}
+
+module.exports = mockPhysics;
+
+/***/ }),
 /* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -4221,369 +4293,82 @@ var _merge = __webpack_require__(0);
 
 var _merge2 = _interopRequireDefault(_merge);
 
-var _module_manager = __webpack_require__(18);
-
-var _module_manager2 = _interopRequireDefault(_module_manager);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var actor = function actor(options) {
+var actorPhysics = function actorPhysics(options) {
+  var _actorPhysics = {
+    name: "actorPhysics",
+    des: { x: 0, y: 0 },
+    acc: { x: 0, y: 0 },
+    vel: { x: 0, y: 0 },
+    max: { x: 10, y: 10 },
+    terminal: 10, //velocity max
+    friction: 0.1,
+    // environment: "air", //current environments
 
-  options = (0, _merge2.default)({
-    name: "actor",
-    type: "actor"
-  }, options);
-
-  var _actor = new _module_manager2.default(options);
-
-  _actor.mergeWith({
-    dx: 0,
-    dy: 0,
-    collision_width: 32,
-    collision_height: 32,
-    state: "default",
-
-    step: function step() {
-      this.runModuleSteps();
-      this.updateState();
-    },
-
-    updateState: function updateState() {
-      // throw {message: "Individual Game Objects must contain custom definitions for updateState function. " + this.name, object: this, trueMessage: "No they don't, this is going to be separated into a state manager for physical game objects. This doesn't pertain to non-entities like the debug module"};
-    }
-
-  });
-
-  return _actor;
-};
-
-module.exports = actor;
-
-/***/ }),
-/* 119 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _actor = __webpack_require__(118);
-
-var _actor2 = _interopRequireDefault(_actor);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var objFrameData = function objFrameData() {
-
-  var domElement = document.getElementById("objFrameData");
-  // debugger
-  var start = Date.now();
-  var _objFrameData = {
-    name: "objFrameData",
-    frameData: {
-      animationFrames: [],
-      animationFPS: 0,
-      physicsFrames: [],
-      physicsFPS: 0,
-      lastUpdate: start,
-      domElement: domElement
-    },
-    moduleStep: function moduleStep() {
-      var animationFrames = this.frameData.animationFrames;
-      var now = Date.now();
-      animationFrames.unshift(now);
-      while (now - animationFrames[animationFrames.length - 1] > 1000) {
-        animationFrames.pop();
+    applyFriction: function applyFriction(axis) {
+      var vel = this.vel[axis];
+      var mod = 0;
+      switch (vel) {
+        case vel < 0:
+          mod = 1;
+          break;
+        case vel > 0:
+          mod = -1;
+          break;
+        case vel === 0:
+          mod = 0;
+          break;
       }
-      this.frameData.domElement.innerHTML = "Animation Frames per Second: " + animationFrames.length;
-    }
-  };
-  return _objFrameData;
-};
 
-module.exports = objFrameData;
-
-/***/ }),
-/* 120 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _actor = __webpack_require__(118);
-
-var _actor2 = _interopRequireDefault(_actor);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var objData = function objData() {
-
-  var domElement = document.getElementById("objData");
-
-  // debugger
-  var start = Date.now();
-  var _objData = {
-    name: "objData",
-    objData: {
-      animationFrames: [],
-      animationFPS: 0,
-      physicsFrames: [],
-      physicsFPS: 0,
-      lastUpdate: start,
-      domElement: domElement
-    },
-    moduleStep: function moduleStep() {
-      this.objData.domElement.innerHTML = "x-coord: " + this.dx + "<br>\n      y-cord: " + this.dy + "<br>\n      animationState: " + this.modules.objAnimator;
-    }
-  };
-  return _objData;
-};
-
-module.exports = objData;
-
-/***/ }),
-/* 121 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _merge = __webpack_require__(0);
-
-var _merge2 = _interopRequireDefault(_merge);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-//abstractly, a verb is the action which is performed when the player presses a button. https://www.youtube.com/watch?v=7daTGyVZ60I
-
-var Verb = function Verb(options) {
-
-  var _verb = {
-
-    name: "unnamedVerb",
-
-    requirements: [],
-    cooldown: false,
-    func: function func() {},
-    priority: 1,
-    subscriptions: {},
-    targets: {},
-
-    setFunc: function setFunc(func) {
-      this.func = func;
+      vel = vel + this.fiction * mod;
     },
 
-    setTrigger: function setTrigger(func) {
-      if (typeof func !== "function") {
-        throw "Verb Triggers must be event handling functions";
+    applyAccToVel: function applyAccToVel(axis) {
+      var n = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+
+      if (["x", "y"].some(function (x) {
+        return x === axis;
+      })) {
+        this.vel[axis] += this.acc[axis] * n;
+      } else {
+        throw "no axis passed to function";
       }
-      this.requirements[0] = func;
+      if (this.vel[axis] > Math.max(this.max[axis], this.terminal)) {
+        this.vel[axis] = Math.max(this.max[axis], this.terminal);
+      }
     },
 
-    getTrigger: function getTrigger() {
-      return this.requirements[0];
+    applyVelToDes: function applyVelToDes(axis) {
+      if (["x", "y"].some(function (x) {
+        return x === axis;
+      })) {
+        this.des[axis] += this.vel[axis];
+      } else {
+        throw "no axis passed to function";
+      }
     },
 
-    newSubscription: function newSubscription(type) {
-      var callBack = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.func;
-
-      document.addEventListener(type, callBack.bind(this));
-    }, //not every verb will be tied to the playerActor. Maybe, for example, if the user pressed printscreen, a component will begin recording screenshots for 1800 frames(30 seconds). This would be an example of a game level verb. Also... maybe the user wants to pause during  cutscene or something, to select the skip cutscene option, because unskippable cutscenes are the worst
-
-    beginCoolDown: function beginCoolDown() {
-      var ms = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 10;
-
-      this.cooldown = true;
-      var _cooldown = function () {
-        this.cooldown = false;
-      }.bind(this);
-      setTimeout(_cooldown, ms);
-    },
-
-    addTarget: function addTarget(name, newTarget) {
-      this.targets[name] = newTarget;
-    },
-
-    handleEvent: function handleEvent(e) {
+    moduleStep: function moduleStep() {
       var _this = this;
 
-      if (this.requirements.length === 0) {
-        console.log("no requirements");
+      var axes = ["x", "y"];
+      if (this.whatever) {
+        debugger;
       }
-      if (this.requirements.every(function (r) {
-        return r.bind(_this)(e);
-      })) {
-        this.func.call(this);
-      }
-    },
-
-    addRequirement: function addRequirement(func) {
-      if (typeof func !== "function") {
-        throw "requirements must be boolean functions";
-      } else {
-        this.requirements.push(func);
-      }
+      axes.forEach(function (axis) {
+        //you think fat arrow means you don't have to bind this as the second argument to forEach, but you weren't sure, so you made a note
+        _this.applyFriction(axis);
+        _this.applyAccToVel(axis, 1);
+        _this.applyVelToDes(axis);
+      });
     }
-
   };
-  (0, _merge2.default)(_verb, options);
-  return _verb;
+  (0, _merge2.default)(_actorPhysics, options);
+  return _actorPhysics;
 };
 
-module.exports = Verb;
-
-/***/ }),
-/* 122 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _merge = __webpack_require__(0);
-
-var _merge2 = _interopRequireDefault(_merge);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var actorAnimator = function actorAnimator(options) {
-
-  var image = new Image();
-  image.src = options.src;
-  var animations = {};
-
-  return {
-    name: "actorAnimator",
-    initialState: "idle",
-    image: image,
-    animations: animations,
-    drawCollision: function drawCollision(ctx) {
-      ctx.save();
-      ctx.fillStyle = "#00eeff";
-      // ctx.fillRect(this.dx, this.dy, this.collision_width, this.collision_height);
-      ctx.restore();
-    },
-
-    draw: function draw(ctx) {
-
-      this.drawCollision(ctx);
-      ctx.save();
-      ctx.translate(this.dx + this.collision_width * 0.5, this.dy + this.collision_height * 0.5);
-      ctx.fillStyle = "red";
-      // ctx.fillRect((-this.draw_width * 0.5), (-this.draw_height * 0.5), this.draw_width, this.draw_height);
-      ctx.drawImage(this.image, this.sX, this.sY, this.draw_width, this.draw_height, -this.draw_width * 0.5, -this.draw_height * 0.5, this.draw_width, this.draw_height);
-      ctx.restore();
-    },
-
-    add: function add(cycle) {
-      this.animations[cycle.name] = cycle;
-    },
-
-    moduleStep: function moduleStep() {
-      // debugger
-      // if(!this.animations[this.modules.actoranimator]){
-      //   throw {message: `frame advance error`, data: {this:this.name, state: this.modules.actoranimator, animations:this.animations}};
-      // }
-      // if(this.modules.actorAnimator === "fastSpin"){debugger}
-      var currentCel = this.animations[this.modules.actorAnimator].advance();
-      (0, _merge2.default)(this, currentCel);
-      delete this.frameCount;
-    },
-
-    set: function set(string) {
-      console.log("you should definitely not being seeing this");
-    },
-    get: function get(string) {
-      return this.animations[string];
-    },
-
-    getAnimations: function getAnimations() {
-      return this.animations.keys;
-    }
-  };
-}; //breadcrumbs: Elise said something about a single source of truth for state. Currently the sprite is just a store of animation data. I think what elise is getting at is closer to a redux cycle.
-
-//that is to say, the gameSpaceObject knows what the current frame and frame data is, passes that information to the sprite, and the sprite returns the frame data for the next state.
-
-exports.default = actorAnimator;
-
-/***/ }),
-/* 123 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.AnimationCycle = undefined;
-exports.cel = cel;
-
-var _merge = __webpack_require__(0);
-
-var _merge2 = _interopRequireDefault(_merge);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function cel(options) {
-  return (0, _merge2.default)({ sX: 0, sY: 0, draw_width: 16, draw_height: 16, frameCount: 5 }, options);
-}
-
-var AnimationCycle = exports.AnimationCycle = function AnimationCycle() {
-  var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
-
-  return {
-    cels: [],
-    celIdx: 0,
-    frameIdx: 0,
-    name: name,
-    rightFace: true,
-
-    push: function push(newCel) {
-      this.cels.push(newCel);
-    },
-
-    add: function add(newCel) {
-      this.cels.push(newCel);
-    },
-
-    currentCel: function currentCel() {
-      return this.cels[this.celIdx];
-    },
-
-    incrementIndex: function incrementIndex() {
-      this.frameIdx += 1;
-      if (this.frameIdx > this.currentCel().frameCount) {
-        this.frameIdx = 0;
-        this.celIdx += 1;
-        if (this.celIdx > this.cels.length - 1) {
-          this.celIdx = 0;
-        }
-      }
-    },
-
-    advance: function advance() {
-      this.incrementIndex();
-      return this.currentCel();
-    },
-
-    spawnCel: function spawnCel() {
-      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-      return cel(options);
-    },
-
-    createCel: function createCel() {
-      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-      this.add(cel(options));
-    }
-
-  };
-};
+module.exports = actorPhysics;
 
 /***/ })
 /******/ ]);
