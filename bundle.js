@@ -713,9 +713,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var EngineCore = function EngineCore() {
 
   var _engine = new _module_manager2.default({ name: "game" });
-  _engine.addModules(new _timeManager2.default(),
-  // new EventManager(),
-  new _actorManager2.default());
+  _engine.addModules(new _timeManager2.default(), new _actorManager2.default());
   return _engine;
 };
 
@@ -1325,58 +1323,39 @@ document.addEventListener('DOMContentLoaded', switcher(1));
 "use strict";
 
 
-// import merge from 'lodash/merge';
-
-// const ActorManager = (options) => {
-//   options = merge({},{
-//       complex: false, //no support
-//       horizontalScrolling: false, //no support
-//       verticalScrolling: false, //no support
-//       playerSeparate: true,
-//       manyPlayerActors: false
-//     },
-//     options);
-//
-//   const Actors = {};
-// const Complex = {
-//   playerActors: [], //objects that respond to inputs
-//   temporaryActors: [], //for projectiles, or other things that aren't on the screen for long, pick ups
-//   environmentActors: [], //ground and wall objects, not doors and chests
-//   actorActors: [], //enemies, allies, doors, chests, things that can be affected by other mobs
-// };
-
-//   const simple = { allActors: [] };
-//
-//   const horizontalScrolling = {
-//     rightActors: {}, //objects to the right of the view. This is a hashMap and not an array. The keys shall be the X position of the object to reduce time complexity of looking up what objects to bring into view
-//     leftActors: {}
-//   };
-//
-//
-//
-//
-// };
-
 var ActorManager = function ActorManager() {
+
   return {
-    allActors: [],
+    actors: { all: [] },
+
     name: "objectsManager",
 
-    addActor: function addActor(object) {
+    addActor: function addActor(newActor) {
+      var _this = this;
 
-      object.globalEvents = this.globalEvents;
-      if (object.type === "player") {
-        this.allActors.unshift(object);
+      if (newActor.type === "player") {
+        this.actors.all.unshift(newActor);
       } else {
-        this.allActors.push(object);
+        this.actors.all.push(newActor);
       }
+      Object.keys(newActor.modules).forEach(function (moduleName) {
+        if (_this.actors[moduleName]) {
+          _this.actors[moduleName].push(newActor);
+        } else {
+          console.error("no Game level module " + moduleName + " from " + newActor.name);
+        }
+      });
     },
 
     moduleStep: function moduleStep() {
-      this.allActors.forEach(function (obj) {
+      var _this2 = this;
+
+      this.actors.all.forEach(function (obj) {
+        _this2.stepFunctions.forEach(function (func) {});
         obj.step();
       });
     }
+
   };
 };
 
@@ -3605,6 +3584,7 @@ var Renderer = function Renderer(options) {
 
   return {
     name: "renderer",
+    actorComponent: "actorAnimation",
     ctx: options.ctx,
     view_width: options.width,
     view_height: options.height,
@@ -3624,7 +3604,7 @@ var Renderer = function Renderer(options) {
     renderFrame: function renderFrame(time) {
       var _this = this;
 
-      this.allActors.forEach(function (obj) {
+      this.actors.all.forEach(function (obj) {
         return obj.draw(_this.ctx);
       });
     },
@@ -3962,7 +3942,7 @@ function mockGame() {
   // game.addActor(new Mock.mockObj(4,4));
   game.addActor(new Mock.featureMock(4, 4));
 
-  dbAdd("feature", game.allActors[0]);
+  dbAdd("feature", game.actors.all[0]);
   dbAdd("game", game);
 
   return game;
@@ -4202,7 +4182,7 @@ var objAnimator = function objAnimator(options) {
   var animations = {};
 
   return {
-    name: "objAnimator",
+    name: "actorAnimation",
     initialState: "idle",
     image: image,
     animations: animations,
