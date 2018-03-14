@@ -538,55 +538,7 @@ module.exports = isArrayLike;
 
 
 /***/ }),
-/* 15 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _merge = __webpack_require__(0);
-
-var _merge2 = _interopRequireDefault(_merge);
-
-var _module_manager = __webpack_require__(18);
-
-var _module_manager2 = _interopRequireDefault(_module_manager);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var actor = function actor(options) {
-
-  options = (0, _merge2.default)({
-    name: "actor",
-    type: "actor"
-  }, options);
-
-  var _actor = new _module_manager2.default(options);
-
-  _actor.mergeWith({
-    dx: 0,
-    dy: 0,
-    collision_width: 32,
-    collision_height: 32,
-    state: "default",
-
-    step: function step() {
-      this.runModuleSteps();
-      this.updateState();
-    },
-
-    updateState: function updateState() {
-      // throw {message: "Individual Game Objects must contain custom definitions for updateState function. " + this.name, object: this, trueMessage: "No they don't, this is going to be separated into a state manager for physical game objects. This doesn't pertain to non-entities like the debug module"};
-    }
-
-  });
-
-  return _actor;
-};
-
-module.exports = actor;
-
-/***/ }),
+/* 15 */,
 /* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -718,14 +670,14 @@ var EngineCore = function EngineCore() {
 };
 
 var Game = function Game() {
-  bootLog("creating Game Engine");
+  devLog.log("creating Game Engine");
   var _game = new EngineCore();
 
   _game.addModules(new _gameController2.default(),
   // new PhysicsManager(),
   // new CollisionManager(),
   new _renderer2.default());
-  bootLog("game engine complete");
+  devLog.log("game engine complete");
   return _game;
 };
 
@@ -745,7 +697,7 @@ var _merge2 = _interopRequireDefault(_merge);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var ModuleManager = function ModuleManager(options) {
-  bootLog("creating new Module Manager: " + options.name);
+  devLog.log("creating new Module Manager: " + options.name);
   var _moduleManager = {
     modules: {},
     moduleSteps: [],
@@ -760,7 +712,7 @@ var ModuleManager = function ModuleManager(options) {
 
     addModule: function addModule(newObj) {
       //merge with object and add object name to modules list.
-      bootLog("[" + this.name + "] begins incorporating new module [" + newObj.name + "]");
+      devLog.log("[" + this.name + "] begins incorporating new module [" + newObj.name + "]");
       if (newObj) {
         //why???
         this.verifyModuleName(newObj);
@@ -775,7 +727,7 @@ var ModuleManager = function ModuleManager(options) {
         (0, _merge2.default)(this, newObj);
         this.name = trueName;
         this.ifComponentDidMount(newObj);
-        bootLog("[" + this.name + "] finishes incorporating new module [" + newObj.name + "]");
+        devLog.log("[" + this.name + "] finishes incorporating new module [" + newObj.name + "]");
       }
     },
 
@@ -1326,9 +1278,9 @@ document.addEventListener('DOMContentLoaded', switcher(1));
 var ActorManager = function ActorManager() {
 
   return {
-    actors: { all: [] },
-
     name: "objectsManager",
+    actors: { all: [] },
+    stepFunctions: [],
 
     addActor: function addActor(newActor) {
       var _this = this;
@@ -1342,7 +1294,7 @@ var ActorManager = function ActorManager() {
         if (_this.actors[moduleName]) {
           _this.actors[moduleName].push(newActor);
         } else {
-          console.error("no Game level module " + moduleName + " from " + newActor.name);
+          devLog.log("no Game level module " + moduleName + " from " + newActor.name, 'warning');
         }
       });
     },
@@ -1354,6 +1306,12 @@ var ActorManager = function ActorManager() {
         _this2.stepFunctions.forEach(function (func) {});
         obj.step();
       });
+    },
+
+    newModuleVerification: function newModuleVerification(newModule) {
+      if (newModule.actorComponent) {
+        this.actors[newModule.actorComponent] = [];
+      }
     }
 
   };
@@ -1376,7 +1334,7 @@ var TimeManager = function TimeManager() {
     framesInASecond: 1 / 60,
 
     startClock: function startClock() {
-      bootLog("starting Game Clock");
+      devLog.log("starting Game Clock");
       this.resetClock();
       requestAnimationFrame(this.updateGameState.bind(this));
     },
@@ -3584,7 +3542,7 @@ var Renderer = function Renderer(options) {
 
   return {
     name: "renderer",
-    actorComponent: "actorAnimation",
+    actorComponent: "actorAnimator",
     ctx: options.ctx,
     view_width: options.width,
     view_height: options.height,
@@ -3678,6 +3636,7 @@ var gameController = function gameController() {
 
   var _controller = {
     name: "gameController",
+    actorComponent: "actorController",
     inputs: new Set(),
     controllerDOM: controllerDOM,
     controllerHistory: [{
@@ -3691,7 +3650,7 @@ var gameController = function gameController() {
     bindKeys: function bindKeys() {
       var _this = this;
 
-      bootLog(this.name + " sets key bindings");
+      devLog.log(this.name + " sets key bindings");
       var self = this;
       document.addEventListener('keydown', function (e) {
         return _this.handleKeydown(e);
@@ -3962,15 +3921,15 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.featureMock = exports.mockObj = undefined;
 
-var _actor = __webpack_require__(15);
+var _actor = __webpack_require__(118);
 
 var _actor2 = _interopRequireDefault(_actor);
 
-var _objFrameData = __webpack_require__(110);
+var _objFrameData = __webpack_require__(119);
 
 var _objFrameData2 = _interopRequireDefault(_objFrameData);
 
-var _objData = __webpack_require__(111);
+var _objData = __webpack_require__(120);
 
 var _objData2 = _interopRequireDefault(_objData);
 
@@ -3982,7 +3941,7 @@ var _mock_controller = __webpack_require__(115);
 
 var _mock_controller2 = _interopRequireDefault(_mock_controller);
 
-var _verb = __webpack_require__(16);
+var _verb = __webpack_require__(121);
 
 var _verb2 = _interopRequireDefault(_verb);
 
@@ -3992,7 +3951,7 @@ var mockObj = exports.mockObj = function mockObj() {
   var n = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
   var m = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
 
-  bootLog('ceating new mock object');
+  devLog.log('ceating new mock object');
   var _mockObj = new _actor2.default();
 
   _mockObj.addModules(new _mock_obj_animation2.default());
@@ -4013,9 +3972,9 @@ var mockObj = exports.mockObj = function mockObj() {
 var featureMock = exports.featureMock = function featureMock() {
   var xmod = 0;
   var ymod = 0;
-  bootLog('creating new feature mock');
+  devLog.log('creating new feature mock');
   var _featureMock = new mockObj(xmod, ymod);
-  bootLog('changing name of ' + _featureMock.name + ' to [player]');
+  devLog.log('changing name of ' + _featureMock.name + ' to [player]');
   _featureMock.name = "player";
   _featureMock.type = "player";
 
@@ -4026,102 +3985,23 @@ var featureMock = exports.featureMock = function featureMock() {
 };
 
 /***/ }),
-/* 110 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _actor = __webpack_require__(15);
-
-var _actor2 = _interopRequireDefault(_actor);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var objFrameData = function objFrameData() {
-
-  var domElement = document.getElementById("objFrameData");
-  // debugger
-  var start = Date.now();
-  var _objFrameData = {
-    name: "objFrameData",
-    frameData: {
-      animationFrames: [],
-      animationFPS: 0,
-      physicsFrames: [],
-      physicsFPS: 0,
-      lastUpdate: start,
-      domElement: domElement
-    },
-    moduleStep: function moduleStep() {
-      var animationFrames = this.frameData.animationFrames;
-      var now = Date.now();
-      animationFrames.unshift(now);
-      while (now - animationFrames[animationFrames.length - 1] > 1000) {
-        animationFrames.pop();
-      }
-      this.frameData.domElement.innerHTML = "Animation Frames per Second: " + animationFrames.length;
-    }
-  };
-  return _objFrameData;
-};
-
-module.exports = objFrameData;
-
-/***/ }),
-/* 111 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _actor = __webpack_require__(15);
-
-var _actor2 = _interopRequireDefault(_actor);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var objData = function objData() {
-
-  var domElement = document.getElementById("objData");
-
-  // debugger
-  var start = Date.now();
-  var _objData = {
-    name: "objData",
-    objData: {
-      animationFrames: [],
-      animationFPS: 0,
-      physicsFrames: [],
-      physicsFPS: 0,
-      lastUpdate: start,
-      domElement: domElement
-    },
-    moduleStep: function moduleStep() {
-      this.objData.domElement.innerHTML = "x-coord: " + this.dx + "<br>\n      y-cord: " + this.dy + "<br>\n      animationState: " + this.modules.objAnimator;
-    }
-  };
-  return _objData;
-};
-
-module.exports = objData;
-
-/***/ }),
+/* 110 */,
+/* 111 */,
 /* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _obj_animator = __webpack_require__(113);
+var _actoranimator = __webpack_require__(122);
 
-var _obj_animator2 = _interopRequireDefault(_obj_animator);
+var _actoranimator2 = _interopRequireDefault(_actoranimator);
 
 var _merge = __webpack_require__(0);
 
 var _merge2 = _interopRequireDefault(_merge);
 
-var _animation = __webpack_require__(114);
+var _animation = __webpack_require__(123);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -4148,7 +4028,7 @@ Spin.cels.forEach(function (cel) {
 });
 
 var mockAnimator = function mockAnimator() {
-  var _mockAnimator = new _obj_animator2.default({ src: './assets/coin_test.png' });
+  var _mockAnimator = new _actoranimator2.default({ src: './assets/coin_test.png' });
   _mockAnimator.add(Spin);
   _mockAnimator.initialState = "Spin";
   _mockAnimator.add(noSpin);
@@ -4159,159 +4039,8 @@ var mockAnimator = function mockAnimator() {
 module.exports = mockAnimator;
 
 /***/ }),
-/* 113 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _merge = __webpack_require__(0);
-
-var _merge2 = _interopRequireDefault(_merge);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var objAnimator = function objAnimator(options) {
-
-  var image = new Image();
-  image.src = options.src;
-  var animations = {};
-
-  return {
-    name: "actorAnimation",
-    initialState: "idle",
-    image: image,
-    animations: animations,
-    drawCollision: function drawCollision(ctx) {
-      ctx.save();
-      ctx.fillStyle = "#00eeff";
-      // ctx.fillRect(this.dx, this.dy, this.collision_width, this.collision_height);
-      ctx.restore();
-    },
-
-    draw: function draw(ctx) {
-
-      this.drawCollision(ctx);
-      ctx.save();
-      ctx.translate(this.dx + this.collision_width * 0.5, this.dy + this.collision_height * 0.5);
-      ctx.fillStyle = "red";
-      // ctx.fillRect((-this.draw_width * 0.5), (-this.draw_height * 0.5), this.draw_width, this.draw_height);
-      ctx.drawImage(this.image, this.sX, this.sY, this.draw_width, this.draw_height, -this.draw_width * 0.5, -this.draw_height * 0.5, this.draw_width, this.draw_height);
-      ctx.restore();
-    },
-
-    add: function add(cycle) {
-      this.animations[cycle.name] = cycle;
-    },
-
-    moduleStep: function moduleStep() {
-      // debugger
-      if (!this.animations[this.modules.objAnimator]) {
-        throw { message: "frame advance error", data: { this: this.name, state: this.modules.objAnimator, animations: this.animations } };
-      }
-      var currentCel = this.animations[this.modules.objAnimator].advance();
-      (0, _merge2.default)(this, currentCel);
-      delete this.frameCount;
-    },
-
-    set: function set(string) {
-      console.log("you should definitely not being seeing this");
-    },
-    get: function get(string) {
-      return this.animations[string];
-    },
-
-    getAnimations: function getAnimations() {
-      return this.animations.keys;
-    }
-  };
-}; //breadcrumbs: Elise said something about a single source of truth for state. Currently the sprite is just a store of animation data. I think what elise is getting at is closer to a redux cycle.
-
-//that is to say, the gameSpaceObject knows what the current frame and frame data is, passes that information to the sprite, and the sprite returns the frame data for the next state.
-
-exports.default = objAnimator;
-
-/***/ }),
-/* 114 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.AnimationCycle = undefined;
-exports.cel = cel;
-
-var _merge = __webpack_require__(0);
-
-var _merge2 = _interopRequireDefault(_merge);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function cel(options) {
-  return (0, _merge2.default)({ sX: 0, sY: 0, draw_width: 16, draw_height: 16, frameCount: 5 }, options);
-}
-
-var AnimationCycle = exports.AnimationCycle = function AnimationCycle() {
-  var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
-
-  return {
-    cels: [],
-    celIdx: 0,
-    frameIdx: 0,
-    name: name,
-    rightFace: true,
-
-    push: function push(newCel) {
-      this.cels.push(newCel);
-    },
-
-    add: function add(newCel) {
-      this.cels.push(newCel);
-    },
-
-    currentCel: function currentCel() {
-      return this.cels[this.celIdx];
-    },
-
-    incrementIndex: function incrementIndex() {
-      this.frameIdx += 1;
-      if (this.frameIdx > this.currentCel().frameCount) {
-        this.frameIdx = 0;
-        this.celIdx += 1;
-        if (this.celIdx > this.cels.length - 1) {
-          this.celIdx = 0;
-        }
-      }
-    },
-
-    advance: function advance() {
-      this.incrementIndex();
-      return this.currentCel();
-    },
-
-    spawnCel: function spawnCel() {
-      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-      return cel(options);
-    },
-
-    createCel: function createCel() {
-      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-      this.add(cel(options));
-    }
-
-  };
-};
-
-/***/ }),
+/* 113 */,
+/* 114 */,
 /* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -4479,6 +4208,381 @@ var actorController = function actorController(options) {
 };
 
 module.exports = actorController;
+
+/***/ }),
+/* 117 */,
+/* 118 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _merge = __webpack_require__(0);
+
+var _merge2 = _interopRequireDefault(_merge);
+
+var _module_manager = __webpack_require__(18);
+
+var _module_manager2 = _interopRequireDefault(_module_manager);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var actor = function actor(options) {
+
+  options = (0, _merge2.default)({
+    name: "actor",
+    type: "actor"
+  }, options);
+
+  var _actor = new _module_manager2.default(options);
+
+  _actor.mergeWith({
+    dx: 0,
+    dy: 0,
+    collision_width: 32,
+    collision_height: 32,
+    state: "default",
+
+    step: function step() {
+      this.runModuleSteps();
+      this.updateState();
+    },
+
+    updateState: function updateState() {
+      // throw {message: "Individual Game Objects must contain custom definitions for updateState function. " + this.name, object: this, trueMessage: "No they don't, this is going to be separated into a state manager for physical game objects. This doesn't pertain to non-entities like the debug module"};
+    }
+
+  });
+
+  return _actor;
+};
+
+module.exports = actor;
+
+/***/ }),
+/* 119 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _actor = __webpack_require__(118);
+
+var _actor2 = _interopRequireDefault(_actor);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var objFrameData = function objFrameData() {
+
+  var domElement = document.getElementById("objFrameData");
+  // debugger
+  var start = Date.now();
+  var _objFrameData = {
+    name: "objFrameData",
+    frameData: {
+      animationFrames: [],
+      animationFPS: 0,
+      physicsFrames: [],
+      physicsFPS: 0,
+      lastUpdate: start,
+      domElement: domElement
+    },
+    moduleStep: function moduleStep() {
+      var animationFrames = this.frameData.animationFrames;
+      var now = Date.now();
+      animationFrames.unshift(now);
+      while (now - animationFrames[animationFrames.length - 1] > 1000) {
+        animationFrames.pop();
+      }
+      this.frameData.domElement.innerHTML = "Animation Frames per Second: " + animationFrames.length;
+    }
+  };
+  return _objFrameData;
+};
+
+module.exports = objFrameData;
+
+/***/ }),
+/* 120 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _actor = __webpack_require__(118);
+
+var _actor2 = _interopRequireDefault(_actor);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var objData = function objData() {
+
+  var domElement = document.getElementById("objData");
+
+  // debugger
+  var start = Date.now();
+  var _objData = {
+    name: "objData",
+    objData: {
+      animationFrames: [],
+      animationFPS: 0,
+      physicsFrames: [],
+      physicsFPS: 0,
+      lastUpdate: start,
+      domElement: domElement
+    },
+    moduleStep: function moduleStep() {
+      this.objData.domElement.innerHTML = "x-coord: " + this.dx + "<br>\n      y-cord: " + this.dy + "<br>\n      animationState: " + this.modules.objAnimator;
+    }
+  };
+  return _objData;
+};
+
+module.exports = objData;
+
+/***/ }),
+/* 121 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _merge = __webpack_require__(0);
+
+var _merge2 = _interopRequireDefault(_merge);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+//abstractly, a verb is the action which is performed when the player presses a button. https://www.youtube.com/watch?v=7daTGyVZ60I
+
+var Verb = function Verb(options) {
+
+  var _verb = {
+
+    name: "unnamedVerb",
+
+    requirements: [],
+    cooldown: false,
+    func: function func() {},
+    priority: 1,
+    subscriptions: {},
+    targets: {},
+
+    setFunc: function setFunc(func) {
+      this.func = func;
+    },
+
+    setTrigger: function setTrigger(func) {
+      if (typeof func !== "function") {
+        throw "Verb Triggers must be event handling functions";
+      }
+      this.requirements[0] = func;
+    },
+
+    getTrigger: function getTrigger() {
+      return this.requirements[0];
+    },
+
+    newSubscription: function newSubscription(type) {
+      var callBack = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.func;
+
+      document.addEventListener(type, callBack.bind(this));
+    }, //not every verb will be tied to the playerActor. Maybe, for example, if the user pressed printscreen, a component will begin recording screenshots for 1800 frames(30 seconds). This would be an example of a game level verb. Also... maybe the user wants to pause during  cutscene or something, to select the skip cutscene option, because unskippable cutscenes are the worst
+
+    beginCoolDown: function beginCoolDown() {
+      var ms = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 10;
+
+      this.cooldown = true;
+      var _cooldown = function () {
+        this.cooldown = false;
+      }.bind(this);
+      setTimeout(_cooldown, ms);
+    },
+
+    addTarget: function addTarget(name, newTarget) {
+      this.targets[name] = newTarget;
+    },
+
+    handleEvent: function handleEvent(e) {
+      var _this = this;
+
+      if (this.requirements.length === 0) {
+        console.log("no requirements");
+      }
+      if (this.requirements.every(function (r) {
+        return r.bind(_this)(e);
+      })) {
+        this.func.call(this);
+      }
+    },
+
+    addRequirement: function addRequirement(func) {
+      if (typeof func !== "function") {
+        throw "requirements must be boolean functions";
+      } else {
+        this.requirements.push(func);
+      }
+    }
+
+  };
+  (0, _merge2.default)(_verb, options);
+  return _verb;
+};
+
+module.exports = Verb;
+
+/***/ }),
+/* 122 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _merge = __webpack_require__(0);
+
+var _merge2 = _interopRequireDefault(_merge);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var actorAnimator = function actorAnimator(options) {
+
+  var image = new Image();
+  image.src = options.src;
+  var animations = {};
+
+  return {
+    name: "actorAnimator",
+    initialState: "idle",
+    image: image,
+    animations: animations,
+    drawCollision: function drawCollision(ctx) {
+      ctx.save();
+      ctx.fillStyle = "#00eeff";
+      // ctx.fillRect(this.dx, this.dy, this.collision_width, this.collision_height);
+      ctx.restore();
+    },
+
+    draw: function draw(ctx) {
+
+      this.drawCollision(ctx);
+      ctx.save();
+      ctx.translate(this.dx + this.collision_width * 0.5, this.dy + this.collision_height * 0.5);
+      ctx.fillStyle = "red";
+      // ctx.fillRect((-this.draw_width * 0.5), (-this.draw_height * 0.5), this.draw_width, this.draw_height);
+      ctx.drawImage(this.image, this.sX, this.sY, this.draw_width, this.draw_height, -this.draw_width * 0.5, -this.draw_height * 0.5, this.draw_width, this.draw_height);
+      ctx.restore();
+    },
+
+    add: function add(cycle) {
+      this.animations[cycle.name] = cycle;
+    },
+
+    moduleStep: function moduleStep() {
+      // debugger
+      // if(!this.animations[this.modules.actoranimator]){
+      //   throw {message: `frame advance error`, data: {this:this.name, state: this.modules.actoranimator, animations:this.animations}};
+      // }
+      var currentCel = this.animations[this.modules.actorAnimator].advance();
+      (0, _merge2.default)(this, currentCel);
+      delete this.frameCount;
+    },
+
+    set: function set(string) {
+      console.log("you should definitely not being seeing this");
+    },
+    get: function get(string) {
+      return this.animations[string];
+    },
+
+    getAnimations: function getAnimations() {
+      return this.animations.keys;
+    }
+  };
+}; //breadcrumbs: Elise said something about a single source of truth for state. Currently the sprite is just a store of animation data. I think what elise is getting at is closer to a redux cycle.
+
+//that is to say, the gameSpaceObject knows what the current frame and frame data is, passes that information to the sprite, and the sprite returns the frame data for the next state.
+
+exports.default = actorAnimator;
+
+/***/ }),
+/* 123 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.AnimationCycle = undefined;
+exports.cel = cel;
+
+var _merge = __webpack_require__(0);
+
+var _merge2 = _interopRequireDefault(_merge);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function cel(options) {
+  return (0, _merge2.default)({ sX: 0, sY: 0, draw_width: 16, draw_height: 16, frameCount: 5 }, options);
+}
+
+var AnimationCycle = exports.AnimationCycle = function AnimationCycle() {
+  var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+
+  return {
+    cels: [],
+    celIdx: 0,
+    frameIdx: 0,
+    name: name,
+    rightFace: true,
+
+    push: function push(newCel) {
+      this.cels.push(newCel);
+    },
+
+    add: function add(newCel) {
+      this.cels.push(newCel);
+    },
+
+    currentCel: function currentCel() {
+      return this.cels[this.celIdx];
+    },
+
+    incrementIndex: function incrementIndex() {
+      this.frameIdx += 1;
+      if (this.frameIdx > this.currentCel().frameCount) {
+        this.frameIdx = 0;
+        this.celIdx += 1;
+        if (this.celIdx > this.cels.length - 1) {
+          this.celIdx = 0;
+        }
+      }
+    },
+
+    advance: function advance() {
+      this.incrementIndex();
+      return this.currentCel();
+    },
+
+    spawnCel: function spawnCel() {
+      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      return cel(options);
+    },
+
+    createCel: function createCel() {
+      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      this.add(cel(options));
+    }
+
+  };
+};
 
 /***/ })
 /******/ ]);
