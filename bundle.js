@@ -4103,7 +4103,7 @@ up.addRequirement(function () {
 
 var spinFaster = new _verb2.default({ name: "spinFaster" });
 spinFaster.setFunc(function (e) {
-  this.targets.owner.modules.objAnimator = "fastSpin";
+  this.targets.owner.modules.actorAnimator = "fastSpin";
 });
 spinFaster.setTrigger(function (e) {
   // debugger
@@ -4112,7 +4112,7 @@ spinFaster.setTrigger(function (e) {
 
 var spinSlower = new _verb2.default({ name: "spinSlower" });
 spinSlower.setFunc(function (e) {
-  this.targets.owner.modules.objAnimator = "Spin";
+  this.targets.owner.modules.actorAnimator = "Spin";
 });
 spinSlower.setTrigger(function (e) {
   // debugger
@@ -4486,6 +4486,7 @@ var actorAnimator = function actorAnimator(options) {
       // if(!this.animations[this.modules.actoranimator]){
       //   throw {message: `frame advance error`, data: {this:this.name, state: this.modules.actoranimator, animations:this.animations}};
       // }
+      // if(this.modules.actorAnimator === "fastSpin"){debugger}
       var currentCel = this.animations[this.modules.actorAnimator].advance();
       (0, _merge2.default)(this, currentCel);
       delete this.frameCount;
