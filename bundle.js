@@ -1286,27 +1286,129 @@ var trueGame = function trueGame() {
 }; // import dbSetUp from './lib/util/debugUtil';
 
 
-var falseGame = function falseGame() {
+var negaGame = function negaGame() {
 
-  function SFillArray(val) {
-    var ar = [];
-    return function _fillArray(val) {
-      ar.push(val);
-      console.log(ar);
+  function ggp() {
+    return navigator.getGamepads();
+  }
+
+  function getid(idstring, endSlice) {
+    var gp = Array.from(ggp());
+    for (var i in gp) {
+      if (gp[i] && gp[i].id.slice(0, endSlice) === idstring) {
+        return i;
+      }
+    }
+  }
+
+  function getController(idstring, endSlice) {
+    return ggp()[getid(idstring, endSlice)];
+  }
+
+  function attachControllerToWindow(varName, id, slice) {
+    window[varName] = getGetControllerFunction(id, slice);
+  }
+
+  function getGetControllerFunction(id, slice) {
+    var _cont = function _cont() {
+      return getController(id, slice);
+    };
+    _cont.buttons = function () {
+      return getController(id, slice).buttons.map(function (b) {
+        return b.pressed;
+      });
+    };
+    _cont.axes = function () {
+      return getController(id, slice).axes;
+    };
+    return _cont;
+  }
+
+  attachControllerToWindow("xbox", "Xbox One", 8);
+  attachControllerToWindow("lcon", "Joy-Con (L)", 11);
+  attachControllerToWindow("rcon", "Joy-Con (R)", 11);
+
+  var xbox = getGetControllerFunction("Xbox One", 8);
+  var lcon = getGetControllerFunction("Joy-Con (L)", 11);
+  var rcon = getGetControllerFunction("Joy-Con (R)", 11);
+
+  function getJoyConVals() {
+    var _vals = new Set();
+    return function _getJoyConVals(value) {
+      _vals.add(value);
+      if (_vals.size < 9) {
+        // console.log(_vals);
+        // console.log(_vals.size)
+        return _getJoyConVals;
+      } else {
+        console.log(_vals);
+        return "break";
+      }
     };
   }
 
-  var fillArray = new SFillArray();
+  var lconvals = new getJoyConVals();
 
-  fillArray(1);
-  fillArray(12);
+  function theLoop() {
+    var g = lconvals(lcon.axes()[Array.from(lcon.axes()).length - 1]);
+    // console.clear();
+    // console.log(lcon.buttons());
+    // console.log(lcon.axes());
+    // console.log( Date.now() );
+  }
+  //
+  //
+  setInterval(theLoop, 250);
+
+  // console.log(ggp()[0]);
+
+  //   document.addEventListener("gamepadconnected", (e)=>{
+  //     console.log(e);
+  //     // debugger
+  //   });
+  //   document.addEventListener("gamepaddisconnected", (e)=>{
+  // console.log(e);
+  // });
+
+
+  // const gamepads = Array.from(navigator.getGamepads());
+  // const gamepads = navigator.getGamepads();
+  //
+  // let lcon = gamepads[ getid("Joy-Con (L)",11) ];
+  // let rcon = gamepads[ getid("Joy-Con (R)",11) ];
+  // let lcons = ["Joy-Con (L)",8];
+  // let rcons = ["Joy-Con (R)",8];
+  // let xboxs = ["Xbox One",11];
+  //
+  //
+  // merge(window,{lcon, rcon, xbox});
+  //
+  // function controllerStatsToLog(gps){
+  //   // console.log(gamepad);
+  //   let gp = navigator.getGamepads()[getid(...xboxs)];
+  //   console.log(
+  //     gp.buttons.map( button => button.pressed )
+  //   );
+  //   console.log( gamepad.axes );
+  //
+  // }
+  //
+  // // function getJoyConButtons(){
+  // //
+  // // }
+  //
+
 };
 
+var falseGame = function falseGame() {};
 var switcher = function switcher(n) {
-  if (n) {
-    return trueGame;
-  } else {
-    return falseGame;
+  switch (n) {
+    case 1:
+      return trueGame;
+    case 0:
+      return falseGame;
+    case -1:
+      return negaGame;
   }
 };
 
@@ -3622,13 +3724,249 @@ module.exports = Renderer;
 
 /***/ }),
 /* 105 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-throw new Error("Module build failed: SyntaxError: Unexpected token, expected , (137:8)\n\n\u001b[0m \u001b[90m 135 | \u001b[39m        \u001b[32m'controllerAction'\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 136 | \u001b[39m        { detail }\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 137 | \u001b[39m        well \u001b[36mthis\u001b[39m won\u001b[32m't work. you need to only dispatch events once per frame. \u001b[39m\n \u001b[90m     | \u001b[39m        \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 138 | \u001b[39m      ))\u001b[33m;\u001b[39m\n \u001b[90m 139 | \u001b[39m    }\u001b[33m,\u001b[39m\n \u001b[90m 140 | \u001b[39m\u001b[0m\n");
+
+
+var _util = __webpack_require__(106);
+
+var gameController = function gameController() {
+  var KeyToButton = {
+    "k": "a",
+    "l": "b",
+    "j": "x",
+    "i": "y",
+
+    "u": "lb",
+    "o": "rb",
+    "7": "lt",
+    "9": "rt",
+
+    "`": "select",
+    "Escape": "start",
+
+    "-": "lclick",
+    "=": "rclick",
+
+    "w": "up",
+    "s": "down",
+    "a": "left",
+    "d": "right"
+  };
+  var ButtonToKey = {
+    "a": "k",
+    "b": "l",
+    "x": "j",
+    "y": "i",
+
+    "lb": "u",
+    "rb": "o",
+    "lt": "7",
+    "rt": "9",
+
+    "select": "`",
+    "start": "Escape",
+
+    "-": "lclick",
+    "=": "rclick",
+
+    "up": "w",
+    "down": "s",
+    "left": "a",
+    "right": "d"
+  };
+  var xboxIndexToKey = ["k", "l", "j", "i", "u", "o", "7", "9", "`", "Escape", "-", "=", "w", "s", "a", "d"];
+  var xboxIndexToButton = ["a", "b", "x", "y", "lb", "rb", "lt", "rt", "select", "start", "lclick", "rclick", "up", "down", "left", "right"];
+  var controllerDOM = document.getElementById("controlDebug");
+
+  var _controller = {
+    name: "gameController",
+    actorComponent: "actorController",
+    inputs: new Set(),
+    controllerDOM: controllerDOM,
+    controllerHistory: [{
+      frameSlice: new Set("~"),
+      frameCount: 0
+    }],
+    gamepadLastStep: new Set(),
+    subscriptions: {},
+    gamepadConnected: false,
+
+    bindKeys: function bindKeys() {
+      var _this = this;
+
+      devLog.log(this.name + " sets key bindings");
+      var self = this;
+      document.addEventListener('keydown', function (e) {
+        return _this.handleKeydown(e);
+      });
+      document.addEventListener('keyup', function (e) {
+        return _this.handleKeyup(e);
+      });
+      window.addEventListener('gamepadconnected', function (e) {
+        return _this.handleGamepadConnected(e);
+      });
+
+      window.addEventListener('gamepaddisconnected', function (e) {
+        return _this.handleGamepadDisconnected(e);
+      });
+    },
+
+    handleKeydown: function handleKeydown(e) {
+      if (KeyToButton[e.key]) {
+        this.inputs.add(KeyToButton[e.key]);
+        this.dispatchControllerEvent({ keydown: KeyToButton[e.key] });
+      }
+    },
+
+    dispatchControllerEvent: function dispatchControllerEvent(detail) {
+      document.dispatchEvent(new CustomEvent('controllerAction', { detail: detail
+        // well this won't work. you need to only dispatch events once per frame.
+      }));
+    },
+
+    handleKeyup: function handleKeyup(e) {
+      if (KeyToButton[e.key]) {
+        this.inputs.delete(KeyToButton[e.key]);
+        this.dispatchControllerEvent({ keyup: KeyToButton[e.key] });
+      }
+    },
+
+    handleGamepadConnected: function handleGamepadConnected(e) {
+      console.log("Gamepad connected at index %d: %s", e.gamepad.index, e.gamepad.id);
+      this.gamepadConnected = true; //extremely unhappy about this use of global variables. More trouble binding this I suppose
+    },
+    handleGamepadDisconnected: function handleGamepadDisconnected(e) {
+      console.log("Gamepad disconnected at index %d: %s", e.gamepad.index, e.gamepad.id);
+      if (navigator.getGamepads()[0] === null) {
+        this.gamepadConnected = false;
+      }
+    },
+    recordHistory: function recordHistory() {
+      var newFrame = new Set();
+      this.inputs.forEach(function (el) {
+        return newFrame.add(el);
+      });
+      if (newFrame.size === 0) {
+        newFrame.add("~");
+      }
+
+      var lastFrame = this.controllerHistory[this.controllerHistory.length - 1];
+
+      if ((0, _util.compareSets)(newFrame, lastFrame.frameSlice)) {
+        lastFrame.frameCount += 1;
+      } else {
+        this.controllerHistory.push({ frameSlice: newFrame, frameCount: 1 });
+      }
+    },
+
+
+    getHistoryTailAsString: function getHistoryTailAsString(n) {
+      var _this2 = this;
+
+      var history = this.controllerHistory.slice(-n).reverse();
+      var str = "";
+      history.map(function (frame) {
+        str = str + _this2.inputFrameAsString(frame.frameSlice);
+      });
+      return str;
+    },
+
+    getHistoryTail: function getHistoryTail(n) {
+      var history = this.controllerHistory.slice(-n).reverse;
+    },
+
+    inputFrameAsString: function inputFrameAsString(frame) {
+      //converts a set to a string, specifically to be printed to the debug window
+      var str = "";
+      if (frame.size > 0) {
+        frame.forEach(function (key) {
+          if (key === " ") {
+            key = "space";
+          }
+          str = str + key + ",";
+        });
+      }
+      str = str.slice(0, -1) + "<br>";
+      return str;
+    },
+
+    getGamepadInputs: function getGamepadInputs() {
+      // console.log(this.gamepadConnected);
+      if (this.gamepadConnected) {
+        // let kd = new Event('keydown');
+        // let ku = new Event('keyup');
+        var buttons = navigator.getGamepads()[0].buttons;
+        for (var i in buttons) {
+          if (buttons[i].pressed) {
+            console.log(i);
+            // kd.key = xboxIndexToKey[i];
+            this.gamepadLastStep.add(xboxIndexToButton[i]);
+            // document.dispatchEvent(kd);
+          } else {
+            if (this.gamepadLastStep.has(xboxIndexToButton[i])) {
+              this.gamepadLastStep.delete(xboxIndexToButton[i]);
+              // ku.key = xboxIndexToKey[i];navigat
+              // document.dispatchEvent(ku);
+            }
+          }
+        }
+      }
+    },
+
+    // onNewActor(actor){
+    //   if(actor.modules.actorController){
+    //     actor.initializeSubscriptions();
+    //   }
+    // },
+
+    moduleStep: function moduleStep() {
+      this.getGamepadInputs();
+      this.recordHistory();
+      this.controllerDOM.innerHTML = "Inputs: <br>" + this.getHistoryTailAsString(5) + "<br/>";
+    }
+
+  };
+  // _controller.bindKeys();
+  return _controller;
+};
+
+module.exports = gameController;
 
 /***/ }),
-/* 106 */,
+/* 106 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.compareSets = compareSets;
+function compareSets(setA, setB) {
+  var bool = true;
+  if (setA.size !== setB.size) {
+    bool = false;
+  }
+
+  setA.forEach(function (el) {
+    if (!setB.has(el)) {
+      bool = false;
+    }
+  });
+
+  setB.forEach(function (el) {
+    if (!setA.has(el)) {
+      bool = false;
+    }
+  });
+
+  return bool;
+}
+
+/***/ }),
 /* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
