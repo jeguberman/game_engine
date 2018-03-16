@@ -3622,13 +3622,248 @@ module.exports = Renderer;
 
 /***/ }),
 /* 105 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-throw new Error("Module build failed: SyntaxError: Unexpected token, expected , (137:8)\n\n\u001b[0m \u001b[90m 135 | \u001b[39m        \u001b[32m'controllerAction'\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 136 | \u001b[39m        { detail }\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 137 | \u001b[39m        well \u001b[36mthis\u001b[39m won\u001b[32m't work. you need to only dispatch events once per frame. \u001b[39m\n \u001b[90m     | \u001b[39m        \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 138 | \u001b[39m      ))\u001b[33m;\u001b[39m\n \u001b[90m 139 | \u001b[39m    }\u001b[33m,\u001b[39m\n \u001b[90m 140 | \u001b[39m\u001b[0m\n");
+
+
+var _util = __webpack_require__(106);
+
+var gameController = function gameController() {
+  var KeyToButton = {
+    "k": "a",
+    "l": "b",
+    "j": "x",
+    "i": "y",
+
+    "u": "lb",
+    "o": "rb",
+    "7": "lt",
+    "9": "rt",
+
+    "`": "select",
+    "Escape": "start",
+
+    "-": "lclick",
+    "=": "rclick",
+
+    "w": "up",
+    "s": "down",
+    "a": "left",
+    "d": "right"
+  };
+  var ButtonToKey = {
+    "a": "k",
+    "b": "l",
+    "x": "j",
+    "y": "i",
+
+    "lb": "u",
+    "rb": "o",
+    "lt": "7",
+    "rt": "9",
+
+    "select": "`",
+    "start": "Escape",
+
+    "-": "lclick",
+    "=": "rclick",
+
+    "up": "w",
+    "down": "s",
+    "left": "a",
+    "right": "d"
+  };
+  var xboxIndexToKey = ["k", "l", "j", "i", "u", "o", "7", "9", "`", "Escape", "-", "=", "w", "s", "a", "d"];
+  var xboxIndexToButton = ["a", "b", "x", "y", "lb", "rb", "lt", "rt", "select", "start", "lclick", "rclick", "up", "down", "left", "right"];
+  var controllerDOM = document.getElementById("controlDebug");
+
+  var _controller = {
+    name: "gameController",
+    actorComponent: "actorController",
+    inputs: new Set(),
+    controllerDOM: controllerDOM,
+    controllerHistory: [{
+      frameSlice: new Set("~"),
+      frameCount: 0
+    }],
+    gamepadLastStep: new Set(),
+    subscriptions: {},
+    gamepadConnected: false,
+
+    bindKeys: function bindKeys() {
+      var _this = this;
+
+      devLog.log(this.name + " sets key bindings");
+      var self = this;
+      document.addEventListener('keydown', function (e) {
+        return _this.handleKeydown(e);
+      });
+      document.addEventListener('keyup', function (e) {
+        return _this.handleKeyup(e);
+      });
+      window.addEventListener('gamepadconnected', function (e) {
+        return _this.handleGamepadConnected(e);
+      });
+
+      window.addEventListener('gamepaddisconnected', function (e) {
+        return _this.handleGamepadDisconnected(e);
+      });
+    },
+
+    handleKeydown: function handleKeydown(e) {
+      if (KeyToButton[e.key]) {
+        this.inputs.add(KeyToButton[e.key]);
+        this.dispatchControllerEvent({ keydown: KeyToButton[e.key] });
+      }
+    },
+
+    dispatchControllerEvent: function dispatchControllerEvent(detail) {
+      document.dispatchEvent(new CustomEvent('controllerAction', { detail: detail
+        // well this won't work. you need to only dispatch events once per frame. 
+      }));
+    },
+
+    handleKeyup: function handleKeyup(e) {
+      if (KeyToButton[e.key]) {
+        this.inputs.delete(KeyToButton[e.key]);
+        this.dispatchControllerEvent({ keyup: KeyToButton[e.key] });
+      }
+    },
+
+    handleGamepadConnected: function handleGamepadConnected(e) {
+      console.log("Gamepad connected at index %d: %s", e.gamepad.index, e.gamepad.id);
+      this.gamepadConnected = true; //extremely unhappy about this use of global variables. More trouble binding this I suppose
+    },
+    handleGamepadDisconnected: function handleGamepadDisconnected(e) {
+      console.log("Gamepad disconnected at index %d: %s", e.gamepad.index, e.gamepad.id);
+      if (navigator.getGamepads()[0] === null) {
+        this.gamepadConnected = false;
+      }
+    },
+    recordHistory: function recordHistory() {
+      var newFrame = new Set();
+      this.inputs.forEach(function (el) {
+        return newFrame.add(el);
+      });
+      if (newFrame.size === 0) {
+        newFrame.add("~");
+      }
+
+      var lastFrame = this.controllerHistory[this.controllerHistory.length - 1];
+
+      if ((0, _util.compareSets)(newFrame, lastFrame.frameSlice)) {
+        lastFrame.frameCount += 1;
+      } else {
+        this.controllerHistory.push({ frameSlice: newFrame, frameCount: 1 });
+      }
+    },
+
+
+    getHistoryTailAsString: function getHistoryTailAsString(n) {
+      var _this2 = this;
+
+      var history = this.controllerHistory.slice(-n).reverse();
+      var str = "";
+      history.map(function (frame) {
+        str = str + _this2.inputFrameAsString(frame.frameSlice);
+      });
+      return str;
+    },
+
+    getHistoryTail: function getHistoryTail(n) {
+      var history = this.controllerHistory.slice(-n).reverse;
+    },
+
+    inputFrameAsString: function inputFrameAsString(frame) {
+      //converts a set to a string, specifically to be printed to the debug window
+      var str = "";
+      if (frame.size > 0) {
+        frame.forEach(function (key) {
+          if (key === " ") {
+            key = "space";
+          }
+          str = str + key + ",";
+        });
+      }
+      str = str.slice(0, -1) + "<br>";
+      return str;
+    },
+
+    getGamepadInputs: function getGamepadInputs() {
+
+      if (this.gamepadConnected) {
+        // let kd = new Event('keydown');
+        // let ku = new Event('keyup');
+        var buttons = navigator.getGamepads()[0].buttons;
+        for (var i in buttons) {
+          if (buttons[i].pressed) {
+            kd.key = xboxIndexToKey[i];
+            this.gamepadLastStep.add(xboxIndexToButton[i]);
+            // document.dispatchEvent(kd);
+          } else {
+            if (this.gamepadLastStep.has(xboxIndexToButton[i])) {
+              this.gamepadLastStep.delete(xboxIndexToButton[i]);
+              ku.key = xboxIndexToKey[i];
+              // document.dispatchEvent(ku);
+            }
+          }
+        }
+      }
+    },
+
+    // onNewActor(actor){
+    //   if(actor.modules.actorController){
+    //     actor.initializeSubscriptions();
+    //   }
+    // },
+
+    moduleStep: function moduleStep() {
+      this.getGamepadInputs();
+      this.recordHistory();
+      this.controllerDOM.innerHTML = "Inputs: <br>" + this.getHistoryTailAsString(5) + "<br/>";
+    }
+
+  };
+  // _controller.bindKeys();
+  return _controller;
+};
+
+module.exports = gameController;
 
 /***/ }),
-/* 106 */,
+/* 106 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.compareSets = compareSets;
+function compareSets(setA, setB) {
+  var bool = true;
+  if (setA.size !== setB.size) {
+    bool = false;
+  }
+
+  setA.forEach(function (el) {
+    if (!setB.has(el)) {
+      bool = false;
+    }
+  });
+
+  setB.forEach(function (el) {
+    if (!setA.has(el)) {
+      bool = false;
+    }
+  });
+
+  return bool;
+}
+
+/***/ }),
 /* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3861,17 +4096,10 @@ var objData = function objData() {
   var start = Date.now();
   var _objData = {
     name: "objData",
-    objData: {
-      animationFrames: [],
-      animationFPS: 0,
-      physicsFrames: [],
-      physicsFPS: 0,
-      lastUpdate: start,
-      domElement: domElement
-    },
+    domElement: domElement,
     moduleStep: function moduleStep() {
       // debugger
-      this.objData.domElement.innerHTML = "x-coord: " + this.des.x + "<br>\n      y-cord: " + this.des.y + "<br>\n      animationState: " + this.modules.actorAnimator;
+      this.domElement.innerHTML = "\n      acc: " + JSON.stringify(this.acc) + "<br>\n      vel: " + JSON.stringify(this.vel) + "<br>\n      des: " + JSON.stringify(this.des) + "<br>\n      animationState: " + JSON.stringify(this.modules.actorAnimator) + "<br>\n      ~:" + JSON.stringify("~") + "<br>\n    ";
     }
   };
   return _objData;
@@ -4115,9 +4343,7 @@ function hop(coord, dir) {
 
 function move(axis, dir) {
   return function () {
-    this.targets.owner.whatever = true;
-    var acc = this.targets.owner.acc[axis];
-    acc += 0.21 * dir;
+    this.targets.owner.acc[axis] += 1 * dir;
   };
 }
 
@@ -4130,25 +4356,25 @@ var moveVerb = function moveVerb(name, axis, dir) {
   return _v;
 };
 
-var right = new moveVerb("right", "x", "+");
+var right = new moveVerb("right", "x", "1");
 right.addRequirement(function () {
   var owner = this.targets.owner;
   return owner.des.x + owner.collision_width < 960;
 });
 
-var left = new moveVerb("left", "x", "-");
+var left = new moveVerb("left", "x", "-1");
 left.addRequirement(function () {
   var owner = this.targets.owner;
   return owner.des.x > 0;
 });
 
-var down = new moveVerb("down", "y", "+");
+var down = new moveVerb("down", "y", "+1");
 down.addRequirement(function () {
   var owner = this.targets.owner;
   return owner.des.y + owner.collision_height < 640;
 });
 
-var up = new moveVerb("up", "y", "-");
+var up = new moveVerb("up", "y", "-1");
 up.addRequirement(function () {
   var owner = this.targets.owner;
   return owner.des.y > 0;
@@ -4303,40 +4529,28 @@ var actorPhysics = function actorPhysics(options) {
     vel: { x: 0, y: 0 },
     max: { x: 10, y: 10 },
     terminal: 10, //velocity max
-    friction: 0.1,
+    friction: 0.03,
     // environment: "air", //current environments
 
     applyFriction: function applyFriction(axis) {
-      var vel = this.vel[axis];
-      var mod = 0;
-      switch (vel) {
-        case vel < 0:
-          mod = 1;
-          break;
-        case vel > 0:
-          mod = -1;
-          break;
-        case vel === 0:
-          mod = 0;
-          break;
+      // if(this.vel[axis] > 0.01){debugger}
+      this.vel[axis] = this.vel[axis] - this.vel[axis] * this.friction;
+      if (0 < this.vel[axis] && this.vel[axis] < 0.2) {
+        this.vel[axis] = 0;
       }
-
-      vel = vel + this.fiction * mod;
+      if (0 > this.vel[axis] && this.vel[axis] > -0.2) {
+        this.vel[axis] = 0;
+      }
     },
 
     applyAccToVel: function applyAccToVel(axis) {
       var n = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
 
-      if (["x", "y"].some(function (x) {
-        return x === axis;
-      })) {
-        this.vel[axis] += this.acc[axis] * n;
-      } else {
-        throw "no axis passed to function";
+      this.vel[axis] = this.vel[axis] + this.acc[axis] * n;
+      if (this.vel[axis] > Math.min(this.max[axis], this.terminal)) {
+        this.vel[axis] = Math.min(this.max[axis], this.terminal);
       }
-      if (this.vel[axis] > Math.max(this.max[axis], this.terminal)) {
-        this.vel[axis] = Math.max(this.max[axis], this.terminal);
-      }
+      this.acc[axis] = 0;
     },
 
     applyVelToDes: function applyVelToDes(axis) {
@@ -4353,15 +4567,28 @@ var actorPhysics = function actorPhysics(options) {
       var _this = this;
 
       var axes = ["x", "y"];
-      if (this.whatever) {
-        debugger;
-      }
       axes.forEach(function (axis) {
         //you think fat arrow means you don't have to bind this as the second argument to forEach, but you weren't sure, so you made a note
-        _this.applyFriction(axis);
+        _this.boundaryLoopBack(axis);
         _this.applyAccToVel(axis, 1);
+        // this.applyFriction(axis);
         _this.applyVelToDes(axis);
       });
+    },
+
+    boundaryLoopBack: function boundaryLoopBack(axis) {
+      if (this.des.x < 0) {
+        this.des.x = this.des.x + 960 - this.collision_width;
+      }
+      if (this.des.x > 960) {
+        this.des.x = this.des.x - 960;
+      }
+      if (this.des.y < 0) {
+        this.des.y = this.des.y + 640 - this.collision_height;
+      }
+      if (this.des.y > 640) {
+        this.des.y = this.des.y - 640;
+      }
     }
   };
   (0, _merge2.default)(_actorPhysics, options);
