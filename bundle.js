@@ -1278,6 +1278,14 @@ var _merge = __webpack_require__(0);
 
 var _merge2 = _interopRequireDefault(_merge);
 
+var _controllerUtilities = __webpack_require__(119);
+
+var _controllerMaps = __webpack_require__(120);
+
+var gamepadMaps = _interopRequireWildcard(_controllerMaps);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var trueGame = function trueGame() {
@@ -1287,117 +1295,19 @@ var trueGame = function trueGame() {
 
 
 var negaGame = function negaGame() {
-
-  function ggp() {
-    return navigator.getGamepads();
-  }
-
-  function getid(idstring, endSlice) {
-    var gp = Array.from(ggp());
-    for (var i in gp) {
-      if (gp[i] && gp[i].id.slice(0, endSlice) === idstring) {
-        return i;
-      }
-    }
-  }
-
-  function getController(idstring, endSlice) {
-    return ggp()[getid(idstring, endSlice)];
-  }
-
-  function attachControllerToWindow(varName, id, slice) {
-    window[varName] = getGetControllerFunction(id, slice);
-  }
-
-  function getGetControllerFunction(id, slice) {
-    var _cont = function _cont() {
-      return getController(id, slice);
-    };
-    _cont.buttons = function () {
-      return getController(id, slice).buttons.map(function (b) {
-        return b.pressed;
-      });
-    };
-    _cont.axes = function () {
-      return getController(id, slice).axes;
-    };
-    return _cont;
-  }
-
-  attachControllerToWindow("xbox", "Xbox One", 8);
-  attachControllerToWindow("lcon", "Joy-Con (L)", 11);
-  attachControllerToWindow("rcon", "Joy-Con (R)", 11);
-
-  var xbox = getGetControllerFunction("Xbox One", 8);
-  var lcon = getGetControllerFunction("Joy-Con (L)", 11);
-  var rcon = getGetControllerFunction("Joy-Con (R)", 11);
-
-  function getJoyConVals() {
-    var _vals = new Set();
-    return function _getJoyConVals(value) {
-      _vals.add(value);
-      if (_vals.size < 9) {
-        // console.log(_vals);
-        // console.log(_vals.size)
-        return _getJoyConVals;
-      } else {
-        console.log(_vals);
-        return "break";
-      }
-    };
-  }
-
-  var lconvals = new getJoyConVals();
+  // attachControllerToWindow("xbox","Xbox One");
+  // attachControllerToWindow("lcon","Joy-Con (L)");
+  // attachControllerToWindow("rcon","Joy-Con (R)");
+  //
+  var xbox = (0, _controllerUtilities.miniControllerObject)("Xbox One", 8);
+  var lcon = (0, _controllerUtilities.miniControllerObject)("Joy-Con (L)");
+  var rcon = (0, _controllerUtilities.miniControllerObject)("Joy-Con (R)");
 
   function theLoop() {
-    var g = lconvals(lcon.axes()[Array.from(lcon.axes()).length - 1]);
-    // console.clear();
-    // console.log(lcon.buttons());
-    // console.log(lcon.axes());
-    // console.log( Date.now() );
+    console.clear();
+    console.log(xbox().buttons[0]);
   }
-  //
-  //
   setInterval(theLoop, 250);
-
-  // console.log(ggp()[0]);
-
-  //   document.addEventListener("gamepadconnected", (e)=>{
-  //     console.log(e);
-  //     // debugger
-  //   });
-  //   document.addEventListener("gamepaddisconnected", (e)=>{
-  // console.log(e);
-  // });
-
-
-  // const gamepads = Array.from(navigator.getGamepads());
-  // const gamepads = navigator.getGamepads();
-  //
-  // let lcon = gamepads[ getid("Joy-Con (L)",11) ];
-  // let rcon = gamepads[ getid("Joy-Con (R)",11) ];
-  // let lcons = ["Joy-Con (L)",8];
-  // let rcons = ["Joy-Con (R)",8];
-  // let xboxs = ["Xbox One",11];
-  //
-  //
-  // merge(window,{lcon, rcon, xbox});
-  //
-  // function controllerStatsToLog(gps){
-  //   // console.log(gamepad);
-  //   let gp = navigator.getGamepads()[getid(...xboxs)];
-  //   console.log(
-  //     gp.buttons.map( button => button.pressed )
-  //   );
-  //   console.log( gamepad.axes );
-  //
-  // }
-  //
-  // // function getJoyConButtons(){
-  // //
-  // // }
-  //
-
 };
 
 var falseGame = function falseGame() {};
@@ -3945,6 +3855,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.compareSets = compareSets;
+exports.swapKeysVals = swapKeysVals;
 function compareSets(setA, setB) {
   var bool = true;
   if (setA.size !== setB.size) {
@@ -3964,6 +3875,18 @@ function compareSets(setA, setB) {
   });
 
   return bool;
+}
+
+function swapKeysVals(obj) {
+  var newObj = {};
+
+  var keys = Object.keys(obj);
+  keys.forEach(function (key) {
+    newObj[obj[key]] = key;
+  });
+
+  this.JSON = JSON.stringify(newObj);
+  return newObj;
 }
 
 /***/ }),
@@ -4707,6 +4630,241 @@ var actorPhysics = function actorPhysics(options) {
 };
 
 module.exports = actorPhysics;
+
+/***/ }),
+/* 119 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.ggp = ggp;
+exports.getControllerIndex = getControllerIndex;
+exports.getController = getController;
+exports.miniControllerObject = miniControllerObject;
+exports.attachControllerToWindow = attachControllerToWindow;
+
+var _controllerMaps = __webpack_require__(120);
+
+var gpMaps = _interopRequireWildcard(_controllerMaps);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+var gamepadIDs = {
+  "Xbox One": 8,
+  "Joy-Con (L)": 11,
+  "Joy-Con (R)": 11
+};
+
+function ggp() {
+  return navigator.getGamepads();
+}
+
+function getControllerIndex(idstring, endSlice) {
+  var gamepads = Array.from(ggp());
+  for (var i in gamepads) {
+    if (gamepads[i] && gamepads[i].id.slice(0, endSlice) === idstring) {
+      return i;
+    }
+  }
+  console.error("gamepad not found");
+}
+
+function getController(idString) {
+  var id = gamepadIDs[idString];
+  return ggp()[getControllerIndex(idString, gamepadIDs[idString])];
+}
+
+function miniControllerObject(idString) {
+  var _cont = function _cont() {
+    return getController(idString);
+  };
+  _cont.buttons = function () {
+    return getController(idString).buttons.map(function (b) {
+      return b.pressed;
+    });
+  };
+  _cont.axes = function () {
+    return getController(idString).axes;
+  };
+  return _cont;
+}
+
+function attachControllerToWindow(varName, idString) {
+  window[varName] = new miniControllerObject(idString);
+}
+
+//everything below this is disorganized, might be deleted
+
+
+function getAxisVals() {
+  var map = gpMaps.joyconDirectionToFloat;
+  var neutral = map.neutral;
+  var vals = function vals() {
+    Object.values(map);
+  };
+  var keys = Object.keys(map);
+  keys.map(function (key) {
+    if (!vals.some(function (value) {
+      return value === map[key];
+    })) {
+      console.log(key);
+      var val = neutral;
+      while (val === neutral) {
+        val = lcon.axes()[9];
+      }
+      map[key] = val;
+    }
+  });
+  console.log(map);
+} //used to get float values from analogue inputs on joycon
+
+/***/ }),
+/* 120 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var KeyToXbox = exports.KeyToXbox = {
+  "k": "a",
+  "l": "b",
+  "j": "x",
+  "i": "y",
+
+  "u": "lb",
+  "o": "rb",
+  "7": "lt",
+  "9": "rt",
+
+  "`": "select",
+  "Escape": "start",
+
+  "-": "lclick",
+  "=": "rclick",
+
+  "w": "up",
+  "s": "down",
+  "a": "left",
+  "d": "right"
+};
+var XboxToKey = exports.XboxToKey = {
+  "a": "k",
+  "b": "l",
+  "x": "j",
+  "y": "i",
+
+  "lb": "u",
+  "rb": "o",
+  "lt": "7",
+  "rt": "9",
+
+  "select": "`",
+  "start": "Escape",
+
+  "-": "lclick",
+  "=": "rclick",
+
+  "up": "w",
+  "down": "s",
+  "left": "a",
+  "right": "d"
+};
+var xboxIndexToKey = exports.xboxIndexToKey = ["k", //1
+"l", //2
+"j", //3
+"i", //4
+
+"u", //5
+"o", //6
+"7", //7
+"9", //8
+
+"`", //9
+"Escape", //10
+
+"-", //11
+"=", //12
+
+"w", //13
+"s", //14
+"a", //15
+"d" //16
+];
+var xboxIndexToButton = exports.xboxIndexToButton = ["a", "b", "x", "y", "lb", //5
+"rb", //6
+"lt", //7
+"rt", //8
+
+"select", //9
+"start", //10
+
+"lclick", //11
+"rclick", //12
+
+"up", "down", "left", "right"];
+
+var lconIndexToButton = exports.lconIndexToButton = ["left", "down", "up", "right", "sl", "sr", null, null, "-", null, "lclick", null, null, "capture", "lb", "zl"];
+
+var rconIndexToButton = exports.rconIndexToButton = ["a", "b", "x", "y", "sl", "sr", null, null, null, "+", null, "rclick", "home", null, "rb", "zr"];
+
+var joyconDirectionToFloatL = exports.joyconDirectionToFloatL = {
+  right: -1,
+  downright: -0.7142857313156128,
+  down: -0.4285714030265808,
+  downleft: -0.14285719394683838,
+  neutral: 1.2857143878936768,
+  upright: 1,
+  up: 0.7142857313156128,
+  upleft: 0.4285714626312256,
+  left: 0.14285719394683838
+};
+
+var joyconFloatToDirectionL = exports.joyconFloatToDirectionL = { "1": "upright", "1.2857143878936768": "neutral", "0.7142857313156128": "up", "-0.4285714030265808": "down", "0.14285719394683838": "left", "-1": "right", "0.4285714626312256": "upleft", "-0.1428571343421936": "downleft", "-0.7142857313156128": "downright" };
+
+var joyconDirectionToFloatR = exports.joyconDirectionToFloatR = {
+  neutral: 1.2857143878936768,
+  up: -0.4285714030265808,
+  down: 0.7142857313156128,
+  left: -1,
+  right: 0.14285719394683838,
+  upleft: -0.7142857313156128,
+  upright: -0.14285719394683838,
+  downleft: 1,
+  downright: 0.4285714626312256
+};
+
+var joyconFloatToDirectionR = exports.joyconFloatToDirectionR = { "1": "downleft", "1.2857143878936768": "neutral", "-0.4285714030265808": "up", "0.7142857313156128": "down", "-1": "left", "0.14285719394683838": "right", "-0.7142857313156128": "upleft", "-0.1428571343421936": "upright", "0.4285714626312256": "downright" };
+
+var generic = exports.generic = {
+  lxaxis: true,
+  lyaxis: true,
+  ltrigger: true,
+  xaxisr: true,
+  yaxisr: true,
+  rtrigger: true,
+  lfaceu: true,
+  lfaced: true,
+  lfacel: true,
+  lfacer: true,
+  lclick: true,
+  rfaceu: true,
+  rfaced: true,
+  rfacel: true,
+  rfacer: true,
+  rclick: true,
+  lnav: true,
+  rnav: true,
+  lsystem: true,
+  rsystem: true
+
+};
 
 /***/ })
 /******/ ]);
