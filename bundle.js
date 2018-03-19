@@ -1394,6 +1394,8 @@ var xboxIndexToKey = exports.xboxIndexToKey = ["k", //1
 "d" //16
 ];
 
+var xboxIndexToButton = exports.xboxIndexToButton = ["a", "b", "x", "y", "lb", "rb", "lt", "rt", "select", "start", "-", "=", "up", "down", "left", "right"];
+
 var lconIndexToButton = exports.lconIndexToButton = ["left", "down", "up", "right", "sl", "sr", null, null, "-", null, "lclick", null, null, "capture", "lb", "zl"];
 
 var rconIndexToButton = exports.rconIndexToButton = ["a", "b", "x", "y", "sl", "sr", null, null, null, "+", null, "rclick", "home", null, "rb", "zr"];
@@ -3829,10 +3831,6 @@ var _merge2 = _interopRequireDefault(_merge);
 
 var _util = __webpack_require__(34);
 
-var _xbox_support = __webpack_require__(124);
-
-var _xbox_support2 = _interopRequireDefault(_xbox_support);
-
 var _controllerMaps = __webpack_require__(109);
 
 var Maps = _interopRequireWildcard(_controllerMaps);
@@ -3843,6 +3841,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 // import KeyboardSupport from './keyboard_support.js';
+// import XBoxSupport from './xbox_support.js';
 
 
 var virtualController = function virtualController(options) {
@@ -3891,24 +3890,15 @@ var virtualController = function virtualController(options) {
     },
 
     appendHistory: function appendHistory(newFrame) {
-      //   // if( newFrame.size === 0 ){
-      //   //   this.stateLog[this.stateLog.length - 1].frames += 1;
-      //   //   return;
-      //   // }
-      //   // if(
-      //     // this.controllerLog.stateLog && this.controllerLog.stateLog.buttons.some(
-      //   //     (e)=>{e === true;}
-      //   //   )
-      //   // ){
-      //     // debugger
-      //   // }
-      //
       this.controllerLog.stateLog.push((0, _merge2.default)({}, this.state));
-      //
     },
     bindKeys: function bindKeys() {
+      //keyboard
       document.addEventListener('keydown', this.handleKeyDown.bind(this));
       document.addEventListener('keyup', this.handleKeyUp.bind(this));
+      //xbox
+      document.addEventListener('gamepadConnected', this.handleGamepadConnected.bind(this));
+      document.addEventListener('gamepadDisconnected', this.handleGamepadDisconnected.bind(this));
     },
     handleKeyDown: function handleKeyDown(e) {
       if (Maps.KeyToXbox[e.key]) {
@@ -3920,22 +3910,14 @@ var virtualController = function virtualController(options) {
         this.state.buttons[Maps.KeyToXbox[e.key]] = false;
       }
     },
-    pushControllerHistory: function pushControllerHistory() {
-      var newFrame = new Set();
-      this.state.buttons.forEach(function (el) {
-        newFrame.add(el);
-      });
-      if (newFrame.size === 0) {
-        newFrame.add("~");
-      }
-
-      var lastFrame = this.controllerHistory.state[this.controllerHistory.state.length - 1];
-
-      if (compareSets(newFrame, lastFrame.frameSlice)) {
-        lastFrame.frameCount += 1;
-      } else {
-        this.controllerHistory.push({ frameSlice: newFrame, frameCount: 1 });
-      }
+    handleGamepadConnected: function handleGamepadConnected(e) {
+      this.gamepadConnected = true;
+      // console.log("gamepadConnected; id:%s; index:%d", e.id, i.index);
+      devLog.log("gamepadConnected; id:%s; index:%d", e.id, i.index);
+    },
+    handleGamepadDisconnected: function handleGamepadDisconnected(e) {
+      this.gamepadDisconnected = false;
+      devLog.log("gamepaddisconnected; id:%s; index:%d", e.id, i.index);
     },
 
 
@@ -3958,10 +3940,24 @@ var virtualController = function virtualController(options) {
     },
 
     dispatchControllerEvent: function dispatchControllerEvent(detail) {
-      // console.log("dispatching controller event %s", detail);
       document.dispatchEvent(new CustomEvent('controllerAction', { detail: detail }));
     },
+    pollGamePads: function pollGamePads() {
+      // debugger
+      // if(this.gamepadConnected){
+      var buttons = navigator.getGamepads()[0].buttons;
+
+      for (var i in buttons) {
+        if (buttons[i].pressed) {
+          this.state.buttons[Maps.xboxIndexToButton[i]] = true;
+        } else {
+          this.state.buttons[Maps.xboxIndexToButton[i]] = false;
+        }
+      }
+      // }
+    },
     moduleStep: function moduleStep() {
+      this.pollGamePads();
       var changeFrame = this.compareControllerHistory();
       // console.log(changeFrame.size);
       this.appendHistory(); //changeFrame);
@@ -4957,20 +4953,6 @@ function getAxisVals() {
   });
   console.log(map);
 } //used to get float values from analogue inputs on joycon
-
-/***/ }),
-/* 123 */,
-/* 124 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var XBoxSupport = function XBoxSupport() {
-  var _xboxSupport = {};
-};
-
-module.exports = XBoxSupport;
 
 /***/ })
 /******/ ]);
