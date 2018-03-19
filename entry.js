@@ -27,7 +27,19 @@ const negaGame = () => {
 };
 
 const falseGame = ()=>{
+  console.log("Start");
+  const Thing = {
+    state: {"a":1},
+    history: [],
+    pushHistory: function(){
+      this.history.push(merge({},this.state));
+    },
 
+  };
+  Thing.pushHistory();
+  Thing.state.a = 2;
+  Thing.pushHistory();
+  console.log(JSON.stringify(Thing.history));
 
 
 };
