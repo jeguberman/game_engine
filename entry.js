@@ -8,6 +8,9 @@ import * as gamepadMaps from "./lib/actors/modules/controller/controllerMaps.js"
 const trueGame = ()=>{
   const game = mockGame();
   game.startClock();//time Manager
+
+  
+
 };
 
 const negaGame = () => {

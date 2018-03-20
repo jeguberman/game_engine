@@ -1462,6 +1462,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var trueGame = function trueGame() {
   var game = (0, _mock_game2.default)();
   game.startClock(); //time Manager
+
 }; // import dbSetUp from './lib/util/debugUtil';
 
 
@@ -3839,11 +3840,6 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-// import KeyboardSupport from './keyboard_support.js';
-// import XBoxSupport from './xbox_support.js';
-
-
 var virtualController = function virtualController(options) {
   var _virtualController = {
     name: "virtualController",
@@ -3912,12 +3908,13 @@ var virtualController = function virtualController(options) {
     },
     handleGamepadConnected: function handleGamepadConnected(e) {
       this.gamepadConnected = true;
-      // console.log("gamepadConnected; id:%s; index:%d", e.id, i.index);
+      console.log("gamepadConnected; id:%s; index:%d", e.id, i.index);
       devLog.log("gamepadConnected; id:%s; index:%d", e.id, i.index);
     },
     handleGamepadDisconnected: function handleGamepadDisconnected(e) {
       this.gamepadDisconnected = false;
-      devLog.log("gamepaddisconnected; id:%s; index:%d", e.id, i.index);
+      console.log("gamepadDisconnected; id:%s; index:%d", e.id, i.index);
+      devLog.log("gamepadDisconnected; id:%s; index:%d", e.id, i.index);
     },
 
 
@@ -3925,15 +3922,16 @@ var virtualController = function virtualController(options) {
       var _this = this;
 
       var lastFrame = this.controllerLog.stateLog[this.controllerLog.stateLog.length - 1];
-      var changeRecord = {};
+      var changeRecord = [];
       var keys = Object.keys(this.state.buttons);
 
       keys.forEach(function (key) {
         if (_this.state.buttons[key] === true && lastFrame.buttons[key] === false) {
-          changeRecord.pressdown = key;
+          changeRecord.push({ type: "pressdown", payload: key });
         }
+
         if (_this.state.buttons[key] === false && lastFrame.buttons[key] === true) {
-          changeRecord.pressup = key;
+          changeRecord.push({ type: "pressup", payload: key });
         }
       });
       return changeRecord;
@@ -3944,26 +3942,26 @@ var virtualController = function virtualController(options) {
     },
     pollGamePads: function pollGamePads() {
       // debugger
-      // if(this.gamepadConnected){
-      var buttons = navigator.getGamepads()[0].buttons;
+      if (this.gamepadConnected) {
+        var buttons = navigator.getGamepads()[0].buttons;
 
-      for (var i in buttons) {
-        if (buttons[i].pressed) {
-          this.state.buttons[Maps.xboxIndexToButton[i]] = true;
-        } else {
-          this.state.buttons[Maps.xboxIndexToButton[i]] = false;
+        for (var i in buttons) {
+          if (buttons[i].pressed) {
+            this.state.buttons[Maps.xboxIndexToButton[i]] = true;
+          } else {
+            this.state.buttons[Maps.xboxIndexToButton[i]] = false;
+          }
         }
       }
-      // }
     },
     moduleStep: function moduleStep() {
       this.pollGamePads();
       var changeFrame = this.compareControllerHistory();
-      // console.log(changeFrame.size);
+      // console.log(changeFrame.size)Frame
       this.appendHistory(); //changeFrame);
       // if(Object.keys(changeFrame).length > 0){debugger}
-      for (var changeEvent in changeFrame) {
-        this.dispatchControllerEvent(_defineProperty({}, changeEvent, changeFrame[changeEvent]));
+      for (var i in changeFrame) {
+        this.dispatchControllerEvent(changeFrame[i]);
       }
     }
   };
@@ -3972,6 +3970,9 @@ var virtualController = function virtualController(options) {
 
   return (0, _merge2.default)(_virtualController, options);
 };
+// import KeyboardSupport from './keyboard_support.js';
+// import XBoxSupport from './xbox_support.js';
+
 
 module.exports = virtualController;
 
@@ -4618,7 +4619,7 @@ var moveVerb = function moveVerb(name, axis, dir) {
   var _v = new _verb2.default({ name: name });
   _v.setFunc(hop(axis, dir));
   _v.setTrigger(function (e) {
-    return e.detail.pressdown === name;
+    return e.detail.type === "pressdown" && e.detail.payload === name;
   });
   return _v;
 };
