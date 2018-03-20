@@ -1455,16 +1455,20 @@ var _controllerMaps = __webpack_require__(35);
 
 var gamepadMaps = _interopRequireWildcard(_controllerMaps);
 
+var _controllerDebug = __webpack_require__(125);
+
+var _controllerDebug2 = _interopRequireDefault(_controllerDebug);
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+// import dbSetUp from './lib/util/debugUtil';
 var trueGame = function trueGame() {
   var game = (0, _mock_game2.default)();
   game.startClock(); //time Manager
-
-}; // import dbSetUp from './lib/util/debugUtil';
-
+  (0, _controllerDebug2.default)();
+};
 
 var negaGame = function negaGame() {
   // attachControllerToWindow("xbox","Xbox One");
@@ -4954,6 +4958,101 @@ function getAxisVals() {
   });
   console.log(map);
 } //used to get float values from analogue inputs on joycon
+
+/***/ }),
+/* 123 */,
+/* 124 */,
+/* 125 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+// import {compareSets} from '../../util/util';
+
+// const controllerDebug = ()=>{
+function controllerFeedBack() {
+
+  var controllerDOM = document.getElementById("controlDebug");
+
+  var activeInputs = new Set();
+  document.addEventListener('controllerAction', handleControllerAction);
+
+  function inputFrameAsString(frame) {
+    //converts a set to a string, specifically to be printed to the debug window
+    var str = "";
+    if (frame.size > 0) {
+      frame.forEach(function (key) {
+        if (key === " ") {
+          key = "space";
+        }
+        str = str + key + ",";
+      });
+    }
+    str = str.slice(0, -1) + "<br>";
+    return str;
+  }
+
+  function handleControllerAction(e) {
+    // switch(e.type){
+    //   case "pressdown":
+    //   activeInputs.add(e.payload);
+    //   return;
+    //   case "pressup":
+    //   activeInputs.delete(e.payload);
+    //   return;
+    // }
+  }
+
+  controllerDOM.innerHTML = activeInputs.string();
+
+  //     getGamepadInputs: function(){
+  //       // console.log(this.gamepadConnected);
+  //       if(this.gamepadConnected){
+  //         // let kd = new Event('keydown');
+  //         // let ku = new Event('keyup');
+  //         let buttons = navigator.getGamepads()[0].buttons;
+  //         for(var i in buttons){
+  //           if(buttons[i].pressed){
+  //             console.log(i);
+  //             // kd.key = xboxIndexToKey[i];
+  //             this.gamepadLastStep.add(xboxIndexToButton[i]);
+  //             // document.dispatchEvent(kd);
+  //           } else {
+  //             if(this.gamepadLastStep.has(xboxIndexToButton[i]) ){
+  //               this.gamepadLastStep.delete(xboxIndexToButton[i]);
+  //               // ku.key = xboxIndexToKey[i];navigat
+  //               // document.dispatchEvent(ku);
+  //             }
+  //           }
+  //         }
+  //       }
+  //     },
+  //
+  //
+  //
+  //     // onNewActor(actor){
+  //     //   if(actor.modules.actorController){
+  //     //     actor.initializeSubscriptions();
+  //     //   }
+  //     // },
+  //
+  //     moduleStep: function(){
+  //       this.getGamepadInputs();
+  //       this.recordHistory();
+  // this.controllerDOM.innerHTML = "Inputs: <br>" +
+  // this.getHistoryTailAsString(5) + "<br/>";
+  //     },
+  //
+  //
+  //
+  //   };
+  //   // _controller.bindKeys();
+  //   return _controller;
+  //
+  // };
+}
+module.exports = controllerFeedBack;
 
 /***/ })
 /******/ ]);

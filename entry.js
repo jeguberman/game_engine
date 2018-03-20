@@ -4,12 +4,14 @@ import mockGame from './lib/mocks/mock_game';
 import merge from 'lodash/merge';
 import { ggp, getid, getControllerById, attachControllerToWindow, miniControllerObject } from "./lib/util/controllerUtilities.js";
 import * as gamepadMaps from "./lib/actors/modules/controller/controllerMaps.js";
+import controllerFeedBack from "./lib/game/modules/controller/controllerDebug.js";
+
 
 const trueGame = ()=>{
   const game = mockGame();
   game.startClock();//time Manager
+  controllerFeedBack();
 
-  
 
 };
 
