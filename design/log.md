@@ -607,3 +607,24 @@ I did something else in my fullstack project, but I can't remember what without 
 It did. I now better understand webpack modules. Also the example at webpack's website didn't quite work, and I had to modify how it works with my config file. So you know, that's hacking. I'm a hacker.
 
 Bottom line, webpack needs me to install certain loaders for certain file types. Makes sense. It already did.
+
+Love Each Other, but don't fuck it up.
+Goomba
+
+#April 5th 2018
+
+I added piskel support. I was pretty drunk when I started, and when I stopped I was so tired I don't remember going to sleep on the second floor.
+
+So as a result the functions all have names like "SpawnLarva" and "apoptosize".
+
+I know I should fix this. But I'm not going to for two reasons.
+
+1: It's awesome and I think it really shows my personality
+2: It stands out, and I want it to, because it needs to be refactored.
+
+You see, I call it the parasite because it doesn't work within the scope of the system. It just adds methods to the base class without asking. But it does the job I want right now.
+
+Also... it really does tickle my personality.
+
+Love each other! AGGRESSIVELY! But with consent.
+Goomba
