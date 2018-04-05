@@ -590,4 +590,20 @@ Goomba
 # March 13th
 Always always abandoning features. But at least it's usually for a good reason.
 
-I was fairly adament that I wanted 
+I was fairly adament that I wanted
+
+# April 4th
+
+Oh man I was sick for like two weeks. Also I've been working on other projects. Stuff in my portfolio.
+
+I learned a bit about webpack today. I mean, it's stuff I knew, but I didn't know I know, you know? Yeah you know.
+
+so webpack basically works as my linker. It's super helpful if I want to import javascript files, but I wanted a JSON string in a file. In ruby it's very easy to manipulate a file locally, there's a class dedicated to it. Javascript seemed a little tougher but it doesn't matter because I basically get to send one javascript file. I mean... with webpack. kiiiind of. Well look, the consequence is this. I can't tell you to just load up the file found in this path because you don't have the path.
+
+I could reference the files as img elements in the html and grab them individually but FUUUUUUUCK THAT, Jesus God that sounds like a lot of work.
+
+I did something else in my fullstack project, but I can't remember what without looking at it, and I'm like 90% sure it was a slightly more boiler platey version of just writing the img tags and grabbing them from the dom, NO DAMN IT, if webpack does ONE thing for me, it's linking my files. Webpack had to have a solution.
+
+It did. I now better understand webpack modules. Also the example at webpack's website didn't quite work, and I had to modify how it works with my config file. So you know, that's hacking. I'm a hacker.
+
+Bottom line, webpack needs me to install certain loaders for certain file types. Makes sense. It already did.

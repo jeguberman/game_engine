@@ -12,6 +12,10 @@ module.exports = {
         query: {
           presets: ['env']
         }
+      },
+      {
+        test: /\.(png|svg|jpg|gif)$/,
+        loader: 'file-loader'
       }
     ]
   },
