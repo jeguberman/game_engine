@@ -5,9 +5,6 @@
   border: none;
   /* border: 1px solid red; */
   line-height: 1;
-
-
-
 }
 
 body {
@@ -26,6 +23,10 @@ a{
   padding: 10px;
   display: inline-block;
   height: 49px;
+}
+
+#title:hover{
+  color: blue;
 }
 
 .sidebar{

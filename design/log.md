@@ -628,3 +628,26 @@ Also... it really does tickle my personality.
 
 Love each other! AGGRESSIVELY! But with consent.
 Goomba
+
+
+# April 9th
+
+Well, on the subject of planning, I didn't really do any. Because I didn't really know what to expect. I built a javascript game in 3 days, how long could it take me to build an engine?
+
+And the truth is, I probably could have done this much faster than I did. But I didn't really do a lot of planning. Not only did I not do a lot of planning, I frequently found myself thinking "I want to implement this thing eventually, and I'll have to redo everything when I do that"
+
+And I have. Frequently I am finding myself combing over every part of the engine, refactoring it to match some new paradigm of how information should be managed. I don't actually regret this, even though I know it's the "wrong way". This is just kind of how I learn.
+
+In this case, each module needs to change the way it updates it's state. Currently, on the actor's main component, there is a hash map who's key value pairs are the names of the modules and the state those modules are in. This might stay the way it is, but there's nothing actually updating the states. We'll look at animation to explore why this is a problem.
+
+The actor animation module has two basic jobs. Store the sprite sheet and information relevant to the sprite sheet, and draw the actor in the canvas element view. But knowing WHICH animations is currently being manually set. Which means both button inputs and environmental inputs like damage and collision have to individually tell the animation module which animation cycle to use.
+
+What if the button inputs and the collision don't agree on which animation to use? Whichever one was called last will be the animation. But this could mean our actor is shown walking when she should be taking damage, or taking damage when she should be walking.
+
+The obvious answer, and I hope not the naive answer, is to have the animation module look at the various states of the other modules to determine which animation cycle to use. For example, if the physics module shows right bound velocity, but the controller module shows left direction input, and the collision module flags true for ground collision, the animation module might render a skid animation.
+
+This is useful for other modules as well. Given the same circumstances, but the collision module flags false for ground collision (the character is in freefall) the physics module might not allow any leftwars acceleration, if the programmer wanted a degree of realism over aerial control.
+
+React's redux library has it's single source of truth. It had various "reducer" functions which would take the current state as well as all the new information, and ask every single layer of data, called slices in redux, how to update. This would be... well... not unhelpful, if I knew I could do it quickly.
+
+If nothing else, when this is "done", I have to immediately get all of it's shit in line, formalize a lot of what happened organically, and start version 2. I can't even really declare what needs to be done. Lifecycle methods need to be formalized.
