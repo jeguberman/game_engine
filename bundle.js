@@ -4402,7 +4402,7 @@ function mockGame() {
   view.height = game.view_height; //should these assignments be in the setContext method?
 
 
-  game.addActor(new _player_actor2.default());
+  game.addActor(new _player_actor2.default(0, 0));
   // game.addActor(new coinActor(1,1));
   game.addActor(new _coin_actor2.default(2, 2));
 
@@ -4453,9 +4453,18 @@ var _objData2 = _interopRequireDefault(_objData);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var playerActor = function playerActor() {
+  var n = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+  var m = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+
   devLog.log('ceating new player object');
 
-  var _playerActor = new _actor2.default({ name: "player" });
+  var _playerActor = new _actor2.default({
+    name: "player",
+    des: {
+      x: 0 + n * 32,
+      y: 0 + n * 32
+    }
+  });
 
   devLog.log('adding modules to player');
   _playerActor.addModules(new _player_animation2.default(), new _player_physics2.default(), new _player_controller2.default(), new _player_collision2.default());
@@ -4465,6 +4474,7 @@ var playerActor = function playerActor() {
 
   devLog.log('initializing controller for player');
   _playerActor.initializeActorController();
+  _playerActor.initializeActorCollision();
 
   return _playerActor;
 };
@@ -4642,6 +4652,7 @@ var actorController = function actorController(options) {
       this.addVerb(this.spawnVerb());
     },
     initializeActorController: function initializeActorController() {
+      //this is a "componentDidMount" but it's not supposed to run until AFTER a new instance of the actor has been created. Will fix in v2.0 if not earlier
       var handleControllerAction = this.handleControllerAction.bind(this);
       document.addEventListener("controllerAction", handleControllerAction);
     }
@@ -5029,7 +5040,7 @@ var coinActor = function coinActor() {
 
   devLog.log('ceating new coin object');
   var options = {
-    name: 'coin' + i,
+    name: 'coin',
     des: {
       x: 0 + n * 40,
       y: 0 + m * 40
@@ -5327,6 +5338,8 @@ var _merge2 = _interopRequireDefault(_merge);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 //for now, we're only going to do box collision. Eventually actorCollision will require a type variable to be passed, and it will return the appropriate collision component, but for now everything is box.
 //
 // const collisionZone = {
@@ -5339,10 +5352,10 @@ var actorCollision = function actorCollision(options) {
     name: "actorCollision",
     collision_width: 32,
     collision_height: 32,
-    state: "collisionState",
+    initialState: "collisionState",
     collisionType: "box",
-    responses: {},
-    collisions: [],
+    collisionResponses: {},
+    collisions: {},
 
     checkCollision: function checkCollision(otherObj) {
       if (otherObj.collisionType === "box") {
@@ -5352,22 +5365,28 @@ var actorCollision = function actorCollision(options) {
       }
     },
     //
-    // addCollisionResponse(objName, func, zone = "any"){
-    //   this.collisions[objName][zone] = func;
-    // },
+    addCollisionResponse: function addCollisionResponse(objName, zone, func) {
+      Object.assign(this.collisionResponses, _defineProperty({}, objName, _defineProperty({}, zone, func)));
+    },
+
     //
     boxCollision: function boxCollision(otherObj) {
       var headIn = this.otherHeadIn(otherObj);
       var footIn = this.otherFootIn(otherObj);
-
-      if (this.name === "coin0") {
-        if (headIn) {}
+      var leftIn = this.otherLeftIn(otherObj);
+      var rightIn = this.otherRightIn(otherObj);
+      if (leftIn || rightIn) {
+        if (!footIn && headIn) {
+          this.collisions[otherObj.name] = "foot";
+        }
       }
     },
 
+    //these functions need a better name. It would also be nice to reduce the boiler plate but this is fine for now. These functions determine if the edge of otherObj falls between two points on the relevant axis of "this". That is to say, in otherHeadIn, if otherObj's head is between my head and my feet, the function returns true.
+
     otherHeadIn: function otherHeadIn(otherObj) {
       var oHead = otherObj.des.y;
-      if (oHead <= this.des.y && oHead >= this.des.y + this.collision_height) {
+      if (oHead >= this.des.y && oHead <= this.des.y + this.collision_height) {
         return true;
       }
       return false;
@@ -5375,35 +5394,51 @@ var actorCollision = function actorCollision(options) {
 
     otherFootIn: function otherFootIn(otherObj) {
       var oFoot = otherObj.des.y + otherObj.collision_height;
-      if (oFoot <= this.des.y && oFoot >= this.des.y + this.collision_height) {
+      if (oFoot >= this.des.y && oFoot <= this.des.y + this.collision_height) {
         return true;
       }
       return false;
     },
-    //
-    // otherLeftIn: function(otherObj){
-    //   let oLeft = otherObj.des.y;
-    //   if( oLeft <= this.des.y && oLeft >= this.des.y + this.collision_height){
-    //     return true;
-    //   }
-    //   return false;
-    // },
-    //
-    // otherRightIn: function(otherObj){
-    //   let oFoot = otherObj.des.y + otherObj.collision_height;
-    //   if( oFoot <= this.des.y && oLeft >= this.des.y + this.collision_height){
-    //     return true;
-    //   }
-    //   return false;
-    // },
 
+    otherLeftIn: function otherLeftIn(otherObj) {
+      var oLeft = otherObj.des.x;
+      if (oLeft >= this.des.x && oLeft <= this.des.x + this.collision_width) {
+        return true;
+      }
+      return false;
+    },
 
-    upCollision: function upCollision(otherObj) {}
+    otherRightIn: function otherRightIn(otherObj) {
+      var oRight = otherObj.des.x + otherObj.collision_width;
+      if (oRight <= this.des.x + this.collision_width && oRight >= this.des.x) {
+        return true;
+      }
+      return false;
+    },
 
-    // moduleStep: function(){
-    //   this.checkCollision();
-    //   // this.collisions = {};
-    // }
+    handleCollisionResponse: function handleCollisionResponse(event) {
+      // debugger
+      if (this.collisionResponses[event]) {
+        this.collisionResponses[event][this.collisions[event]]();
+      }
+    },
+
+    initializeActorCollision: function initializeActorCollision() {
+      // this.handleCollisionResponse = this.handleCollisionResponse.bind(this);
+      for (var response in this.collisionResponses) {
+        for (var zone in this.collisionResponses[response]) {
+          this.collisionResponses[response][zone] = this.collisionResponses[response][zone].bind(this);
+        } // this.collisionResponses[response] =  this.collisionResponses[response].bind(this);
+      }
+    },
+
+    moduleStep: function moduleStep() {
+      var g = this;
+      for (var event in this.collisions) {
+        this.handleCollisionResponse(event);
+      }
+      this.collisions = {};
+    }
   };
 
   (0, _merge2.default)(_actorCollision, options);
@@ -5439,6 +5474,10 @@ var collisionComponent = function collisionComponent(options) {
       try {
         for (var _iterator = actors[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
           var collider = _step.value;
+
+          if (!collider.modules["actorCollision"]) {
+            break;
+          }
           var _iteratorNormalCompletion2 = true;
           var _didIteratorError2 = false;
           var _iteratorError2 = undefined;
@@ -5446,7 +5485,6 @@ var collisionComponent = function collisionComponent(options) {
           try {
             for (var _iterator2 = actors[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
               var collidee = _step2.value;
-
 
               if (collider === collidee) {
                 continue;
@@ -5509,6 +5547,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var playerCollision = function playerCollision() {
   var _playerCollision = new _actorCollision2.default();
+  _playerCollision.addCollisionResponse("coin", "foot", function () {
+    this.modules.actorAnimator = "collideDown";
+  });
   return _playerCollision;
 };
 
