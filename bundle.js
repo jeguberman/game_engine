@@ -396,8 +396,7 @@ var actor = function actor(options) {
     name: "actor",
     type: "actor",
     collision_width: 32,
-    collision_height: 32,
-    state: "default"
+    collision_height: 32
   }, options);
 
   var _actor = new _module_manager2.default(options);
@@ -748,10 +747,8 @@ var EngineCore = function EngineCore() {
 var Game = function Game() {
   devLog.log("creating Game Engine");
   var _game = new EngineCore();
-  _game.addModule(new _virtualController2.default());
-  _game.addModules(
-  // new gameController(),
-  new _physicsComponent2.default(), new _collisionComponent2.default(), new _renderer2.default());
+  _game.addModules(new _virtualController2.default());
+  _game.addModules(new _physicsComponent2.default(), new _collisionComponent2.default(), new _renderer2.default());
   devLog.log("game engine complete");
   _game.bindKeys();
   return _game;
@@ -775,7 +772,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var ModuleManager = function ModuleManager(options) {
   devLog.log("creating new Module Manager: " + options.name);
   var _moduleManager = {
-    modules: {},
+    modules: new Set(),
+    state: {},
     moduleSteps: [],
     moduleVerifications: [],
 
@@ -789,21 +787,17 @@ var ModuleManager = function ModuleManager(options) {
     addModule: function addModule(newObj) {
       //merge with object and add object name to modules list.
       devLog.log("[" + this.name + "] begins incorporating new module [" + newObj.name + "]");
+      var newName = newObj.name;
       if (newObj) {
         //why???
-        this.verifyModuleName(newObj);
-        this.modules[newObj.name] = newObj.initialState;
+        this.newModuleWillMount(newObj);
+        this.assimilateNewModuleStates(newObj);
+        this.assimilateNewModuleName(newObj);
 
-        delete newObj.initialState;
-        this.addModuleVerifications(newObj);
-        this.runModuleVerifications(newObj);
-        this.verifyModuleStep(newObj);
-        this.ifComponentWillMount(newObj);
-        var trueName = this.name;
+        this.assimilateNewModuleStep(newObj);
         (0, _merge2.default)(this, newObj);
-        this.name = trueName;
-        this.ifComponentDidMount(newObj);
-        devLog.log("[" + this.name + "] finishes incorporating new module [" + newObj.name + "]");
+        this.newModuleDidMount(newObj);
+        devLog.log("[" + this.name + "] finishes incorporating new module [" + newName + "]");
       }
     },
 
@@ -811,18 +805,26 @@ var ModuleManager = function ModuleManager(options) {
       //this should definitely be doable I'm just lazy right now
     },
 
-    ifComponentDidMount: function ifComponentDidMount(newObj) {
-      if (newObj.componentDidMount) {
-        this.componentDidMount();
+    assimilateNewModuleStates: function assimilateNewModuleStates(newObj) {
+      if (newObj.state) {
+        this.state[newObj.name] = newObj.state;
+        delete newObj.state;
+      }
+    },
+    newModuleWillMount: function newModuleWillMount(newObj) {
+      if (newObj.moduleWillMount) {
+        newObj.moduleWillMount();
+        delete newObj.moduleWillMount;
       }
     },
 
-    ifComponentWillMount: function ifComponentWillMount(newObj) {
-      if (newObj.componentWillMount) {
-        newObj.componentWillMount();
+
+    newModuleDidMount: function newModuleDidMount(newObj) {
+      if (newObj.moduleDidMount) {
+        this.moduleDidMount();
+        delete this.moduleDidMount;
       }
     },
-
 
     addModules: function addModules() {
       var _this = this;
@@ -836,6 +838,12 @@ var ModuleManager = function ModuleManager(options) {
       });
     },
 
+    assimilateNewModuleName: function assimilateNewModuleName(newObj) {
+      this.verifyModuleName(newObj);
+      this.modules.add(newObj.name);
+      delete newObj.name;
+    },
+
     verifyModuleName: function verifyModuleName(newObj) {
       //verify newObj has property "name", or else throw an error
       if (!newObj.name) {
@@ -843,22 +851,7 @@ var ModuleManager = function ModuleManager(options) {
       }
     },
 
-    addModuleVerifications: function addModuleVerifications(newObj) {
-      if (newObj.newModuleVerification) {
-        this.moduleVerifications.push(newObj.newModuleVerification);
-        delete newObj.newModuleVerification;
-      }
-    },
-
-    runModuleVerifications: function runModuleVerifications(newObj) {
-      var _this2 = this;
-
-      this.moduleVerifications.forEach(function (func) {
-        func.bind(_this2)(newObj);
-      });
-    },
-
-    verifyModuleStep: function verifyModuleStep(newObj) {
+    assimilateNewModuleStep: function assimilateNewModuleStep(newObj) {
       //if module has a function called moduleStep, add it to the list of steps, or else do nothing
       if (newObj.moduleStep) {
         this.moduleSteps.push(newObj.moduleStep);
@@ -867,11 +860,10 @@ var ModuleManager = function ModuleManager(options) {
     },
 
     runModuleSteps: function runModuleSteps() {
-      var _this3 = this;
+      var _this2 = this;
 
       this.moduleSteps.forEach(function (func) {
-        // debugger
-        func.call(_this3);
+        func.call(_this2);
       });
     },
 
@@ -1417,7 +1409,10 @@ var actorAnimator = function actorAnimator(options) {
 
   return {
     name: "actorAnimator",
-    initialState: "idle",
+    state: {
+      cycle: "idle",
+      alphaOpacity: 1
+    },
     image: image,
     animations: animations,
     drawCollision: function drawCollision(ctx) {
@@ -1431,6 +1426,7 @@ var actorAnimator = function actorAnimator(options) {
 
       this.drawCollision(ctx);
       ctx.save();
+      // ctx.globalAlpha = this.state.actorAnimator.alphaOpacity;
       ctx.translate(this.des.x + this.collision_width * 0.5, this.des.y + this.collision_height * 0.5);
       ctx.fillStyle = "red";
       // ctx.fillRect((-this.draw_width * 0.5), (-this.draw_height * 0.5), this.draw_width, this.draw_height);
@@ -1450,7 +1446,7 @@ var actorAnimator = function actorAnimator(options) {
     },
 
     moduleStep: function moduleStep() {
-      var currentCel = this.animations[this.modules.actorAnimator].advance();
+      var currentCel = this.animations[this.state.actorAnimator.cycle].advance();
       (0, _merge2.default)(this, currentCel);
       delete this.frameCount;
     },
@@ -1469,7 +1465,17 @@ var actorAnimator = function actorAnimator(options) {
 
     spawnAnimationCycle: function spawnAnimationCycle(name) {
       return new _animationCycle.AnimationCycle(name);
-    }
+    },
+
+    setInitialCycleState: function setInitialCycleState(string) {
+      if (this.state.cycle) {
+        this.state.cycle = string;
+      } else if (this.state.actorAnimator.cycle) {
+        this.state.actorAnimator.cycle = string;
+      }
+    },
+
+    moduleDidMount: function moduleDidMount() {}
 
   };
 };
@@ -4039,7 +4045,10 @@ var virtualController = function virtualController(options) {
       changelog: []
     },
 
-    appendHistory: function appendHistory(newFrame) {
+    appendHistory: function appendHistory() {
+      this.controllerLog.stateLog.push((0, _merge2.default)({}, this.state.virtualController));
+    },
+    moduleWillMount: function moduleWillMount() {
       this.controllerLog.stateLog.push((0, _merge2.default)({}, this.state));
     },
     bindKeys: function bindKeys() {
@@ -4052,12 +4061,12 @@ var virtualController = function virtualController(options) {
     },
     handleKeyDown: function handleKeyDown(e) {
       if (Maps.KeyToXbox[e.key]) {
-        this.state.buttons[Maps.KeyToXbox[e.key]] = true;
+        this.state.virtualController.buttons[Maps.KeyToXbox[e.key]] = true;
       }
     },
     handleKeyUp: function handleKeyUp(e) {
       if (Maps.KeyToXbox[e.key]) {
-        this.state.buttons[Maps.KeyToXbox[e.key]] = false;
+        this.state.virtualController.buttons[Maps.KeyToXbox[e.key]] = false;
       }
     },
     handleGamepadConnected: function handleGamepadConnected(e) {
@@ -4077,23 +4086,28 @@ var virtualController = function virtualController(options) {
 
       var lastFrame = this.controllerLog.stateLog[this.controllerLog.stateLog.length - 1];
       var changeRecord = [];
-      var keys = Object.keys(this.state.buttons);
+      var keys = Object.keys(this.state.virtualController.buttons);
 
       keys.forEach(function (key) {
-        if (_this.state.buttons[key] === true && lastFrame.buttons[key] === false) {
-          changeRecord.push({
-            type: "pressdown",
-            payload: key
-          });
-        }
+        try {
+          // debugger
+          if (_this.state.virtualController.buttons[key] === true && lastFrame.buttons[key] === false) {
+            changeRecord.push({
+              type: "pressdown",
+              payload: key
+            });
+          }
 
-        if (_this.state.buttons[key] === false && lastFrame.buttons[key] === true) {
-          changeRecord.push({
-            type: "pressup",
-            payload: key
-          });
+          if (_this.state.virtualController.buttons[key] === false && lastFrame.buttons[key] === true) {
+            changeRecord.push({
+              type: "pressup",
+              payload: key
+            });
+          }
+        } catch (error) {
+          debugger;
         }
-      });
+      }, this);
       return changeRecord;
     },
 
@@ -4108,9 +4122,9 @@ var virtualController = function virtualController(options) {
 
       for (var i in buttons) {
         if (buttons[i].pressed) {
-          this.state.buttons[Maps.xboxIndexToButton[i]] = true;
+          this.state.virtualController.buttons[Maps.xboxIndexToButton[i]] = true;
         } else {
-          this.state.buttons[Maps.xboxIndexToButton[i]] = false;
+          this.state.virtualController.buttons[Maps.xboxIndexToButton[i]] = false;
         }
       }
     },
@@ -4127,7 +4141,7 @@ var virtualController = function virtualController(options) {
       }
     }
   };
-  _virtualController.appendHistory();
+  // _virtualController.appendHistory();
   // _virtualController.bindKeys();
 
   return (0, _merge2.default)(_virtualController, options);
@@ -4473,8 +4487,8 @@ var playerActor = function playerActor() {
   _playerActor.addModules(new _objData2.default(), new _objFrameData2.default());
 
   devLog.log('initializing controller for player');
-  _playerActor.initializeActorController();
-  _playerActor.initializeActorCollision();
+  _playerActor.flags = {};
+  // _playerActor.initializeActorCollision();
 
   return _playerActor;
 };
@@ -4564,6 +4578,9 @@ var down = new moveVerb("down", "y", "+1");
 //   let owner = this.targets.owner;
 //   return owner.des.y + owner.collision_height < 640;
 // });
+// down.addRequirement(function(){
+//   return this.targets.owner.flags.blockDown === false;
+// });
 var unDown = new unMoveVerb("unDown", "down", "y", "1");
 
 var up = new moveVerb("up", "y", "-1");
@@ -4635,12 +4652,13 @@ var actorController = function actorController(options) {
       });
     },
 
-    componentDidMount: function componentDidMount() {
+    moduleDidMount: function moduleDidMount() {
 
       var verbs = Object.values(this.verbs);
       verbs.forEach(function (verb) {
         verb.addTarget("owner", this);
       }, this);
+      this.initializeActorController();
     },
 
     spawnVerb: function spawnVerb(options) {
@@ -4808,7 +4826,7 @@ var json = __webpack_require__(121).frames;
 //Each prop has a sub prop. I really want the subprop. Honestly as an array! there has got to be a way of doing that faster. But this si fine for proof of concept
 
 var guyAnimation = function guyAnimation() {
-  var animas = [{ name: "stand", frames: [1] }, { name: "collideDown", frames: [1] }, { name: "collideUp", frames: [1] }, { name: "collideRight", frames: [1] }, { name: "collideLeft", frames: [1] }, { name: "walk", frames: [5, 5] }, { name: "jumpUp", frames: [1] }, { name: "fallDown", frames: [1] }, { name: "praiseTheSun", frames: [1] }];
+  var animas = [{ name: "idle", frames: [1] }, { name: "collideDown", frames: [1] }, { name: "collideUp", frames: [1] }, { name: "collideRight", frames: [1] }, { name: "collideLeft", frames: [1] }, { name: "walk", frames: [5, 5] }, { name: "jumpUp", frames: [1] }, { name: "fallDown", frames: [1] }, { name: "praiseTheSun", frames: [1] }];
 
   var _guyAnimation = new _actoranimator2.default({ src: _spriteguy2.default });
   (0, _piskelSupport2.default)(_guyAnimation);
@@ -4818,7 +4836,6 @@ var guyAnimation = function guyAnimation() {
   larva.piskelZip();
   larva.apoptosize();
   _guyAnimation.reabsorbPiskelLarva(larva);
-  _guyAnimation.initialState = "stand";
 
   // dbAdd("ga", _guyAnimation);
   return _guyAnimation;
@@ -5044,12 +5061,13 @@ var coinActor = function coinActor() {
     des: {
       x: 0 + n * 40,
       y: 0 + m * 40
-    },
-    state: "coinish"
+    }
   };
   var _coinActor = new _actor2.default(options);
 
-  _coinActor.addModules(new _coin_animation2.default(), new _coin_collision2.default(), new _coin_controller2.default());
+  _coinActor.addModules(new _coin_animation2.default(),
+  // new coinCollision(),
+  new _coin_controller2.default());
 
   i += 1;
   _coinActor.initializeActorController();
@@ -5106,9 +5124,8 @@ Spin.cels.forEach(function (cel) {
 var coinAnimation = function coinAnimation() {
   var _coinAnimation = new _actoranimator2.default({ src: './assets/coin_test.png' });
   _coinAnimation.addAnimation(Spin);
-  _coinAnimation.initialState = "Spin";
-  _coinAnimation.addAnimation(noSpin);
-  _coinAnimation.addAnimation(fastSpin);
+  _coinAnimation.setInitialCycleState("Spin");
+  _coinAnimation.addAnimations(noSpin, fastSpin);
   return _coinAnimation;
 };
 
@@ -5338,8 +5355,6 @@ var _merge2 = _interopRequireDefault(_merge);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 //for now, we're only going to do box collision. Eventually actorCollision will require a type variable to be passed, and it will return the appropriate collision component, but for now everything is box.
 //
 // const collisionZone = {
@@ -5354,8 +5369,29 @@ var actorCollision = function actorCollision(options) {
     collision_height: 32,
     initialState: "collisionState",
     collisionType: "box",
-    collisionResponses: {},
+    collisionResponses: {
+      any: { any: function any() {
+          console.log("defaultResponse");
+        } }
+    },
     collisions: {},
+
+    moduleStep: function moduleStep() {
+      if (Object.keys(this.collisions).length === 0) {
+        this.collisionResponses.any.any();
+      } else {
+        debugger;
+        for (var otherName in this.collisions) {
+          this.handleCollisionResponse(otherName);
+        }
+      }
+      this.collisions = {};
+    },
+
+    moduleDidMount: function moduleDidMount() {
+      debugger;
+      this.initializeActorCollision();
+    },
 
     checkCollision: function checkCollision(otherObj) {
       if (otherObj.collisionType === "box") {
@@ -5364,22 +5400,88 @@ var actorCollision = function actorCollision(options) {
         return this.circleCollision(otherObj);
       }
     },
-    //
+
     addCollisionResponse: function addCollisionResponse(objName, zone, func) {
-      Object.assign(this.collisionResponses, _defineProperty({}, objName, _defineProperty({}, zone, func)));
+      // Object.assign(this.collisionResponses,{[objName]:{[zone]:func}});
+      if (!this.collisionResponses[objName]) {
+        this.collisionResponses[objName] = {};
+      }
+      if (!this.collisionResponses[objName][zone]) {
+        this.collisionResponses[objName][zone] = func;
+      }
+    },
+    changeDefaultCollisionResponse: function changeDefaultCollisionResponse(func) {
+      this.collisionResponses.any.any = func;
     },
 
-    //
-    boxCollision: function boxCollision(otherObj) {
-      var headIn = this.otherHeadIn(otherObj);
-      var footIn = this.otherFootIn(otherObj);
-      var leftIn = this.otherLeftIn(otherObj);
-      var rightIn = this.otherRightIn(otherObj);
-      if (leftIn || rightIn) {
-        if (!footIn && headIn) {
-          this.collisions[otherObj.name] = "foot";
+
+    handleCollisionResponse: function handleCollisionResponse(otherName) {
+      // debugger
+      if (this.collisionResponses[otherName] && this.collisionResponses[otherName][this.collisions[otherName]]) {
+        this.collisionResponses[otherName][this.collisions[otherName]]();
+      }
+    },
+
+    initializeActorCollision: function initializeActorCollision() {
+      for (var response in this.collisionResponses) {
+        for (var zone in this.collisionResponses[response]) {
+          this.collisionResponses[response][zone] = this.collisionResponses[response][zone].bind(this);
         }
       }
+    },
+
+    boxCollision: function boxCollision(otherObj) {
+      var otherHeadIn = this.otherHeadIn(otherObj);
+      var otherFootIn = this.otherFootIn(otherObj);
+      var otherLeftIn = this.otherLeftIn(otherObj);
+      var otherRightIn = this.otherRightIn(otherObj);
+      if (this.footCollision(otherObj)) {
+        //if otherObj collides with my foot
+        this.collisions[otherObj.name] = "foot";
+      }
+      if (this.headCollision(otherObj)) {
+        //if otherObj collides with my head
+        this.collisions[otherObj.name] = "head";
+      }
+      if (this.leftCollision(otherObj)) {
+        //if otherObj collides with my left
+        this.collisions[otherObj.name] = "left";
+      }
+      if (this.rightCollision(otherObj)) {
+        //if otherObj collides with my right
+        this.collisions[otherObj.name] = "right";
+      }
+    },
+
+    //various directional methods
+
+    footCollision: function footCollision(otherObj) {
+      if ((this.otherLeftIn(otherObj) || this.otherRightIn(otherObj)) && this.footLine() - 5 <= otherObj.headLine() && otherObj.headLine() <= this.footLine()) {
+        console.log(this.name, ":foot");
+        return true;
+      }
+      return false;
+    },
+
+    headCollision: function headCollision(otherObj) {
+      if ((this.otherLeftIn(otherObj) || this.otherRightIn(otherObj)) && this.headLine() <= otherObj.footLine() && otherObj.footLine() <= this.headLine() - 5) {
+        return true;
+      }
+      return false;
+    },
+
+    rightCollision: function rightCollision(otherObj) {
+      if ((this.otherHeadIn(otherObj) || this.otherFootIn(otherObj)) && this.rightLine() - 5 <= otherObj.leftLine() && otherObj.leftLine() <= this.rightLine()) {
+        return true;
+      }
+      return false;
+    },
+
+    leftCollision: function leftCollision(otherObj) {
+      if ((this.otherHeadIn(otherObj) || this.otherFootIn(otherObj)) && this.leftLine() <= otherObj.rightLine() && otherObj.rightLine() <= this.leftLine() - 5) {
+        return true;
+      }
+      return false;
     },
 
     //these functions need a better name. It would also be nice to reduce the boiler plate but this is fine for now. These functions determine if the edge of otherObj falls between two points on the relevant axis of "this". That is to say, in otherHeadIn, if otherObj's head is between my head and my feet, the function returns true.
@@ -5416,29 +5518,22 @@ var actorCollision = function actorCollision(options) {
       return false;
     },
 
-    handleCollisionResponse: function handleCollisionResponse(event) {
-      // debugger
-      if (this.collisionResponses[event]) {
-        this.collisionResponses[event][this.collisions[event]]();
-      }
+    headLine: function headLine() {
+      return this.des.y;
     },
 
-    initializeActorCollision: function initializeActorCollision() {
-      // this.handleCollisionResponse = this.handleCollisionResponse.bind(this);
-      for (var response in this.collisionResponses) {
-        for (var zone in this.collisionResponses[response]) {
-          this.collisionResponses[response][zone] = this.collisionResponses[response][zone].bind(this);
-        } // this.collisionResponses[response] =  this.collisionResponses[response].bind(this);
-      }
+    footLine: function footLine() {
+      return this.des.y + this.collision_height;
     },
 
-    moduleStep: function moduleStep() {
-      var g = this;
-      for (var event in this.collisions) {
-        this.handleCollisionResponse(event);
-      }
-      this.collisions = {};
+    leftLine: function leftLine() {
+      return this.des.x;
+    },
+
+    rightLine: function rightLine() {
+      return this.des.x + this.collision_width;
     }
+
   };
 
   (0, _merge2.default)(_actorCollision, options);
@@ -5473,9 +5568,9 @@ var collisionComponent = function collisionComponent(options) {
 
       try {
         for (var _iterator = actors[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var collider = _step.value;
+          var collidant = _step.value;
 
-          if (!collider.modules["actorCollision"]) {
+          if (!collidant.modules["actorCollision"]) {
             break;
           }
           var _iteratorNormalCompletion2 = true;
@@ -5486,13 +5581,13 @@ var collisionComponent = function collisionComponent(options) {
             for (var _iterator2 = actors[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
               var collidee = _step2.value;
 
-              if (collider === collidee) {
+              if (collidant === collidee) {
                 continue;
               }
 
-              // console.log(collider.name, collidee.name);
-
-              collider.checkCollision(collidee);
+              // console.log(collidant.name, collidee.name);
+              console.log(collidant.name);
+              collidant.checkCollision(collidee);
             }
           } catch (err) {
             _didIteratorError2 = true;
@@ -5549,6 +5644,22 @@ var playerCollision = function playerCollision() {
   var _playerCollision = new _actorCollision2.default();
   _playerCollision.addCollisionResponse("coin", "foot", function () {
     this.modules.actorAnimator = "collideDown";
+    this.flags.blockDown = true;
+  });
+  _playerCollision.addCollisionResponse("coin", "head", function () {
+    this.modules.actorAnimator = "collideUp";
+    this.flags.blockUp = true;
+  });
+  _playerCollision.addCollisionResponse("coin", "left", function () {
+    this.modules.actorAnimator = "collideLeft";
+    this.flags.blockLeft = true;
+  });
+  _playerCollision.addCollisionResponse("coin", "right", function () {
+    this.modules.actorAnimator = "collideRight";
+    this.flags.blockRight = true;
+  });
+  _playerCollision.changeDefaultCollisionResponse(function () {
+    this.state.actorAnimator.cycle = "idle";
   });
   return _playerCollision;
 };
