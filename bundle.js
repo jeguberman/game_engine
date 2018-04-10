@@ -1658,10 +1658,7 @@ var actorCollision = function actorCollision(options) {
     },
 
     boxCollision: function boxCollision(otherObj) {
-      var otherHeadIn = this.otherHeadIn(otherObj);
-      var otherFootIn = this.otherFootIn(otherObj);
-      var otherLeftIn = this.otherLeftIn(otherObj);
-      var otherRightIn = this.otherRightIn(otherObj);
+
       if (this.footCollision(otherObj)) {
         //if otherObj collides with my foot
         this.collisions[otherObj.name] = "foot";
@@ -1683,62 +1680,28 @@ var actorCollision = function actorCollision(options) {
     //various directional methods
 
     footCollision: function footCollision(otherObj) {
-      if ((this.otherLeftIn(otherObj) || this.otherRightIn(otherObj)) && this.footLine() - 5 <= otherObj.headLine() && otherObj.headLine() <= this.footLine()) {
+      if (this.leftLine() <= otherObj.rightLine() && this.rightLine() >= otherObj.leftLine() && this.footLine() >= otherObj.headLine() && this.footLine() <= otherObj.neckLine()) {
         return true;
       }
       return false;
     },
 
     headCollision: function headCollision(otherObj) {
-      if ((this.otherLeftIn(otherObj) || this.otherRightIn(otherObj)) && this.headLine() <= otherObj.footLine() && otherObj.footLine() <= this.headLine() - 5) {
+      if (this.leftLine() <= otherObj.rightLine() && this.rightLine() >= otherObj.leftLine() && this.headLine() <= otherObj.footLine() && this.headLine() >= otherObj.ankleLine()) {
         return true;
       }
       return false;
     },
 
     rightCollision: function rightCollision(otherObj) {
-      if ((this.otherHeadIn(otherObj) || this.otherFootIn(otherObj)) && this.rightLine() - 5 <= otherObj.leftLine() && otherObj.leftLine() <= this.rightLine()) {
+      if (this.headLine() <= otherObj.footLine() && this.footLine() >= otherObj.headLine() && this.rightLine() >= otherObj.leftLine() && this.rightLine() <= otherObj.leftWrist()) {
         return true;
       }
       return false;
     },
 
     leftCollision: function leftCollision(otherObj) {
-      if ((this.otherHeadIn(otherObj) || this.otherFootIn(otherObj)) && this.leftLine() <= otherObj.rightLine() && otherObj.rightLine() <= this.leftLine() - 15) {
-        return true;
-      }
-      return false;
-    },
-
-    //these functions need a better name. It would also be nice to reduce the boiler plate but this is fine for now. These functions determine if the edge of otherObj falls between two points on the relevant axis of "this". That is to say, in otherHeadIn, if otherObj's head is between my head and my feet, the function returns true.
-
-    otherHeadIn: function otherHeadIn(otherObj) {
-      var oHead = otherObj.des.y;
-      if (oHead >= this.des.y && oHead <= this.des.y + this.collision_height) {
-        return true;
-      }
-      return false;
-    },
-
-    otherFootIn: function otherFootIn(otherObj) {
-      var oFoot = otherObj.des.y + otherObj.collision_height;
-      if (oFoot >= this.des.y && oFoot <= this.des.y + this.collision_height) {
-        return true;
-      }
-      return false;
-    },
-
-    otherLeftIn: function otherLeftIn(otherObj) {
-      var oLeft = otherObj.des.x;
-      if (oLeft >= this.des.x && oLeft <= this.des.x + this.collision_width) {
-        return true;
-      }
-      return false;
-    },
-
-    otherRightIn: function otherRightIn(otherObj) {
-      var oRight = otherObj.des.x + otherObj.collision_width;
-      if (oRight <= this.des.x + this.collision_width && oRight >= this.des.x) {
+      if (this.headLine() <= otherObj.footLine() && this.footLine() >= otherObj.headLine() && this.leftLine() <= otherObj.rightLine() && this.leftLine() >= otherObj.rightWrist()) {
         return true;
       }
       return false;
@@ -1748,16 +1711,32 @@ var actorCollision = function actorCollision(options) {
       return this.des.y;
     },
 
+    neckLine: function neckLine() {
+      return this.des.y + 15;
+    },
+
     footLine: function footLine() {
       return this.des.y + this.collision_height;
+    },
+
+    ankleLine: function ankleLine() {
+      return this.des.y + this.collision_height - 15;
     },
 
     leftLine: function leftLine() {
       return this.des.x;
     },
 
+    leftWrist: function leftWrist() {
+      return this.des.x + 15;
+    },
+
     rightLine: function rightLine() {
       return this.des.x + this.collision_width;
+    },
+
+    rightWrist: function rightWrist() {
+      return this.des.x + this.collision_width - 15;
     }
 
   };
@@ -5270,21 +5249,33 @@ var playerCollision = function playerCollision() {
   _playerCollision.addCollisionResponse("coin", "foot", function () {
     this.changeAnimation("collideDown");
     this.state.actorPhysics.block.down = true;
+    if (this.vel.y > 0) {
+      this.vel.y = 0;
+    }
   });
 
   _playerCollision.addCollisionResponse("coin", "head", function () {
     this.changeAnimation("collideUp");
     this.state.actorPhysics.block.up = true;
+    if (this.vel.y < 0) {
+      this.vel.y = 0;
+    }
   });
 
   _playerCollision.addCollisionResponse("coin", "left", function () {
     this.changeAnimation("collideLeft");
     this.state.actorPhysics.block.left = true;
+    if (this.vel.x < 0) {
+      this.vel.x = 0;
+    }
   });
 
   _playerCollision.addCollisionResponse("coin", "right", function () {
     this.changeAnimation("collideRight");
     this.state.actorPhysics.block.right = true;
+    if (this.vel.x > 0) {
+      this.vel.x = 0;
+    }
   });
 
   _playerCollision.changeDefaultCollisionResponse(function () {
