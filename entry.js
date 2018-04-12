@@ -16,6 +16,8 @@ const trueGame = ()=>{
 };
 
 const negaGame = () => {
+  //the negaGame is basically a larger false game for ideas which might even be their own side projects if creating new webpack projects wasn't such a pain in the buttottom.
+  
   // attachControllerToWindow("xbox","Xbox One");
   // attachControllerToWindow("lcon","Joy-Con (L)");
   // attachControllerToWindow("rcon","Joy-Con (R)");
@@ -32,20 +34,8 @@ const negaGame = () => {
 };
 
 const falseGame = ()=>{
-  console.log("Start");
-  const Thing = {
-    state: {"a":1},
-    history: [],
-    pushHistory: function(){
-      this.history.push(merge({},this.state));
-    },
 
-  };
-  Thing.pushHistory();
-  Thing.state.a = 2;
-  Thing.pushHistory();
-  console.log(JSON.stringify(Thing.history));
-
+  console.error("You're in false game, which is for testing small ideas, usually javascript fundamentals.");
 
 };
 const switcher = (n) => {

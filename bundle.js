@@ -60,15 +60,15 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 35);
+/******/ 	return __webpack_require__(__webpack_require__.s = 39);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseMerge = __webpack_require__(38),
-    createAssigner = __webpack_require__(96);
+var baseMerge = __webpack_require__(42),
+    createAssigner = __webpack_require__(100);
 
 /**
  * This method is like `_.assign` except that it recursively merges own and
@@ -149,7 +149,7 @@ module.exports = isObject;
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var freeGlobal = __webpack_require__(21);
+var freeGlobal = __webpack_require__(22);
 
 /** Detect free variable `self`. */
 var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
@@ -199,11 +199,11 @@ module.exports = isObjectLike;
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var listCacheClear = __webpack_require__(40),
-    listCacheDelete = __webpack_require__(41),
-    listCacheGet = __webpack_require__(42),
-    listCacheHas = __webpack_require__(43),
-    listCacheSet = __webpack_require__(44);
+var listCacheClear = __webpack_require__(44),
+    listCacheDelete = __webpack_require__(45),
+    listCacheGet = __webpack_require__(46),
+    listCacheHas = __webpack_require__(47),
+    listCacheSet = __webpack_require__(48);
 
 /**
  * Creates an list cache object.
@@ -307,9 +307,9 @@ module.exports = eq;
 /* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var Symbol = __webpack_require__(20),
-    getRawTag = __webpack_require__(52),
-    objectToString = __webpack_require__(53);
+var Symbol = __webpack_require__(21),
+    getRawTag = __webpack_require__(56),
+    objectToString = __webpack_require__(57);
 
 /** `Object#toString` result references. */
 var nullTag = '[object Null]',
@@ -341,7 +341,7 @@ module.exports = baseGetTag;
 /* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var getNative = __webpack_require__(10);
+var getNative = __webpack_require__(12);
 
 /* Built-in method references that are verified to be native. */
 var nativeCreate = getNative(Object, 'create');
@@ -353,7 +353,7 @@ module.exports = nativeCreate;
 /* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isKeyable = __webpack_require__(67);
+var isKeyable = __webpack_require__(71);
 
 /**
  * Gets the data for `map`.
@@ -377,8 +377,169 @@ module.exports = getMapData;
 /* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseIsNative = __webpack_require__(50),
-    getValue = __webpack_require__(57);
+"use strict";
+
+
+var _merge = __webpack_require__(0);
+
+var _merge2 = _interopRequireDefault(_merge);
+
+var _module_manager = __webpack_require__(19);
+
+var _module_manager2 = _interopRequireDefault(_module_manager);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var actor = function actor(options) {
+
+  options = (0, _merge2.default)({
+    name: "actor",
+    type: "actor",
+    collision_width: 32,
+    collision_height: 32
+  }, options);
+
+  var _actor = new _module_manager2.default(options);
+
+  _actor.mergeWith({
+
+    step: function step() {
+      this.runModuleSteps();
+      this.updateState();
+    },
+
+    updateState: function updateState() {
+      // throw {message: "Individual Game Objects must contain custom definitions for updateState function. " + this.name, object: this, trueMessage: "No they don't, this is going to be separated into a state manager for physical game objects. This doesn't pertain to non-entities like the debug module"};
+    }
+
+  });
+
+  return _actor;
+};
+
+module.exports = actor;
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.AnimationCycle = undefined;
+exports.cel = cel;
+
+var _merge = __webpack_require__(0);
+
+var _merge2 = _interopRequireDefault(_merge);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function cel(options) {
+  return (0, _merge2.default)({ sX: 0, sY: 0, draw_width: 16, draw_height: 16, frameCount: 5 }, options);
+}
+
+var AnimationCycle = exports.AnimationCycle = function AnimationCycle() {
+  var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+
+  return {
+    cels: [],
+    celIdx: 0,
+    frameIdx: 0,
+    name: name,
+    rightFace: true,
+
+    push: function push(newCel) {
+      this.cels.push(newCel);
+    },
+
+    addCel: function addCel(newCel) {
+      this.cels.push(newCel);
+    },
+
+    currentCel: function currentCel() {
+      return this.cels[this.celIdx];
+    },
+
+    incrementIndex: function incrementIndex() {
+      this.frameIdx += 1;
+      if (this.frameIdx > this.currentCel().frameCount) {
+        this.frameIdx = 0;
+        this.celIdx += 1;
+        if (this.celIdx > this.cels.length - 1) {
+          this.celIdx = 0;
+        }
+      }
+    },
+
+    advance: function advance() {
+      this.incrementIndex();
+      return this.currentCel();
+    },
+
+    spawnCel: function spawnCel() {
+      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      return cel(options);
+    },
+
+    createCel: function createCel() {
+      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      this.addCel(cel(options));
+    },
+
+    piskelCel: function piskelCel(options) {
+      return spawnCel({
+        sX: options.x,
+        sY: options.y,
+        draw_width: options.w,
+        draw_height: options.h
+      });
+    }
+
+    // piskel: function(json){//O(n*m) look up, make better?
+    //   if(json.frames){
+    //     json = json.frames
+    //   }
+    //   frames = {};
+    //   let i = 0;
+    //   for( var frame in json ){
+    //     Object.assign(frames, {[frame]: json[frame].frame});
+    //   }
+    //   debugger
+    //
+    // }
+
+  };
+};
+
+// AnimationCycle.prototype.piskel = function(json){//O(n*m) look up, make better?
+//     if(json.frames){
+//       json = json.frames
+//     }
+//     frames = {};
+//     let i = 0;
+//     for( var frame in json ){
+//       Object.assign(frames, {[frame]: json[frame].frame});
+//     }
+//     debugger
+//
+//   }
+
+
+// module.exports = AnimationCycle;
+// export default
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var baseIsNative = __webpack_require__(54),
+    getValue = __webpack_require__(61);
 
 /**
  * Gets the native function at `key` of `object`.
@@ -397,7 +558,7 @@ module.exports = getNative;
 
 
 /***/ }),
-/* 11 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var baseGetTag = __webpack_require__(7),
@@ -440,10 +601,10 @@ module.exports = isFunction;
 
 
 /***/ }),
-/* 12 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var defineProperty = __webpack_require__(23);
+var defineProperty = __webpack_require__(24);
 
 /**
  * The base implementation of `assignValue` and `assignMergeValue` without
@@ -471,7 +632,7 @@ module.exports = baseAssignValue;
 
 
 /***/ }),
-/* 13 */
+/* 15 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -499,11 +660,11 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 14 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isFunction = __webpack_require__(11),
-    isLength = __webpack_require__(28);
+var isFunction = __webpack_require__(13),
+    isLength = __webpack_require__(29);
 
 /**
  * Checks if `value` is array-like. A value is considered array-like if it's
@@ -538,54 +699,7 @@ module.exports = isArrayLike;
 
 
 /***/ }),
-/* 15 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _merge = __webpack_require__(0);
-
-var _merge2 = _interopRequireDefault(_merge);
-
-var _module_manager = __webpack_require__(18);
-
-var _module_manager2 = _interopRequireDefault(_module_manager);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var actor = function actor(options) {
-
-  options = (0, _merge2.default)({
-    name: "actor",
-    type: "actor"
-  }, options);
-
-  var _actor = new _module_manager2.default(options);
-
-  _actor.mergeWith({
-    collision_width: 32,
-    collision_height: 32,
-    state: "default",
-
-    step: function step() {
-      this.runModuleSteps();
-      this.updateState();
-    },
-
-    updateState: function updateState() {
-      // throw {message: "Individual Game Objects must contain custom definitions for updateState function. " + this.name, object: this, trueMessage: "No they don't, this is going to be separated into a state manager for physical game objects. This doesn't pertain to non-entities like the debug module"};
-    }
-
-  });
-
-  return _actor;
-};
-
-module.exports = actor;
-
-/***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -614,14 +728,14 @@ var Verb = function Verb(options) {
 
     setFunc: function setFunc(func) {
       this.func = func;
-    },
+    }, //this is what will happen when all requirements === true
 
     setTrigger: function setTrigger(func) {
       if (typeof func !== "function") {
         throw "Verb Triggers must be event handling functions";
       }
       this.requirements[0] = func;
-    },
+    }, //the first requirement. No reason to check other requirements if this requirement isn't true. Usually a button or collision event
 
     getTrigger: function getTrigger() {
       return this.requirements[0];
@@ -651,10 +765,10 @@ var Verb = function Verb(options) {
       var _this = this;
 
       if (this.requirements.length === 0) {
-        console.log("no requirements");
+        console.error("no requirements given to verb " + this.name);
       }
-      if (this.requirements.every(function (r) {
-        return r.bind(_this)(e);
+      if (this.requirements.every(function (req) {
+        return req.call(_this, e);
       })) {
         this.func.call(this);
       }
@@ -666,7 +780,7 @@ var Verb = function Verb(options) {
       } else {
         this.requirements.push(func);
       }
-    }
+    } //add additional requirements past the trigger, like character must be on ground to jump.
 
   };
   (0, _merge2.default)(_verb, options);
@@ -676,54 +790,56 @@ var Verb = function Verb(options) {
 module.exports = Verb;
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _actorManager = __webpack_require__(36);
+var _actorManager = __webpack_require__(40);
 
 var _actorManager2 = _interopRequireDefault(_actorManager);
 
-var _timeManager = __webpack_require__(37);
+var _timeManager = __webpack_require__(41);
 
 var _timeManager2 = _interopRequireDefault(_timeManager);
 
-var _module_manager = __webpack_require__(18);
+var _module_manager = __webpack_require__(19);
 
 var _module_manager2 = _interopRequireDefault(_module_manager);
 
-var _renderer = __webpack_require__(105);
+var _renderer = __webpack_require__(109);
 
 var _renderer2 = _interopRequireDefault(_renderer);
 
-var _virtualController = __webpack_require__(106);
+var _virtualController = __webpack_require__(110);
 
 var _virtualController2 = _interopRequireDefault(_virtualController);
 
-var _physicsComponent = __webpack_require__(109);
+var _physicsComponent = __webpack_require__(111);
 
 var _physicsComponent2 = _interopRequireDefault(_physicsComponent);
 
+var _collisionComponent = __webpack_require__(112);
+
+var _collisionComponent2 = _interopRequireDefault(_collisionComponent);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// import gameController from './modules/gameController.js';
 var EngineCore = function EngineCore() {
 
   var _engine = new _module_manager2.default({ name: "game" });
   _engine.addModules(new _timeManager2.default(), new _actorManager2.default());
   return _engine;
 };
+// import gameController from './modules/gameController.js';
+
 
 var Game = function Game() {
   devLog.log("creating Game Engine");
   var _game = new EngineCore();
-  _game.addModule(new _virtualController2.default());
-  _game.addModules(
-  // new gameController(),
-  new _physicsComponent2.default(), // new CollisionManager(),
-  new _renderer2.default());
+  _game.addModules(new _virtualController2.default());
+  _game.addModules(new _physicsComponent2.default(), new _collisionComponent2.default(), new _renderer2.default());
   devLog.log("game engine complete");
   _game.bindKeys();
   return _game;
@@ -732,7 +848,7 @@ var Game = function Game() {
 module.exports = Game;
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -747,7 +863,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var ModuleManager = function ModuleManager(options) {
   devLog.log("creating new Module Manager: " + options.name);
   var _moduleManager = {
-    modules: {},
+    modules: new Set(),
+    state: {},
     moduleSteps: [],
     moduleVerifications: [],
 
@@ -761,21 +878,17 @@ var ModuleManager = function ModuleManager(options) {
     addModule: function addModule(newObj) {
       //merge with object and add object name to modules list.
       devLog.log("[" + this.name + "] begins incorporating new module [" + newObj.name + "]");
+      var newName = newObj.name;
       if (newObj) {
         //why???
-        this.verifyModuleName(newObj);
-        this.modules[newObj.name] = newObj.initialState;
+        this.newModuleWillMount(newObj);
+        this.assimilateNewModuleStates(newObj);
+        this.assimilateNewModuleName(newObj);
 
-        delete newObj.initialState;
-        this.addModuleVerifications(newObj);
-        this.runModuleVerifications(newObj);
-        this.verifyModuleStep(newObj);
-        this.ifComponentWillMount(newObj);
-        var trueName = this.name;
+        this.assimilateNewModuleStep(newObj);
         (0, _merge2.default)(this, newObj);
-        this.name = trueName;
-        this.ifComponentDidMount(newObj);
-        devLog.log("[" + this.name + "] finishes incorporating new module [" + newObj.name + "]");
+        this.newModuleDidMount(newObj);
+        devLog.log("[" + this.name + "] finishes incorporating new module [" + newName + "]");
       }
     },
 
@@ -783,18 +896,26 @@ var ModuleManager = function ModuleManager(options) {
       //this should definitely be doable I'm just lazy right now
     },
 
-    ifComponentDidMount: function ifComponentDidMount(newObj) {
-      if (newObj.componentDidMount) {
-        this.componentDidMount();
+    assimilateNewModuleStates: function assimilateNewModuleStates(newObj) {
+      if (newObj.state) {
+        this.state[newObj.name] = newObj.state;
+        delete newObj.state;
+      }
+    },
+    newModuleWillMount: function newModuleWillMount(newObj) {
+      if (newObj.moduleWillMount) {
+        newObj.moduleWillMount();
+        delete newObj.moduleWillMount;
       }
     },
 
-    ifComponentWillMount: function ifComponentWillMount(newObj) {
-      if (newObj.componentWillMount) {
-        newObj.componentWillMount();
+
+    newModuleDidMount: function newModuleDidMount(newObj) {
+      if (newObj.moduleDidMount) {
+        this.moduleDidMount();
+        delete this.moduleDidMount;
       }
     },
-
 
     addModules: function addModules() {
       var _this = this;
@@ -808,29 +929,20 @@ var ModuleManager = function ModuleManager(options) {
       });
     },
 
+    assimilateNewModuleName: function assimilateNewModuleName(newObj) {
+      this.verifyModuleName(newObj);
+      this.modules.add(newObj.name);
+      delete newObj.name;
+    },
+
     verifyModuleName: function verifyModuleName(newObj) {
       //verify newObj has property "name", or else throw an error
       if (!newObj.name) {
-        throw { message: "Module Manager " + this.name + " tried to receive unnamed object ", object: newObj };
+        throw { message: "Module Manager " + this.name + " tried to receive unnamed module ", object: newObj, trace: console.trace() };
       }
     },
 
-    addModuleVerifications: function addModuleVerifications(newObj) {
-      if (newObj.newModuleVerification) {
-        this.moduleVerifications.push(newObj.newModuleVerification);
-        delete newObj.newModuleVerification;
-      }
-    },
-
-    runModuleVerifications: function runModuleVerifications(newObj) {
-      var _this2 = this;
-
-      this.moduleVerifications.forEach(function (func) {
-        func.bind(_this2)(newObj);
-      });
-    },
-
-    verifyModuleStep: function verifyModuleStep(newObj) {
+    assimilateNewModuleStep: function assimilateNewModuleStep(newObj) {
       //if module has a function called moduleStep, add it to the list of steps, or else do nothing
       if (newObj.moduleStep) {
         this.moduleSteps.push(newObj.moduleStep);
@@ -839,11 +951,10 @@ var ModuleManager = function ModuleManager(options) {
     },
 
     runModuleSteps: function runModuleSteps() {
-      var _this3 = this;
+      var _this2 = this;
 
       this.moduleSteps.forEach(function (func) {
-        // debugger
-        func.call(_this3);
+        func.call(_this2);
       });
     },
 
@@ -867,10 +978,10 @@ var ModuleManager = function ModuleManager(options) {
 module.exports = ModuleManager;
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var getNative = __webpack_require__(10),
+var getNative = __webpack_require__(12),
     root = __webpack_require__(2);
 
 /* Built-in method references that are verified to be native. */
@@ -880,7 +991,7 @@ module.exports = Map;
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var root = __webpack_require__(2);
@@ -892,7 +1003,7 @@ module.exports = Symbol;
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {/** Detect free variable `global` from Node.js. */
@@ -900,13 +1011,13 @@ var freeGlobal = typeof global == 'object' && global && global.Object === Object
 
 module.exports = freeGlobal;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(51)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(55)))
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseAssignValue = __webpack_require__(12),
+var baseAssignValue = __webpack_require__(14),
     eq = __webpack_require__(6);
 
 /**
@@ -929,10 +1040,10 @@ module.exports = assignMergeValue;
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var getNative = __webpack_require__(10);
+var getNative = __webpack_require__(12);
 
 var defineProperty = (function() {
   try {
@@ -946,10 +1057,10 @@ module.exports = defineProperty;
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var overArg = __webpack_require__(81);
+var overArg = __webpack_require__(85);
 
 /** Built-in value references. */
 var getPrototype = overArg(Object.getPrototypeOf, Object);
@@ -958,7 +1069,7 @@ module.exports = getPrototype;
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports) {
 
 /** Used for built-in method references. */
@@ -982,10 +1093,10 @@ module.exports = isPrototype;
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseIsArguments = __webpack_require__(82),
+var baseIsArguments = __webpack_require__(86),
     isObjectLike = __webpack_require__(3);
 
 /** Used for built-in method references. */
@@ -1024,7 +1135,7 @@ module.exports = isArguments;
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports) {
 
 /**
@@ -1056,7 +1167,7 @@ module.exports = isArray;
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports) {
 
 /** Used as references for various `Number` constants. */
@@ -1097,11 +1208,11 @@ module.exports = isLength;
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(module) {var root = __webpack_require__(2),
-    stubFalse = __webpack_require__(84);
+    stubFalse = __webpack_require__(88);
 
 /** Detect free variable `exports`. */
 var freeExports = typeof exports == 'object' && exports && !exports.nodeType && exports;
@@ -1139,15 +1250,15 @@ var isBuffer = nativeIsBuffer || stubFalse;
 
 module.exports = isBuffer;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(15)(module)))
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseIsTypedArray = __webpack_require__(86),
-    baseUnary = __webpack_require__(87),
-    nodeUtil = __webpack_require__(88);
+var baseIsTypedArray = __webpack_require__(90),
+    baseUnary = __webpack_require__(91),
+    nodeUtil = __webpack_require__(92);
 
 /* Node.js helper references. */
 var nodeIsTypedArray = nodeUtil && nodeUtil.isTypedArray;
@@ -1175,12 +1286,12 @@ module.exports = isTypedArray;
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var arrayLikeKeys = __webpack_require__(92),
-    baseKeysIn = __webpack_require__(94),
-    isArrayLike = __webpack_require__(14);
+var arrayLikeKeys = __webpack_require__(96),
+    baseKeysIn = __webpack_require__(98),
+    isArrayLike = __webpack_require__(16);
 
 /**
  * Creates an array of the own and inherited enumerable property names of `object`.
@@ -1213,7 +1324,7 @@ module.exports = keysIn;
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports) {
 
 /** Used as references for various `Number` constants. */
@@ -1241,7 +1352,7 @@ module.exports = isIndex;
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports) {
 
 /**
@@ -1268,7 +1379,375 @@ module.exports = identity;
 
 
 /***/ }),
-/* 34 */
+/* 35 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _merge = __webpack_require__(0);
+
+var _merge2 = _interopRequireDefault(_merge);
+
+var _verb2 = __webpack_require__(17);
+
+var _verb3 = _interopRequireDefault(_verb2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var actorController = function actorController(options) {
+  var _actorController = {
+    name: "actorController",
+    initialState: "idle",
+    verbs: {},
+    events: {},
+
+    handleControllerAction: function handleControllerAction(e) {
+      Object.values(this.verbs).forEach(function (verb) {
+        verb.handleEvent(e);
+      });
+    },
+
+    addVerb: function addVerb(newVerb) {
+      var neoVerb = Object.assign({}, newVerb);
+      if (!this.verbs[newVerb.name]) {
+        this.verbs[newVerb.name] = neoVerb;
+      } else {
+        throw {
+          message: 'Game Object ' + this.name + ' tried to overwrite action',
+          data: { newVerb: newVerb.name, input: newVerb.input }
+        };
+      }
+    },
+
+    addVerbs: function addVerbs() {
+      var _this = this;
+
+      for (var _len = arguments.length, newVerbs = Array(_len), _key = 0; _key < _len; _key++) {
+        newVerbs[_key] = arguments[_key];
+      }
+
+      newVerbs.forEach(function (newVerb) {
+        return _this.addVerb(newVerb);
+      });
+    },
+
+    moduleDidMount: function moduleDidMount() {
+
+      var verbs = Object.values(this.verbs);
+      verbs.forEach(function (verb) {
+        verb.addTarget("owner", this);
+      }, this);
+      this.initializeActorController();
+    },
+
+    spawnVerb: function spawnVerb(options) {
+      _verb = new _verb3.default.core(options);
+      return _verb;
+    },
+
+    createVerb: function createVerb(options) {
+      this.addVerb(this.spawnVerb());
+    },
+    initializeActorController: function initializeActorController() {
+      //this is a "componentDidMount" but it's not supposed to run until AFTER a new instance of the actor has been created. Will fix in v2.0 if not earlier
+      var handleControllerAction = this.handleControllerAction.bind(this);
+      document.addEventListener("controllerAction", handleControllerAction);
+    }
+  };
+
+  (0, _merge2.default)(_actorController, options);
+  return _actorController;
+};
+
+module.exports = actorController;
+
+/***/ }),
+/* 36 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _merge = __webpack_require__(0);
+
+var _merge2 = _interopRequireDefault(_merge);
+
+var _animationCycle = __webpack_require__(11);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+//breadcrumbs: Elise said something about a single source of truth for state. Currently the sprite is just a store of animation data. I think what elise is getting at is closer to a redux cycle.
+
+//that is to say, the gameSpaceObject knows what the current frame and frame data is, passes that information to the sprite, and the sprite returns the frame data for the next state.
+
+var actorAnimator = function actorAnimator(options) {
+
+  var image = new Image();
+  image.src = options.src;
+  var animations = {};
+
+  return {
+    name: "actorAnimator",
+    state: {
+      cycle: "idle",
+      alphaOpacity: 1
+    },
+    image: image,
+    animations: animations,
+    drawCollision: function drawCollision(ctx) {
+      ctx.save();
+      ctx.fillStyle = "#00eeff";
+      ctx.fillRect(this.des.x, this.des.y, this.collision_width, this.collision_height);
+      ctx.restore();
+    },
+
+    draw: function draw(ctx) {
+
+      this.drawCollision(ctx);
+      ctx.save();
+      // ctx.globalAlpha = this.state.actorAnimator.alphaOpacity;
+      ctx.translate(this.des.x + this.collision_width * 0.5, this.des.y + this.collision_height * 0.5);
+      ctx.fillStyle = "red";
+      // ctx.fillRect((-this.draw_width * 0.5), (-this.draw_height * 0.5), this.draw_width, this.draw_height);
+      ctx.drawImage(this.image, this.sX, this.sY, this.draw_width, this.draw_height, -this.draw_width * 0.5, -this.draw_height * 0.5, this.draw_width, this.draw_height);
+      ctx.restore();
+    },
+
+    addAnimation: function addAnimation(cycle) {
+      this.animations[cycle.name] = cycle;
+    },
+
+    addAnimations: function addAnimations(animations) {
+
+      for (var cycle in animations) {
+        this.addAnimation(animations[cycle]);
+      }
+    },
+
+    moduleStep: function moduleStep() {
+      var currentCel = this.animations[this.state.actorAnimator.cycle].advance();
+      (0, _merge2.default)(this, currentCel);
+      delete this.frameCount;
+    },
+
+    set: function set(string) {
+      console.log("you should definitely not being seeing this");
+    },
+
+    get: function get(string) {
+      return this.animations[string];
+    },
+
+    getAnimations: function getAnimations() {
+      return this.animations.keys;
+    },
+
+    spawnAnimationCycle: function spawnAnimationCycle(name) {
+      return new _animationCycle.AnimationCycle(name);
+    },
+
+    setInitialCycleState: function setInitialCycleState(string) {
+      if (this.state.cycle) {
+        this.state.cycle = string;
+      } else if (this.state.actorAnimator.cycle) {
+        this.state.actorAnimator.cycle = string;
+      }
+    },
+
+    changeAnimation: function changeAnimation(string) {
+      this.state.actorAnimator.cycle = string;
+    },
+
+    moduleDidMount: function moduleDidMount() {}
+
+  };
+};
+
+exports.default = actorAnimator;
+
+/***/ }),
+/* 37 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _merge = __webpack_require__(0);
+
+var _merge2 = _interopRequireDefault(_merge);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+//for now, we're only going to do box collision. Eventually actorCollision will require a type variable to be passed, and it will return the appropriate collision component, but for now everything is box.
+//
+// const collisionZone = {
+//   left: [],
+//   right
+// };
+
+var actorCollision = function actorCollision(options) {
+  var _actorCollision = {
+    name: "actorCollision",
+    collision_width: 32,
+    collision_height: 32,
+    initialState: "collisionState",
+    collisionType: "box",
+    collisionResponses: {
+      any: { any: function any() {} }
+    },
+    collisions: {},
+
+    moduleStep: function moduleStep() {
+      if (Object.keys(this.collisions).length === 0) {
+        this.collisionResponses.any.any();
+      } else {
+        for (var otherName in this.collisions) {
+          this.handleCollisionResponse(otherName);
+        }
+      }
+      this.collisions = {};
+    },
+
+    moduleDidMount: function moduleDidMount() {
+      this.initializeActorCollision();
+    },
+
+    checkCollision: function checkCollision(otherObj) {
+
+      // if(otherObj.collisionType === "box"){
+      return this.boxCollision(otherObj);
+      // }else if(otherObj.collisionType === "circle"){
+      // return this.circleCollision(otherObj);
+      // }
+    },
+
+    addCollisionResponse: function addCollisionResponse(objName, zone, func) {
+      // Object.assign(this.collisionResponses,{[objName]:{[zone]:func}});
+      if (!this.collisionResponses[objName]) {
+        this.collisionResponses[objName] = {};
+      }
+      if (!this.collisionResponses[objName][zone]) {
+        this.collisionResponses[objName][zone] = func;
+      }
+    },
+    changeDefaultCollisionResponse: function changeDefaultCollisionResponse(func) {
+      this.collisionResponses.any.any = func;
+    },
+
+
+    handleCollisionResponse: function handleCollisionResponse(otherName) {
+      // debugger
+      if (this.collisionResponses[otherName] && this.collisionResponses[otherName][this.collisions[otherName]]) {
+        this.collisionResponses[otherName][this.collisions[otherName]]();
+      }
+    },
+
+    initializeActorCollision: function initializeActorCollision() {
+      for (var response in this.collisionResponses) {
+        for (var zone in this.collisionResponses[response]) {
+          this.collisionResponses[response][zone] = this.collisionResponses[response][zone].bind(this);
+        }
+      }
+    },
+
+    boxCollision: function boxCollision(otherObj) {
+
+      if (this.footCollision(otherObj)) {
+        //if otherObj collides with my foot
+        this.collisions[otherObj.name] = "foot";
+      }
+      if (this.headCollision(otherObj)) {
+        //if otherObj collides with my head
+        this.collisions[otherObj.name] = "head";
+      }
+      if (this.leftCollision(otherObj)) {
+        //if otherObj collides with my left
+        this.collisions[otherObj.name] = "left";
+      }
+      if (this.rightCollision(otherObj)) {
+        //if otherObj collides with my right
+        this.collisions[otherObj.name] = "right";
+      }
+    },
+
+    //various directional methods
+
+    footCollision: function footCollision(otherObj) {
+      if (this.leftLine() <= otherObj.rightLine() && this.rightLine() >= otherObj.leftLine() && this.footLine() >= otherObj.headLine() && this.footLine() <= otherObj.neckLine()) {
+        return true;
+      }
+      return false;
+    },
+
+    headCollision: function headCollision(otherObj) {
+      if (this.leftLine() <= otherObj.rightLine() && this.rightLine() >= otherObj.leftLine() && this.headLine() <= otherObj.footLine() && this.headLine() >= otherObj.ankleLine()) {
+        return true;
+      }
+      return false;
+    },
+
+    rightCollision: function rightCollision(otherObj) {
+      if (this.headLine() <= otherObj.footLine() && this.footLine() >= otherObj.headLine() && this.rightLine() >= otherObj.leftLine() && this.rightLine() <= otherObj.leftWrist()) {
+        return true;
+      }
+      return false;
+    },
+
+    leftCollision: function leftCollision(otherObj) {
+      if (this.headLine() <= otherObj.footLine() && this.footLine() >= otherObj.headLine() && this.leftLine() <= otherObj.rightLine() && this.leftLine() >= otherObj.rightWrist()) {
+        return true;
+      }
+      return false;
+    },
+
+    headLine: function headLine() {
+      return this.des.y;
+    },
+
+    neckLine: function neckLine() {
+      return this.des.y + 15;
+    },
+
+    footLine: function footLine() {
+      return this.des.y + this.collision_height;
+    },
+
+    ankleLine: function ankleLine() {
+      return this.des.y + this.collision_height - 15;
+    },
+
+    leftLine: function leftLine() {
+      return this.des.x;
+    },
+
+    leftWrist: function leftWrist() {
+      return this.des.x + 15;
+    },
+
+    rightLine: function rightLine() {
+      return this.des.x + this.collision_width;
+    },
+
+    rightWrist: function rightWrist() {
+      return this.des.x + this.collision_width - 15;
+    }
+
+  };
+
+  (0, _merge2.default)(_actorCollision, options);
+
+  return _actorCollision;
+};
+
+module.exports = actorCollision;
+
+/***/ }),
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1381,17 +1860,17 @@ var joyconFloatToDirectionR = exports.joyconFloatToDirectionR = { "1": "downleft
 var noNameController = exports.noNameController = new Set(["lxaxis", "lyaxis", "lclick", "rxaxis", "ryaxis", "rclick", "ltrigger", "rtrigger", "lbumper", "rbumper", "lfaceu", "lfaced", "lfacel", "lfacer", "rfaceu", "rfaced", "rfacel", "rfacer", "lnav", "rnav", "lsystem", "rsystem"]);
 
 /***/ }),
-/* 35 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _game = __webpack_require__(17);
+var _game = __webpack_require__(18);
 
 var _game2 = _interopRequireDefault(_game);
 
-var _mock_game = __webpack_require__(110);
+var _mock_game = __webpack_require__(113);
 
 var _mock_game2 = _interopRequireDefault(_mock_game);
 
@@ -1399,13 +1878,13 @@ var _merge = __webpack_require__(0);
 
 var _merge2 = _interopRequireDefault(_merge);
 
-var _controllerUtilities = __webpack_require__(121);
+var _controllerUtilities = __webpack_require__(129);
 
-var _controllerMaps = __webpack_require__(34);
+var _controllerMaps = __webpack_require__(38);
 
 var gamepadMaps = _interopRequireWildcard(_controllerMaps);
 
-var _controllerDebug = __webpack_require__(122);
+var _controllerDebug = __webpack_require__(130);
 
 var _controllerDebug2 = _interopRequireDefault(_controllerDebug);
 
@@ -1421,6 +1900,8 @@ var trueGame = function trueGame() {
 };
 
 var negaGame = function negaGame() {
+  //the negaGame is basically a larger false game for ideas which might even be their own side projects if creating new webpack projects wasn't such a pain in the buttottom.
+
   // attachControllerToWindow("xbox","Xbox One");
   // attachControllerToWindow("lcon","Joy-Con (L)");
   // attachControllerToWindow("rcon","Joy-Con (R)");
@@ -1437,19 +1918,8 @@ var negaGame = function negaGame() {
 };
 
 var falseGame = function falseGame() {
-  console.log("Start");
-  var Thing = {
-    state: { "a": 1 },
-    history: [],
-    pushHistory: function pushHistory() {
-      this.history.push((0, _merge2.default)({}, this.state));
-    }
 
-  };
-  Thing.pushHistory();
-  Thing.state.a = 2;
-  Thing.pushHistory();
-  console.log(JSON.stringify(Thing.history));
+  console.error("You're in false game, which is for testing small ideas, usually javascript fundamentals.");
 };
 var switcher = function switcher(n) {
   switch (n) {
@@ -1465,7 +1935,7 @@ var switcher = function switcher(n) {
 document.addEventListener('DOMContentLoaded', switcher(1));
 
 /***/ }),
-/* 36 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1486,6 +1956,7 @@ var ActorManager = function ActorManager() {
       } else {
         this.actors.all.push(newActor);
       }
+      // debugger
       Object.keys(newActor.modules).forEach(function (moduleName) {
         if (_this.actors[moduleName]) {
           _this.actors[moduleName].push(newActor);
@@ -1516,7 +1987,7 @@ var ActorManager = function ActorManager() {
 module.exports = ActorManager;
 
 /***/ }),
-/* 37 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1580,15 +2051,15 @@ var TimeManager = function TimeManager() {
 module.exports = TimeManager;
 
 /***/ }),
-/* 38 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var Stack = __webpack_require__(39),
-    assignMergeValue = __webpack_require__(22),
-    baseFor = __webpack_require__(71),
-    baseMergeDeep = __webpack_require__(73),
+var Stack = __webpack_require__(43),
+    assignMergeValue = __webpack_require__(23),
+    baseFor = __webpack_require__(75),
+    baseMergeDeep = __webpack_require__(77),
     isObject = __webpack_require__(1),
-    keysIn = __webpack_require__(31);
+    keysIn = __webpack_require__(32);
 
 /**
  * The base implementation of `_.merge` without support for multiple sources.
@@ -1627,15 +2098,15 @@ module.exports = baseMerge;
 
 
 /***/ }),
-/* 39 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var ListCache = __webpack_require__(4),
-    stackClear = __webpack_require__(45),
-    stackDelete = __webpack_require__(46),
-    stackGet = __webpack_require__(47),
-    stackHas = __webpack_require__(48),
-    stackSet = __webpack_require__(49);
+    stackClear = __webpack_require__(49),
+    stackDelete = __webpack_require__(50),
+    stackGet = __webpack_require__(51),
+    stackHas = __webpack_require__(52),
+    stackSet = __webpack_require__(53);
 
 /**
  * Creates a stack cache object to store key-value pairs.
@@ -1660,7 +2131,7 @@ module.exports = Stack;
 
 
 /***/ }),
-/* 40 */
+/* 44 */
 /***/ (function(module, exports) {
 
 /**
@@ -1679,7 +2150,7 @@ module.exports = listCacheClear;
 
 
 /***/ }),
-/* 41 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var assocIndexOf = __webpack_require__(5);
@@ -1720,7 +2191,7 @@ module.exports = listCacheDelete;
 
 
 /***/ }),
-/* 42 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var assocIndexOf = __webpack_require__(5);
@@ -1745,7 +2216,7 @@ module.exports = listCacheGet;
 
 
 /***/ }),
-/* 43 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var assocIndexOf = __webpack_require__(5);
@@ -1767,7 +2238,7 @@ module.exports = listCacheHas;
 
 
 /***/ }),
-/* 44 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var assocIndexOf = __webpack_require__(5);
@@ -1799,7 +2270,7 @@ module.exports = listCacheSet;
 
 
 /***/ }),
-/* 45 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var ListCache = __webpack_require__(4);
@@ -1820,7 +2291,7 @@ module.exports = stackClear;
 
 
 /***/ }),
-/* 46 */
+/* 50 */
 /***/ (function(module, exports) {
 
 /**
@@ -1844,7 +2315,7 @@ module.exports = stackDelete;
 
 
 /***/ }),
-/* 47 */
+/* 51 */
 /***/ (function(module, exports) {
 
 /**
@@ -1864,7 +2335,7 @@ module.exports = stackGet;
 
 
 /***/ }),
-/* 48 */
+/* 52 */
 /***/ (function(module, exports) {
 
 /**
@@ -1884,12 +2355,12 @@ module.exports = stackHas;
 
 
 /***/ }),
-/* 49 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var ListCache = __webpack_require__(4),
-    Map = __webpack_require__(19),
-    MapCache = __webpack_require__(58);
+    Map = __webpack_require__(20),
+    MapCache = __webpack_require__(62);
 
 /** Used as the size to enable large array optimizations. */
 var LARGE_ARRAY_SIZE = 200;
@@ -1924,13 +2395,13 @@ module.exports = stackSet;
 
 
 /***/ }),
-/* 50 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isFunction = __webpack_require__(11),
-    isMasked = __webpack_require__(54),
+var isFunction = __webpack_require__(13),
+    isMasked = __webpack_require__(58),
     isObject = __webpack_require__(1),
-    toSource = __webpack_require__(56);
+    toSource = __webpack_require__(60);
 
 /**
  * Used to match `RegExp`
@@ -1977,7 +2448,7 @@ module.exports = baseIsNative;
 
 
 /***/ }),
-/* 51 */
+/* 55 */
 /***/ (function(module, exports) {
 
 var g;
@@ -2004,10 +2475,10 @@ module.exports = g;
 
 
 /***/ }),
-/* 52 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var Symbol = __webpack_require__(20);
+var Symbol = __webpack_require__(21);
 
 /** Used for built-in method references. */
 var objectProto = Object.prototype;
@@ -2056,7 +2527,7 @@ module.exports = getRawTag;
 
 
 /***/ }),
-/* 53 */
+/* 57 */
 /***/ (function(module, exports) {
 
 /** Used for built-in method references. */
@@ -2084,10 +2555,10 @@ module.exports = objectToString;
 
 
 /***/ }),
-/* 54 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var coreJsData = __webpack_require__(55);
+var coreJsData = __webpack_require__(59);
 
 /** Used to detect methods masquerading as native. */
 var maskSrcKey = (function() {
@@ -2110,7 +2581,7 @@ module.exports = isMasked;
 
 
 /***/ }),
-/* 55 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var root = __webpack_require__(2);
@@ -2122,7 +2593,7 @@ module.exports = coreJsData;
 
 
 /***/ }),
-/* 56 */
+/* 60 */
 /***/ (function(module, exports) {
 
 /** Used for built-in method references. */
@@ -2154,7 +2625,7 @@ module.exports = toSource;
 
 
 /***/ }),
-/* 57 */
+/* 61 */
 /***/ (function(module, exports) {
 
 /**
@@ -2173,14 +2644,14 @@ module.exports = getValue;
 
 
 /***/ }),
-/* 58 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var mapCacheClear = __webpack_require__(59),
-    mapCacheDelete = __webpack_require__(66),
-    mapCacheGet = __webpack_require__(68),
-    mapCacheHas = __webpack_require__(69),
-    mapCacheSet = __webpack_require__(70);
+var mapCacheClear = __webpack_require__(63),
+    mapCacheDelete = __webpack_require__(70),
+    mapCacheGet = __webpack_require__(72),
+    mapCacheHas = __webpack_require__(73),
+    mapCacheSet = __webpack_require__(74);
 
 /**
  * Creates a map cache object to store key-value pairs.
@@ -2211,12 +2682,12 @@ module.exports = MapCache;
 
 
 /***/ }),
-/* 59 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var Hash = __webpack_require__(60),
+var Hash = __webpack_require__(64),
     ListCache = __webpack_require__(4),
-    Map = __webpack_require__(19);
+    Map = __webpack_require__(20);
 
 /**
  * Removes all key-value entries from the map.
@@ -2238,14 +2709,14 @@ module.exports = mapCacheClear;
 
 
 /***/ }),
-/* 60 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var hashClear = __webpack_require__(61),
-    hashDelete = __webpack_require__(62),
-    hashGet = __webpack_require__(63),
-    hashHas = __webpack_require__(64),
-    hashSet = __webpack_require__(65);
+var hashClear = __webpack_require__(65),
+    hashDelete = __webpack_require__(66),
+    hashGet = __webpack_require__(67),
+    hashHas = __webpack_require__(68),
+    hashSet = __webpack_require__(69);
 
 /**
  * Creates a hash object.
@@ -2276,7 +2747,7 @@ module.exports = Hash;
 
 
 /***/ }),
-/* 61 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var nativeCreate = __webpack_require__(8);
@@ -2297,7 +2768,7 @@ module.exports = hashClear;
 
 
 /***/ }),
-/* 62 */
+/* 66 */
 /***/ (function(module, exports) {
 
 /**
@@ -2320,7 +2791,7 @@ module.exports = hashDelete;
 
 
 /***/ }),
-/* 63 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var nativeCreate = __webpack_require__(8);
@@ -2356,7 +2827,7 @@ module.exports = hashGet;
 
 
 /***/ }),
-/* 64 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var nativeCreate = __webpack_require__(8);
@@ -2385,7 +2856,7 @@ module.exports = hashHas;
 
 
 /***/ }),
-/* 65 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var nativeCreate = __webpack_require__(8);
@@ -2414,7 +2885,7 @@ module.exports = hashSet;
 
 
 /***/ }),
-/* 66 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var getMapData = __webpack_require__(9);
@@ -2438,7 +2909,7 @@ module.exports = mapCacheDelete;
 
 
 /***/ }),
-/* 67 */
+/* 71 */
 /***/ (function(module, exports) {
 
 /**
@@ -2459,7 +2930,7 @@ module.exports = isKeyable;
 
 
 /***/ }),
-/* 68 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var getMapData = __webpack_require__(9);
@@ -2481,7 +2952,7 @@ module.exports = mapCacheGet;
 
 
 /***/ }),
-/* 69 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var getMapData = __webpack_require__(9);
@@ -2503,7 +2974,7 @@ module.exports = mapCacheHas;
 
 
 /***/ }),
-/* 70 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var getMapData = __webpack_require__(9);
@@ -2531,10 +3002,10 @@ module.exports = mapCacheSet;
 
 
 /***/ }),
-/* 71 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var createBaseFor = __webpack_require__(72);
+var createBaseFor = __webpack_require__(76);
 
 /**
  * The base implementation of `baseForOwn` which iterates over `object`
@@ -2553,7 +3024,7 @@ module.exports = baseFor;
 
 
 /***/ }),
-/* 72 */
+/* 76 */
 /***/ (function(module, exports) {
 
 /**
@@ -2584,23 +3055,23 @@ module.exports = createBaseFor;
 
 
 /***/ }),
-/* 73 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var assignMergeValue = __webpack_require__(22),
-    cloneBuffer = __webpack_require__(74),
-    cloneTypedArray = __webpack_require__(75),
-    copyArray = __webpack_require__(78),
-    initCloneObject = __webpack_require__(79),
-    isArguments = __webpack_require__(26),
-    isArray = __webpack_require__(27),
-    isArrayLikeObject = __webpack_require__(83),
-    isBuffer = __webpack_require__(29),
-    isFunction = __webpack_require__(11),
+var assignMergeValue = __webpack_require__(23),
+    cloneBuffer = __webpack_require__(78),
+    cloneTypedArray = __webpack_require__(79),
+    copyArray = __webpack_require__(82),
+    initCloneObject = __webpack_require__(83),
+    isArguments = __webpack_require__(27),
+    isArray = __webpack_require__(28),
+    isArrayLikeObject = __webpack_require__(87),
+    isBuffer = __webpack_require__(30),
+    isFunction = __webpack_require__(13),
     isObject = __webpack_require__(1),
-    isPlainObject = __webpack_require__(85),
-    isTypedArray = __webpack_require__(30),
-    toPlainObject = __webpack_require__(89);
+    isPlainObject = __webpack_require__(89),
+    isTypedArray = __webpack_require__(31),
+    toPlainObject = __webpack_require__(93);
 
 /**
  * A specialized version of `baseMerge` for arrays and objects which performs
@@ -2683,7 +3154,7 @@ module.exports = baseMergeDeep;
 
 
 /***/ }),
-/* 74 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(module) {var root = __webpack_require__(2);
@@ -2722,13 +3193,13 @@ function cloneBuffer(buffer, isDeep) {
 
 module.exports = cloneBuffer;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(15)(module)))
 
 /***/ }),
-/* 75 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var cloneArrayBuffer = __webpack_require__(76);
+var cloneArrayBuffer = __webpack_require__(80);
 
 /**
  * Creates a clone of `typedArray`.
@@ -2747,10 +3218,10 @@ module.exports = cloneTypedArray;
 
 
 /***/ }),
-/* 76 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var Uint8Array = __webpack_require__(77);
+var Uint8Array = __webpack_require__(81);
 
 /**
  * Creates a clone of `arrayBuffer`.
@@ -2769,7 +3240,7 @@ module.exports = cloneArrayBuffer;
 
 
 /***/ }),
-/* 77 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var root = __webpack_require__(2);
@@ -2781,7 +3252,7 @@ module.exports = Uint8Array;
 
 
 /***/ }),
-/* 78 */
+/* 82 */
 /***/ (function(module, exports) {
 
 /**
@@ -2807,12 +3278,12 @@ module.exports = copyArray;
 
 
 /***/ }),
-/* 79 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseCreate = __webpack_require__(80),
-    getPrototype = __webpack_require__(24),
-    isPrototype = __webpack_require__(25);
+var baseCreate = __webpack_require__(84),
+    getPrototype = __webpack_require__(25),
+    isPrototype = __webpack_require__(26);
 
 /**
  * Initializes an object clone.
@@ -2831,7 +3302,7 @@ module.exports = initCloneObject;
 
 
 /***/ }),
-/* 80 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var isObject = __webpack_require__(1);
@@ -2867,7 +3338,7 @@ module.exports = baseCreate;
 
 
 /***/ }),
-/* 81 */
+/* 85 */
 /***/ (function(module, exports) {
 
 /**
@@ -2888,7 +3359,7 @@ module.exports = overArg;
 
 
 /***/ }),
-/* 82 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var baseGetTag = __webpack_require__(7),
@@ -2912,10 +3383,10 @@ module.exports = baseIsArguments;
 
 
 /***/ }),
-/* 83 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isArrayLike = __webpack_require__(14),
+var isArrayLike = __webpack_require__(16),
     isObjectLike = __webpack_require__(3);
 
 /**
@@ -2951,7 +3422,7 @@ module.exports = isArrayLikeObject;
 
 
 /***/ }),
-/* 84 */
+/* 88 */
 /***/ (function(module, exports) {
 
 /**
@@ -2975,11 +3446,11 @@ module.exports = stubFalse;
 
 
 /***/ }),
-/* 85 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var baseGetTag = __webpack_require__(7),
-    getPrototype = __webpack_require__(24),
+    getPrototype = __webpack_require__(25),
     isObjectLike = __webpack_require__(3);
 
 /** `Object#toString` result references. */
@@ -3043,11 +3514,11 @@ module.exports = isPlainObject;
 
 
 /***/ }),
-/* 86 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var baseGetTag = __webpack_require__(7),
-    isLength = __webpack_require__(28),
+    isLength = __webpack_require__(29),
     isObjectLike = __webpack_require__(3);
 
 /** `Object#toString` result references. */
@@ -3109,7 +3580,7 @@ module.exports = baseIsTypedArray;
 
 
 /***/ }),
-/* 87 */
+/* 91 */
 /***/ (function(module, exports) {
 
 /**
@@ -3129,10 +3600,10 @@ module.exports = baseUnary;
 
 
 /***/ }),
-/* 88 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(module) {var freeGlobal = __webpack_require__(21);
+/* WEBPACK VAR INJECTION */(function(module) {var freeGlobal = __webpack_require__(22);
 
 /** Detect free variable `exports`. */
 var freeExports = typeof exports == 'object' && exports && !exports.nodeType && exports;
@@ -3155,14 +3626,14 @@ var nodeUtil = (function() {
 
 module.exports = nodeUtil;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(15)(module)))
 
 /***/ }),
-/* 89 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var copyObject = __webpack_require__(90),
-    keysIn = __webpack_require__(31);
+var copyObject = __webpack_require__(94),
+    keysIn = __webpack_require__(32);
 
 /**
  * Converts `value` to a plain object flattening inherited enumerable string
@@ -3196,11 +3667,11 @@ module.exports = toPlainObject;
 
 
 /***/ }),
-/* 90 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var assignValue = __webpack_require__(91),
-    baseAssignValue = __webpack_require__(12);
+var assignValue = __webpack_require__(95),
+    baseAssignValue = __webpack_require__(14);
 
 /**
  * Copies properties of `source` to `object`.
@@ -3242,10 +3713,10 @@ module.exports = copyObject;
 
 
 /***/ }),
-/* 91 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseAssignValue = __webpack_require__(12),
+var baseAssignValue = __webpack_require__(14),
     eq = __webpack_require__(6);
 
 /** Used for built-in method references. */
@@ -3276,15 +3747,15 @@ module.exports = assignValue;
 
 
 /***/ }),
-/* 92 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseTimes = __webpack_require__(93),
-    isArguments = __webpack_require__(26),
-    isArray = __webpack_require__(27),
-    isBuffer = __webpack_require__(29),
-    isIndex = __webpack_require__(32),
-    isTypedArray = __webpack_require__(30);
+var baseTimes = __webpack_require__(97),
+    isArguments = __webpack_require__(27),
+    isArray = __webpack_require__(28),
+    isBuffer = __webpack_require__(30),
+    isIndex = __webpack_require__(33),
+    isTypedArray = __webpack_require__(31);
 
 /** Used for built-in method references. */
 var objectProto = Object.prototype;
@@ -3331,7 +3802,7 @@ module.exports = arrayLikeKeys;
 
 
 /***/ }),
-/* 93 */
+/* 97 */
 /***/ (function(module, exports) {
 
 /**
@@ -3357,12 +3828,12 @@ module.exports = baseTimes;
 
 
 /***/ }),
-/* 94 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var isObject = __webpack_require__(1),
-    isPrototype = __webpack_require__(25),
-    nativeKeysIn = __webpack_require__(95);
+    isPrototype = __webpack_require__(26),
+    nativeKeysIn = __webpack_require__(99);
 
 /** Used for built-in method references. */
 var objectProto = Object.prototype;
@@ -3396,7 +3867,7 @@ module.exports = baseKeysIn;
 
 
 /***/ }),
-/* 95 */
+/* 99 */
 /***/ (function(module, exports) {
 
 /**
@@ -3422,11 +3893,11 @@ module.exports = nativeKeysIn;
 
 
 /***/ }),
-/* 96 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseRest = __webpack_require__(97),
-    isIterateeCall = __webpack_require__(104);
+var baseRest = __webpack_require__(101),
+    isIterateeCall = __webpack_require__(108);
 
 /**
  * Creates a function like `_.assign`.
@@ -3465,12 +3936,12 @@ module.exports = createAssigner;
 
 
 /***/ }),
-/* 97 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var identity = __webpack_require__(33),
-    overRest = __webpack_require__(98),
-    setToString = __webpack_require__(100);
+var identity = __webpack_require__(34),
+    overRest = __webpack_require__(102),
+    setToString = __webpack_require__(104);
 
 /**
  * The base implementation of `_.rest` which doesn't validate or coerce arguments.
@@ -3488,10 +3959,10 @@ module.exports = baseRest;
 
 
 /***/ }),
-/* 98 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var apply = __webpack_require__(99);
+var apply = __webpack_require__(103);
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
 var nativeMax = Math.max;
@@ -3530,7 +4001,7 @@ module.exports = overRest;
 
 
 /***/ }),
-/* 99 */
+/* 103 */
 /***/ (function(module, exports) {
 
 /**
@@ -3557,11 +4028,11 @@ module.exports = apply;
 
 
 /***/ }),
-/* 100 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseSetToString = __webpack_require__(101),
-    shortOut = __webpack_require__(103);
+var baseSetToString = __webpack_require__(105),
+    shortOut = __webpack_require__(107);
 
 /**
  * Sets the `toString` method of `func` to return `string`.
@@ -3577,12 +4048,12 @@ module.exports = setToString;
 
 
 /***/ }),
-/* 101 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var constant = __webpack_require__(102),
-    defineProperty = __webpack_require__(23),
-    identity = __webpack_require__(33);
+var constant = __webpack_require__(106),
+    defineProperty = __webpack_require__(24),
+    identity = __webpack_require__(34);
 
 /**
  * The base implementation of `setToString` without support for hot loop shorting.
@@ -3605,7 +4076,7 @@ module.exports = baseSetToString;
 
 
 /***/ }),
-/* 102 */
+/* 106 */
 /***/ (function(module, exports) {
 
 /**
@@ -3637,7 +4108,7 @@ module.exports = constant;
 
 
 /***/ }),
-/* 103 */
+/* 107 */
 /***/ (function(module, exports) {
 
 /** Used to detect hot functions by number of calls within a span of milliseconds. */
@@ -3680,12 +4151,12 @@ module.exports = shortOut;
 
 
 /***/ }),
-/* 104 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var eq = __webpack_require__(6),
-    isArrayLike = __webpack_require__(14),
-    isIndex = __webpack_require__(32),
+    isArrayLike = __webpack_require__(16),
+    isIndex = __webpack_require__(33),
     isObject = __webpack_require__(1);
 
 /**
@@ -3716,7 +4187,7 @@ module.exports = isIterateeCall;
 
 
 /***/ }),
-/* 105 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3773,7 +4244,7 @@ var Renderer = function Renderer(options) {
 module.exports = Renderer;
 
 /***/ }),
-/* 106 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3783,9 +4254,9 @@ var _merge = __webpack_require__(0);
 
 var _merge2 = _interopRequireDefault(_merge);
 
-var _util = __webpack_require__(107);
+var _util = __webpack_require__(131);
 
-var _controllerMaps = __webpack_require__(108);
+var _controllerMaps = __webpack_require__(132);
 
 var Maps = _interopRequireWildcard(_controllerMaps);
 
@@ -3838,7 +4309,10 @@ var virtualController = function virtualController(options) {
       changelog: []
     },
 
-    appendHistory: function appendHistory(newFrame) {
+    appendHistory: function appendHistory() {
+      this.controllerLog.stateLog.push((0, _merge2.default)({}, this.state.virtualController));
+    },
+    moduleWillMount: function moduleWillMount() {
       this.controllerLog.stateLog.push((0, _merge2.default)({}, this.state));
     },
     bindKeys: function bindKeys() {
@@ -3851,12 +4325,12 @@ var virtualController = function virtualController(options) {
     },
     handleKeyDown: function handleKeyDown(e) {
       if (Maps.KeyToXbox[e.key]) {
-        this.state.buttons[Maps.KeyToXbox[e.key]] = true;
+        this.state.virtualController.buttons[Maps.KeyToXbox[e.key]] = true;
       }
     },
     handleKeyUp: function handleKeyUp(e) {
       if (Maps.KeyToXbox[e.key]) {
-        this.state.buttons[Maps.KeyToXbox[e.key]] = false;
+        this.state.virtualController.buttons[Maps.KeyToXbox[e.key]] = false;
       }
     },
     handleGamepadConnected: function handleGamepadConnected(e) {
@@ -3876,37 +4350,45 @@ var virtualController = function virtualController(options) {
 
       var lastFrame = this.controllerLog.stateLog[this.controllerLog.stateLog.length - 1];
       var changeRecord = [];
-      var keys = Object.keys(this.state.buttons);
+      var keys = Object.keys(this.state.virtualController.buttons);
 
       keys.forEach(function (key) {
-        if (_this.state.buttons[key] === true && lastFrame.buttons[key] === false) {
-          changeRecord.push({ type: "pressdown", payload: key });
-        }
+        try {
+          // debugger
+          if (_this.state.virtualController.buttons[key] === true && lastFrame.buttons[key] === false) {
+            changeRecord.push({
+              type: "pressdown",
+              payload: key
+            });
+          }
 
-        if (_this.state.buttons[key] === false && lastFrame.buttons[key] === true) {
-          changeRecord.push({ type: "pressup", payload: key });
+          if (_this.state.virtualController.buttons[key] === false && lastFrame.buttons[key] === true) {
+            changeRecord.push({
+              type: "pressup",
+              payload: key
+            });
+          }
+        } catch (error) {
+          debugger;
         }
-      });
+      }, this);
       return changeRecord;
     },
 
     dispatchControllerEvent: function dispatchControllerEvent(detail) {
-      document.dispatchEvent(new CustomEvent('controllerAction', { detail: detail }));
+      document.dispatchEvent(new CustomEvent('controllerAction', {
+        detail: detail
+      }));
     },
     pollGamePads: function pollGamePads() {
-      if (this.gamepadConnected) {
-        var buttons = navigator.getGamepads()[0].buttons;
 
-        for (var i in buttons) {
-          if (buttons[i].pressed) {
-            if (this.gamepadConnected) {
-              this.state.buttons[Maps.xboxIndexToButton[i]] = true;
-            }
-          } else {
-            if (this.gamepadConnected) {
-              this.state.buttons[Maps.xboxIndexToButton[i]] = false;
-            }
-          }
+      var buttons = navigator.getGamepads()[0].buttons;
+
+      for (var i in buttons) {
+        if (buttons[i].pressed) {
+          this.state.virtualController.buttons[Maps.xboxIndexToButton[i]] = true;
+        } else {
+          this.state.virtualController.buttons[Maps.xboxIndexToButton[i]] = false;
         }
       }
     },
@@ -3923,7 +4405,7 @@ var virtualController = function virtualController(options) {
       }
     }
   };
-  _virtualController.appendHistory();
+  // _virtualController.appendHistory();
   // _virtualController.bindKeys();
 
   return (0, _merge2.default)(_virtualController, options);
@@ -3935,7 +4417,1125 @@ var virtualController = function virtualController(options) {
 module.exports = virtualController;
 
 /***/ }),
-/* 107 */
+/* 111 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _merge = __webpack_require__(0);
+
+var _merge2 = _interopRequireDefault(_merge);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var physicsComponent = function physicsComponent(options) {
+  var _physicsComponent = {
+    name: "physicsComponent",
+    actorComponent: "actorPhysics"
+
+    // moduleStep: function(){
+    //   // this.actors.all.forEach( (actor)=>{
+    //   //   actor.yAcc += this.gravity;
+    //   // },this);
+    // }
+
+
+  };
+  (0, _merge2.default)(_physicsComponent, options);
+  return _physicsComponent;
+};
+
+module.exports = physicsComponent;
+
+/***/ }),
+/* 112 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _merge = __webpack_require__(0);
+
+var _merge2 = _interopRequireDefault(_merge);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var collisionComponent = function collisionComponent(options) {
+  var _collisionComponent = {
+    name: "collisionComponent",
+
+    moduleStep: function moduleStep() {
+      var actors = this.actors.all;
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = actors[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var collidant = _step.value;
+
+          if (!collidant.modules.has("actorCollision")) {
+            continue;
+          }
+          var _iteratorNormalCompletion2 = true;
+          var _didIteratorError2 = false;
+          var _iteratorError2 = undefined;
+
+          try {
+            for (var _iterator2 = actors[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+              var collidee = _step2.value;
+
+              if (collidant === collidee) {
+                continue;
+              }
+              collidant.checkCollision(collidee);
+            }
+          } catch (err) {
+            _didIteratorError2 = true;
+            _iteratorError2 = err;
+          } finally {
+            try {
+              if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                _iterator2.return();
+              }
+            } finally {
+              if (_didIteratorError2) {
+                throw _iteratorError2;
+              }
+            }
+          }
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+    }
+  };
+
+  (0, _merge2.default)(_collisionComponent, options);
+  return _collisionComponent;
+};
+
+module.exports = collisionComponent;
+
+/***/ }),
+/* 113 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _game = __webpack_require__(18);
+
+var _game2 = _interopRequireDefault(_game);
+
+var _player_actor = __webpack_require__(114);
+
+var _player_actor2 = _interopRequireDefault(_player_actor);
+
+var _coin_actor = __webpack_require__(125);
+
+var _coin_actor2 = _interopRequireDefault(_coin_actor);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function mockGame() {
+  var view = document.getElementById('view');
+
+  var game = new _game2.default();
+  // debugger
+  // game.bindKeys();
+
+
+  game.setContext(view.getContext('2d'));
+  view.width = game.view_width;
+  view.height = game.view_height; //should these assignments be in the setContext method?
+
+
+  game.addActor(new _player_actor2.default(0, 0));
+  // game.addActor(new coinActor(1,1));
+  game.addActor(new _coin_actor2.default(2, 2));
+
+  dbAdd("player", game.actors.all[0]);
+  dbAdd("coin", game.actors.all[1]);
+  dbAdd("game", game);
+
+  return game;
+}
+
+exports.default = mockGame;
+
+/***/ }),
+/* 114 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _actor = __webpack_require__(10);
+
+var _actor2 = _interopRequireDefault(_actor);
+
+var _player_controller = __webpack_require__(115);
+
+var _player_controller2 = _interopRequireDefault(_player_controller);
+
+var _player_physics = __webpack_require__(116);
+
+var _player_physics2 = _interopRequireDefault(_player_physics);
+
+var _player_animation = __webpack_require__(118);
+
+var _player_animation2 = _interopRequireDefault(_player_animation);
+
+var _player_collision = __webpack_require__(122);
+
+var _player_collision2 = _interopRequireDefault(_player_collision);
+
+var _objFrameData = __webpack_require__(123);
+
+var _objFrameData2 = _interopRequireDefault(_objFrameData);
+
+var _objData = __webpack_require__(124);
+
+var _objData2 = _interopRequireDefault(_objData);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var playerActor = function playerActor() {
+  var n = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+  var m = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+
+  devLog.log('ceating new player object');
+
+  var _playerActor = new _actor2.default({
+    name: "player",
+    des: {
+      x: 0 + n * 32,
+      y: 0 + n * 32
+    }
+  });
+
+  devLog.log('adding modules to player');
+  _playerActor.addModules(new _player_animation2.default(), new _player_physics2.default(), new _player_controller2.default(), new _player_collision2.default());
+
+  devLog.log('creating debug information for player');
+  _playerActor.addModules(new _objData2.default(), new _objFrameData2.default());
+
+  devLog.log('initializing controller for player');
+  _playerActor.flags = {};
+  // _playerActor.initializeActorCollision();
+
+  return _playerActor;
+};
+
+module.exports = playerActor;
+
+/***/ }),
+/* 115 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _actorController = __webpack_require__(35);
+
+var _actorController2 = _interopRequireDefault(_actorController);
+
+var _verb = __webpack_require__(17);
+
+var _verb2 = _interopRequireDefault(_verb);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function hop(coord, dir) {
+  var cmd = 'this.targets.owner.des.' + coord + ' += 40 * ' + dir;
+  return function () {
+    // debugger
+    if (!this.cooldown) {
+      eval(cmd);
+      this.beginCoolDown();
+    }
+  };
+}
+
+function move(axis, dir) {
+  return function () {
+    this.targets.owner.acc[axis] += 1 * dir;
+  };
+}
+
+var moveVerb = function moveVerb(name, axis, dir) {
+  var _v = new _verb2.default({ name: name });
+
+  _v.setFunc(move(axis, dir));
+
+  _v.setTrigger(function (e) {
+    return e.detail.type === "pressdown" && e.detail.payload === name;
+  });
+
+  _v.addRequirement(function (e) {
+    return this.targets.owner.state.actorPhysics.block[e.detail.payload] === false;
+  });
+
+  return _v;
+};
+
+function unMove(axis, dir) {
+  return function () {
+    this.targets.owner.acc[axis] -= 1 * dir;
+  };
+}
+
+var unMoveVerb = function unMoveVerb(name, trigger, axis, dir) {
+  var _v = new _verb2.default({ name: name });
+  _v.setFunc(unMove(axis, dir));
+
+  _v.setTrigger(function (e) {
+    return e.detail.type === "pressup" && e.detail.payload === trigger;
+  });
+
+  _v.addRequirement(function () {
+    return this.targets.owner.vel[axis] != 0;
+  });
+  return _v;
+};
+
+var right = new moveVerb("right", "x", "1");
+// right.addRequirement(function(){
+//   let owner = this.targets.owner;
+//   return owner.des.x + owner.collision_width < 960;
+// });
+
+//don't delete these added requirements. Right now they don't play nice with the looping function that keeps the guy on the screen, but eventually you want to stop the player from being able to push buttons under certain circumstances.
+
+var unRight = new unMoveVerb("unRight", "right", "x", "1");
+
+var left = new moveVerb("left", "x", "-1");
+// left.addRequirement(function(){
+//   let owner = this.targets.owner;
+//   return owner.des.x > 0;
+// });
+var unLeft = new unMoveVerb("unLeft", "left", "x", "-1");
+
+var down = new moveVerb("down", "y", "+1");
+// down.addRequirement(function(){
+//   let owner = this.targets.owner;
+//   return owner.des.y + owner.collision_height < 640;
+// });
+// down.addRequirement(function(){
+//   return this.targets.owner.flags.blockDown === false;
+// });
+var unDown = new unMoveVerb("unDown", "down", "y", "1");
+
+var up = new moveVerb("up", "y", "-1");
+// up.addRequirement(function(){
+//   let owner = this.targets.owner;
+//   return owner.des.y > 0;
+// });
+var unUp = new unMoveVerb("unUp", "up", "y", "-1");
+
+var mockController = function mockController() {
+  var _mockController = new _actorController2.default();
+  _mockController.addVerbs(right, left, up, down, unRight, unLeft, unUp, unDown);
+
+  return _mockController;
+};
+
+module.exports = mockController;
+
+/***/ }),
+/* 116 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _actorPhysics = __webpack_require__(117);
+
+var _actorPhysics2 = _interopRequireDefault(_actorPhysics);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function mockPhysics() {
+  var _mockPhysics = new _actorPhysics2.default();
+  _mockPhysics.state = {
+    block: {
+      up: false,
+      down: false,
+      left: false,
+      right: false
+    }
+  };
+
+  return _mockPhysics;
+}
+
+module.exports = mockPhysics;
+
+/***/ }),
+/* 117 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _merge = __webpack_require__(0);
+
+var _merge2 = _interopRequireDefault(_merge);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var actorPhysics = function actorPhysics(options) {
+  var _actorPhysics = {
+    name: "actorPhysics",
+    des: { x: 0, y: 0 },
+    acc: { x: 0, y: 0 },
+    vel: { x: 0, y: 0 },
+    max: { x: 10, y: 10 },
+    terminal: 10, //velocity max
+    friction: 0.09,
+    // environment: "air", //current environments
+
+    applyFriction: function applyFriction(axis) {
+      // if(this.vel[axis] > 9.7){debugger}
+      // console.log("hit")
+      this.vel[axis] = this.vel[axis] - this.vel[axis] * this.friction;
+      if (this.vel[axis] > 0 && this.vel[axis] < 0.2) {
+        this.vel[axis] = 0;
+      }
+      if (this.vel[axis] < 0 && this.vel[axis] > -0.2) {
+        this.vel[axis] = 0;
+      }
+    },
+
+    applyAccToVel: function applyAccToVel(axis) {
+      var n = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+
+      this.vel[axis] = this.vel[axis] + this.acc[axis] * n;
+      if (this.vel[axis] > Math.min(this.max[axis], this.terminal)) {
+        this.vel[axis] = Math.min(this.max[axis], this.terminal);
+      }
+      if (this.vel[axis] < -1 * Math.min(this.max[axis], this.terminal)) {
+        this.vel[axis] = -1 * Math.min(this.max[axis], this.terminal);
+      }
+      // this.acc[axis] = 0;
+    },
+
+    applyVelToDes: function applyVelToDes(axis) {
+      if (["x", "y"].some(function (x) {
+        return x === axis;
+      })) {
+        this.des[axis] += this.vel[axis];
+      } else {
+        throw "no axis passed to function";
+      }
+    },
+
+    moduleStep: function moduleStep() {
+      var _this = this;
+
+      var axes = ["x", "y"];
+      axes.forEach(function (axis) {
+        _this.boundaryLoopBack(axis);
+        _this.applyAccToVel(axis, 1);
+        _this.applyFriction(axis);
+        _this.applyVelToDes(axis);
+      }, this);
+    },
+
+    boundaryLoopBack: function boundaryLoopBack(axis) {
+      if (this.des.x < 0) {
+        this.des.x = this.des.x + 960 - this.collision_width;
+      }
+      if (this.des.x > 960) {
+        this.des.x = this.des.x - 960;
+      }
+      if (this.des.y < 0) {
+        this.des.y = this.des.y + 640 - this.collision_height;
+      }
+      if (this.des.y > 640) {
+        this.des.y = this.des.y - 640;
+      }
+    }
+  };
+  (0, _merge2.default)(_actorPhysics, options);
+  return _actorPhysics;
+};
+
+module.exports = actorPhysics;
+
+/***/ }),
+/* 118 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _actoranimator = __webpack_require__(36);
+
+var _actoranimator2 = _interopRequireDefault(_actoranimator);
+
+var _merge = __webpack_require__(0);
+
+var _merge2 = _interopRequireDefault(_merge);
+
+var _piskelSupport = __webpack_require__(119);
+
+var _piskelSupport2 = _interopRequireDefault(_piskelSupport);
+
+var _animationCycle = __webpack_require__(11);
+
+var _spriteguy = __webpack_require__(120);
+
+var _spriteguy2 = _interopRequireDefault(_spriteguy);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var json = __webpack_require__(121).frames;
+//Each prop has a sub prop. I really want the subprop. Honestly as an array! there has got to be a way of doing that faster. But this si fine for proof of concept
+
+var guyAnimation = function guyAnimation() {
+  var animas = [{ name: "idle", frames: [1] }, { name: "collideDown", frames: [1] }, { name: "collideUp", frames: [1] }, { name: "collideRight", frames: [1] }, { name: "collideLeft", frames: [1] }, { name: "walk", frames: [5, 5] }, { name: "jumpUp", frames: [1] }, { name: "fallDown", frames: [1] }, { name: "praiseTheSun", frames: [1] }];
+
+  var _guyAnimation = new _actoranimator2.default({ src: _spriteguy2.default });
+  (0, _piskelSupport2.default)(_guyAnimation);
+  var larva = _guyAnimation.spawnPiskelLarva();
+  larva.addInfoFrames(animas);
+  larva.piskelParse(json);
+  larva.piskelZip();
+  larva.apoptosize();
+  _guyAnimation.reabsorbPiskelLarva(larva);
+
+  // dbAdd("ga", _guyAnimation);
+  return _guyAnimation;
+};
+
+module.exports = guyAnimation;
+
+/***/ }),
+/* 119 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _merge = __webpack_require__(0);
+
+var _merge2 = _interopRequireDefault(_merge);
+
+var _animationCycle = __webpack_require__(11);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+//a parasite is a type of wrapper. It's basically a module that attaches it's functions to the base class without taking advantage of the base class's integration procedures. It's fine for now, but it should indicate a need for redesign after creating something stable. Also saying I need to change it later helps me justify the delightful use of grotesque language to describe what's happening.
+
+var piskelSupportParasite = function piskelSupportParasite(owner) {
+  return {
+    owner: owner,
+    animaFeed: [],
+    celuloidFeed: [],
+    payload: [],
+
+    apoptosize: function apoptosize() {
+      for (var prop in this) {
+        if (prop !== "payload" && prop !== "owner") {
+          delete this[prop];
+        }
+      }
+    },
+
+    addInfoFrame: function addInfoFrame(options) {
+      this.animaFeed.push({ name: options.name, frames: options.frames });
+    },
+
+    addInfoFrames: function addInfoFrames(ary) {
+      for (var idx in ary) {
+        this.addInfoFrame(ary[idx]);
+      }
+    },
+
+    piskelCel: function piskelCel(options, frameCount) {
+      var _cel = {
+        sX: options.x,
+        sY: options.y,
+        draw_width: options.w,
+        draw_height: options.h,
+        frameCount: frameCount
+      };
+      return _cel;
+    },
+
+    piskelZip: function piskelZip() {
+      while (this.animaFeed.length > 0 && this.celuloidFeed.length > 0) {
+        //these should both be 0 when the cycle is over. If not add something to the devBootLog
+        var anima = this.animaFeed.shift();
+        var newAnimation = new _animationCycle.AnimationCycle(anima.name);
+        while (anima.frames.length > 0) {
+          var celuloid = this.celuloidFeed.shift();
+          var newCel = this.piskelCel(celuloid, anima.frames.shift());
+          newAnimation.addCel(newCel);
+        }
+        this.payload.push(newAnimation);
+      }
+    },
+
+    piskelParse: function piskelParse(json) {
+      //O(n*m) look up, make better?
+      if (json.frames) {
+        json = json.frames;
+      }
+      for (var frame in json) {
+        this.celuloidFeed.push(json[frame].frame);
+      }
+    }
+  };
+};
+
+function piskelInfest(actorAnimator) {
+  (0, _merge2.default)(actorAnimator, {
+    spawnPiskelLarva: function spawnPiskelLarva() {
+      return new piskelSupportParasite(this);
+    },
+    reabsorbPiskelLarva: function reabsorbPiskelLarva(obj) {
+      if (obj.owner === this) {
+        this.addAnimations(obj.payload);
+      }
+    }
+  });
+}
+
+module.exports = piskelInfest;
+
+/***/ }),
+/* 120 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__.p + "2ae673bb17beceb7b6b0375f10a47c8f.png";
+
+/***/ }),
+/* 121 */
+/***/ (function(module, exports) {
+
+module.exports = {"frames":{"spriteguy0.png":{"frame":{"x":0,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"spriteguy1.png":{"frame":{"x":32,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"spriteguy2.png":{"frame":{"x":64,"y":0,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"spriteguy3.png":{"frame":{"x":0,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"spriteguy4.png":{"frame":{"x":32,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"spriteguy5.png":{"frame":{"x":64,"y":32,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"spriteguy6.png":{"frame":{"x":0,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"spriteguy7.png":{"frame":{"x":32,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"spriteguy8.png":{"frame":{"x":64,"y":64,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}},"spriteguy9.png":{"frame":{"x":0,"y":96,"w":32,"h":32},"rotated":false,"trimmed":false,"spriteSourceSize":{"x":0,"y":0,"w":32,"h":32},"sourceSize":{"w":32,"h":32}}},"meta":{"app":"https://github.com/piskelapp/piskel/","version":"1.0","image":"spriteguy.png","format":"RGBA8888","size":{"w":96,"h":128}}}
+
+/***/ }),
+/* 122 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _actorCollision = __webpack_require__(37);
+
+var _actorCollision2 = _interopRequireDefault(_actorCollision);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var playerCollision = function playerCollision() {
+  var _playerCollision = new _actorCollision2.default();
+
+  _playerCollision.addCollisionResponse("coin", "foot", function () {
+    this.changeAnimation("collideDown");
+    this.state.actorPhysics.block.down = true;
+    if (this.vel.y > 0) {
+      this.vel.y = 0;
+    }
+  });
+
+  _playerCollision.addCollisionResponse("coin", "head", function () {
+    this.changeAnimation("collideUp");
+    this.state.actorPhysics.block.up = true;
+    if (this.vel.y < 0) {
+      this.vel.y = 0;
+    }
+  });
+
+  _playerCollision.addCollisionResponse("coin", "left", function () {
+    this.changeAnimation("collideLeft");
+    this.state.actorPhysics.block.left = true;
+    if (this.vel.x < 0) {
+      this.vel.x = 0;
+    }
+  });
+
+  _playerCollision.addCollisionResponse("coin", "right", function () {
+    this.changeAnimation("collideRight");
+    this.state.actorPhysics.block.right = true;
+    if (this.vel.x > 0) {
+      this.vel.x = 0;
+    }
+  });
+
+  _playerCollision.changeDefaultCollisionResponse(function () {
+    this.state.actorAnimator.cycle = "idle";
+    for (var block in this.state.actorPhysics.block) {
+      this.state.actorPhysics.block[block] = false;
+    }
+  });
+  return _playerCollision;
+};
+
+module.exports = playerCollision;
+
+/***/ }),
+/* 123 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _actor = __webpack_require__(10);
+
+var _actor2 = _interopRequireDefault(_actor);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var objFrameData = function objFrameData() {
+
+  var domElement = document.getElementById("objFrameData");
+  // debugger
+  var start = Date.now();
+  var _objFrameData = {
+    name: "objFrameData",
+    frameData: {
+      animationFrames: [],
+      animationFPS: 0,
+      physicsFrames: [],
+      physicsFPS: 0,
+      lastUpdate: start,
+      domElement: domElement
+    },
+    moduleStep: function moduleStep() {
+      var animationFrames = this.frameData.animationFrames;
+      var now = Date.now();
+      animationFrames.unshift(now);
+      while (now - animationFrames[animationFrames.length - 1] > 1000) {
+        animationFrames.pop();
+      }
+      this.frameData.domElement.innerHTML = "Animation Frames per Second: " + animationFrames.length;
+    }
+  };
+  return _objFrameData;
+};
+
+module.exports = objFrameData;
+
+/***/ }),
+/* 124 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _actor = __webpack_require__(10);
+
+var _actor2 = _interopRequireDefault(_actor);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var objData = function objData() {
+
+  var domElement = document.getElementById("objData");
+
+  // debugger
+  var start = Date.now();
+  var _objData = {
+    name: "objData",
+    domElement: domElement,
+    moduleStep: function moduleStep() {
+      // debugger
+      this.domElement.innerHTML = "\n      acc: " + JSON.stringify(this.acc) + "<br>\n      vel: " + JSON.stringify(this.vel) + "<br>\n      des: " + JSON.stringify(this.des) + "<br>\n      animationState: " + JSON.stringify(this.modules.actorAnimator) + "<br>\n      ~:" + JSON.stringify("~") + "<br>\n    ";
+    }
+  };
+  return _objData;
+};
+
+module.exports = objData;
+
+/***/ }),
+/* 125 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _actor = __webpack_require__(10);
+
+var _actor2 = _interopRequireDefault(_actor);
+
+var _coin_animation = __webpack_require__(126);
+
+var _coin_animation2 = _interopRequireDefault(_coin_animation);
+
+var _coin_collision = __webpack_require__(127);
+
+var _coin_collision2 = _interopRequireDefault(_coin_collision);
+
+var _coin_controller = __webpack_require__(128);
+
+var _coin_controller2 = _interopRequireDefault(_coin_controller);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var i = 0;
+
+var coinActor = function coinActor() {
+  var n = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+  var m = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+
+  devLog.log('ceating new coin object');
+  var options = {
+    name: 'coin',
+    des: {
+      x: 0 + n * 40,
+      y: 0 + m * 40
+    }
+  };
+  var _coinActor = new _actor2.default(options);
+
+  _coinActor.addModules(new _coin_animation2.default(), new _coin_collision2.default(), new _coin_controller2.default());
+
+  i += 1;
+  _coinActor.initializeActorController();
+
+  return _coinActor;
+};
+
+module.exports = coinActor;
+
+/***/ }),
+/* 126 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _actoranimator = __webpack_require__(36);
+
+var _actoranimator2 = _interopRequireDefault(_actoranimator);
+
+var _merge = __webpack_require__(0);
+
+var _merge2 = _interopRequireDefault(_merge);
+
+var _animationCycle = __webpack_require__(11);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Spin = new _animationCycle.AnimationCycle("Spin");
+var noSpin = new _animationCycle.AnimationCycle("noSpin");
+
+noSpin.createCel({ sX: 400, sY: 0, draw_width: 40, draw_height: 40 }); //0
+
+Spin.createCel({ sX: 400, sY: 0, draw_width: 40, draw_height: 40 }); //0
+Spin.createCel({ sX: 5, sY: 0, draw_width: 37, draw_height: 40 }); //1
+Spin.createCel({ sX: 51, sY: 0, draw_width: 31, draw_height: 40 }); //2
+Spin.createCel({ sX: 101, sY: 0, draw_width: 21, draw_height: 40 }); //3
+Spin.createCel({ sX: 149, sY: 0, draw_width: 13, draw_height: 40 }); //4
+Spin.createCel({ sX: 196, sY: 0, draw_width: 8, draw_height: 40 }); //5
+Spin.createCel({ sX: 238, sY: 0, draw_width: 13, draw_height: 40 }); //6
+Spin.createCel({ sX: 277, sY: 0, draw_width: 22, draw_height: 40 }); //7
+Spin.createCel({ sX: 317, sY: 0, draw_width: 31, draw_height: 40 }); //8
+Spin.createCel({ sX: 357, sY: 0, draw_width: 38, draw_height: 40 }); //9
+
+
+var fastSpin = new _animationCycle.AnimationCycle("fastSpin");
+Spin.cels.forEach(function (cel) {
+
+  fastSpin.createCel((0, _merge2.default)({}, cel, { frameCount: 1 }));
+});
+// dbAdd("spin",Spin);
+
+
+var coinAnimation = function coinAnimation() {
+  var _coinAnimation = new _actoranimator2.default({ src: './assets/coin_test.png' });
+  _coinAnimation.addAnimation(Spin);
+  _coinAnimation.setInitialCycleState("Spin");
+  _coinAnimation.addAnimations(noSpin, fastSpin);
+  return _coinAnimation;
+};
+
+module.exports = coinAnimation;
+
+/***/ }),
+/* 127 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _actorCollision = __webpack_require__(37);
+
+var _actorCollision2 = _interopRequireDefault(_actorCollision);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var coinCollision = function coinCollision() {
+  var _coinCollision = new _actorCollision2.default({
+    collision_width: 40,
+    collision_height: 40
+  });
+  return _coinCollision;
+};
+
+module.exports = coinCollision;
+
+/***/ }),
+/* 128 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _actorController = __webpack_require__(35);
+
+var _actorController2 = _interopRequireDefault(_actorController);
+
+var _verb = __webpack_require__(17);
+
+var _verb2 = _interopRequireDefault(_verb);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var spinFaster = new _verb2.default({ name: "spinFaster" });
+spinFaster.setFunc(function () {
+  this.targets.owner.modules.actorAnimator = "fastSpin";
+});
+spinFaster.setTrigger(function (e) {
+  return e.detail.type === "pressdown" && e.detail.payload === "a";
+});
+
+var spinSlower = new _verb2.default({ name: "spinSlower" });
+spinSlower.setFunc(function () {
+  this.targets.owner.modules.actorAnimator = "Spin";
+});
+spinSlower.setTrigger(function (e) {
+  return e.detail.type === "pressup" && e.detail.payload === "a";
+});
+
+// let spinSlower = new Verb({name:"spinSlower"});
+// spinSlower.setFunc(function(e){
+//     this.targets.owner.modules.actorAnimator = "Spin";
+// });
+//
+// spinSlower.setTrigger(function(e){
+//   return e.detail.keyup === "a";
+// });
+
+
+var coinController = function coinController() {
+  var _coinController = new _actorController2.default();
+  _coinController.addVerbs(spinFaster, spinSlower);
+  return _coinController;
+};
+
+module.exports = coinController;
+
+/***/ }),
+/* 129 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.ggp = ggp;
+exports.getControllerIndex = getControllerIndex;
+exports.getController = getController;
+exports.miniControllerObject = miniControllerObject;
+exports.attachControllerToWindow = attachControllerToWindow;
+
+var _controllerMaps = __webpack_require__(38);
+
+var gpMaps = _interopRequireWildcard(_controllerMaps);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+var gamepadIDs = {
+  "Xbox One": 8,
+  "Joy-Con (L)": 11,
+  "Joy-Con (R)": 11
+};
+
+function ggp() {
+  return navigator.getGamepads();
+}
+
+function getControllerIndex(idstring, endSlice) {
+  var gamepads = Array.from(ggp());
+  for (var i in gamepads) {
+    if (gamepads[i] && gamepads[i].id.slice(0, endSlice) === idstring) {
+      return i;
+    }
+  }
+  console.error("gamepad not found");
+}
+
+function getController(idString) {
+  var id = gamepadIDs[idString];
+  return ggp()[getControllerIndex(idString, gamepadIDs[idString])];
+}
+
+function miniControllerObject(idString) {
+  var _cont = function _cont() {
+    return getController(idString);
+  };
+  _cont.buttons = function () {
+    return getController(idString).buttons.map(function (b) {
+      return b.pressed;
+    });
+  };
+  _cont.axes = function () {
+    return getController(idString).axes;
+  };
+  return _cont;
+}
+
+function attachControllerToWindow(varName, idString) {
+  window[varName] = new miniControllerObject(idString);
+}
+
+//everything below this is disorganized, might be deleted
+
+
+function getAxisVals() {
+  var map = gpMaps.joyconDirectionToFloat;
+  var neutral = map.neutral;
+  var vals = function vals() {
+    Object.values(map);
+  };
+  var keys = Object.keys(map);
+  keys.map(function (key) {
+    if (!vals.some(function (value) {
+      return value === map[key];
+    })) {
+      console.log(key);
+      var val = neutral;
+      while (val === neutral) {
+        val = lcon.axes()[9];
+      }
+      map[key] = val;
+    }
+  });
+  console.log(map);
+} //used to get float values from analogue inputs on joycon
+
+/***/ }),
+/* 130 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+// import {compareSets} from '../../util/util';
+
+// const controllerDebug = ()=>{
+function controllerFeedBack() {
+
+  var controllerDOM = document.getElementById("controlDebug");
+  controllerDOM.innerHTML = "Inputs: ";
+
+  var activeInputs = new Set();
+  document.addEventListener('controllerAction', handleControllerAction);
+
+  function inputFrameAsString(frame) {
+    //converts a set to a string, specifically to be printed to the debug window
+    var str = "";
+
+    if (frame.size > 0) {
+      frame.forEach(function (key) {
+        if (key === " ") {
+          key = "space";
+        }
+        str = str + key + ",";
+      });
+    }
+    str = str.slice(0, -1);
+    return str;
+  }
+
+  function handleControllerAction(e) {
+
+    switch (e.detail.type) {
+      case "pressdown":
+        activeInputs.add(e.detail.payload);
+        break;
+      case "pressup":
+        activeInputs.delete(e.detail.payload);
+        break;
+    }
+    var t = inputFrameAsString(activeInputs);
+    controllerDOM.innerHTML = "Inputs:<br>" + t;
+  }
+
+  //     getGamepadInputs: function(){
+  //       // console.log(this.gamepadConnected);
+  //       if(this.gamepadConnected){
+  //         // let kd = new Event('keydown');
+  //         // let ku = new Event('keyup');
+  //         let buttons = navigator.getGamepads()[0].buttons;
+  //         for(var i in buttons){
+  //           if(buttons[i].pressed){
+  //             console.log(i);
+  //             // kd.key = xboxIndexToKey[i];
+  //             this.gamepadLastStep.add(xboxIndexToButton[i]);
+  //             // document.dispatchEvent(kd);
+  //           } else {
+  //             if(this.gamepadLastStep.has(xboxIndexToButton[i]) ){
+  //               this.gamepadLastStep.delete(xboxIndexToButton[i]);
+  //               // ku.key = xboxIndexToKey[i];navigat
+  //               // document.dispatchEvent(ku);
+  //             }
+  //           }
+  //         }
+  //       }
+  //     },
+  //
+  //
+  //
+  //     // onNewActor(actor){
+  //     //   if(actor.modules.actorController){
+  //     //     actor.initializeSubscriptions();
+  //     //   }
+  //     // },
+  //
+  //     moduleStep: function(){
+  //       this.getGamepadInputs();
+  //       this.recordHistory();
+  // this.controllerDOM.innerHTML = "Inputs: <br>" +
+  // this.getHistoryTailAsString(5) + "<br/>";
+  //     },
+  //
+  //
+  //
+  //   };
+  //   // _controller.bindKeys();
+  //   return _controller;
+  //
+  // };
+}
+module.exports = controllerFeedBack;
+
+/***/ }),
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3985,7 +5585,7 @@ function swapKeysVals(obj) {
 }
 
 /***/ }),
-/* 108 */
+/* 132 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4127,933 +5727,6 @@ var generic = exports.generic = {
   rsystem: true
 
 };
-
-/***/ }),
-/* 109 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _merge = __webpack_require__(0);
-
-var _merge2 = _interopRequireDefault(_merge);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var physicsComponent = function physicsComponent(options) {
-  var _physicsComponent = {
-    name: "physicsComponent",
-    actorComponent: "actorPhysics"
-
-    // moduleStep: function(){
-    //   // this.actors.all.forEach( (actor)=>{
-    //   //   actor.yAcc += this.gravity;
-    //   // },this);
-    // }
-
-
-  };
-  (0, _merge2.default)(_physicsComponent, options);
-  return _physicsComponent;
-};
-
-module.exports = physicsComponent;
-
-/***/ }),
-/* 110 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _game = __webpack_require__(17);
-
-var _game2 = _interopRequireDefault(_game);
-
-var _mock_actor = __webpack_require__(111);
-
-var Mock = _interopRequireWildcard(_mock_actor);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function mockGame() {
-  var view = document.getElementById('view');
-
-  var game = new _game2.default();
-  // debugger
-  // game.bindKeys();
-
-
-  game.setContext(view.getContext('2d'));
-  view.width = game.view_width;
-  view.height = game.view_height;
-
-  // game.addActor(new Mock.mockObj(0,0));
-  // game.addActor(new mockObj(1,1));
-  // game.addActor(new mockObj(0,2));
-  // game.addActor(new mockObj(2,0));
-  // game.addActor(new mockObj(2,2));
-  // game.addActor(new mockObj(1,3));
-  // game.addActor(new mockObj(3,1));
-  // game.addActor(new mockObj(3,3));
-  // game.addActor(new mockObj(4,0));
-  // game.addActor(new mockObj(0,4));
-  // game.addActor(new mockObj(2,4));
-  // game.addActor(new mockObj(4,2));
-  // game.addActor(new Mock.mockObj(4,4));
-  game.addActor(new Mock.featureMock(4, 4));
-
-  dbAdd("feature", game.actors.all[0]);
-  dbAdd("game", game);
-
-  return game;
-}
-
-exports.default = mockGame;
-
-/***/ }),
-/* 111 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.featureMock = exports.mockObj = undefined;
-
-var _actor = __webpack_require__(15);
-
-var _actor2 = _interopRequireDefault(_actor);
-
-var _objFrameData = __webpack_require__(112);
-
-var _objFrameData2 = _interopRequireDefault(_objFrameData);
-
-var _objData = __webpack_require__(113);
-
-var _objData2 = _interopRequireDefault(_objData);
-
-var _mock_obj_animation = __webpack_require__(114);
-
-var _mock_obj_animation2 = _interopRequireDefault(_mock_obj_animation);
-
-var _mock_controller = __webpack_require__(117);
-
-var _mock_controller2 = _interopRequireDefault(_mock_controller);
-
-var _mock_physics = __webpack_require__(119);
-
-var _mock_physics2 = _interopRequireDefault(_mock_physics);
-
-var _verb = __webpack_require__(16);
-
-var _verb2 = _interopRequireDefault(_verb);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var mockObj = exports.mockObj = function mockObj() {
-  var n = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
-  var m = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-
-  devLog.log('ceating new mock object');
-  var _mockObj = new _actor2.default();
-
-  _mockObj.addModules(new _mock_obj_animation2.default(), new _mock_physics2.default());
-
-  var options = {
-    name: "mockObj",
-    d: {
-      x: 0 + n * 40,
-      y: 0 + m * 40
-    },
-    collision_width: 40,
-    collision_height: 40,
-    state: "mockery"
-  };
-
-  _mockObj.mergeWith(options);
-  return _mockObj;
-};
-
-var featureMock = exports.featureMock = function featureMock() {
-  var xmod = 0;
-  var ymod = 0;
-  devLog.log('creating new feature mock');
-  var _featureMock = new mockObj(xmod, ymod);
-  devLog.log('changing name of ' + _featureMock.name + ' to [player]');
-  _featureMock.name = "player";
-  _featureMock.type = "player";
-
-  _featureMock.addModules(new _mock_controller2.default(), new _objData2.default(), new _objFrameData2.default());
-
-  _featureMock.initializeActorController();
-  return _featureMock;
-};
-
-/***/ }),
-/* 112 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _actor = __webpack_require__(15);
-
-var _actor2 = _interopRequireDefault(_actor);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var objFrameData = function objFrameData() {
-
-  var domElement = document.getElementById("objFrameData");
-  // debugger
-  var start = Date.now();
-  var _objFrameData = {
-    name: "objFrameData",
-    frameData: {
-      animationFrames: [],
-      animationFPS: 0,
-      physicsFrames: [],
-      physicsFPS: 0,
-      lastUpdate: start,
-      domElement: domElement
-    },
-    moduleStep: function moduleStep() {
-      var animationFrames = this.frameData.animationFrames;
-      var now = Date.now();
-      animationFrames.unshift(now);
-      while (now - animationFrames[animationFrames.length - 1] > 1000) {
-        animationFrames.pop();
-      }
-      this.frameData.domElement.innerHTML = "Animation Frames per Second: " + animationFrames.length;
-    }
-  };
-  return _objFrameData;
-};
-
-module.exports = objFrameData;
-
-/***/ }),
-/* 113 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _actor = __webpack_require__(15);
-
-var _actor2 = _interopRequireDefault(_actor);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var objData = function objData() {
-
-  var domElement = document.getElementById("objData");
-
-  // debugger
-  var start = Date.now();
-  var _objData = {
-    name: "objData",
-    domElement: domElement,
-    moduleStep: function moduleStep() {
-      // debugger
-      this.domElement.innerHTML = "\n      acc: " + JSON.stringify(this.acc) + "<br>\n      vel: " + JSON.stringify(this.vel) + "<br>\n      des: " + JSON.stringify(this.des) + "<br>\n      animationState: " + JSON.stringify(this.modules.actorAnimator) + "<br>\n      ~:" + JSON.stringify("~") + "<br>\n    ";
-    }
-  };
-  return _objData;
-};
-
-module.exports = objData;
-
-/***/ }),
-/* 114 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _actoranimator = __webpack_require__(115);
-
-var _actoranimator2 = _interopRequireDefault(_actoranimator);
-
-var _merge = __webpack_require__(0);
-
-var _merge2 = _interopRequireDefault(_merge);
-
-var _animation = __webpack_require__(116);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var Spin = new _animation.AnimationCycle("Spin");
-var noSpin = new _animation.AnimationCycle("noSpin");
-
-noSpin.createCel({ sX: 400, sY: 0, draw_width: 40, draw_height: 40 }); //0
-
-Spin.createCel({ sX: 400, sY: 0, draw_width: 40, draw_height: 40 }); //0
-Spin.createCel({ sX: 5, sY: 0, draw_width: 37, draw_height: 40 }); //1
-Spin.createCel({ sX: 51, sY: 0, draw_width: 31, draw_height: 40 }); //2
-Spin.createCel({ sX: 101, sY: 0, draw_width: 21, draw_height: 40 }); //3
-Spin.createCel({ sX: 149, sY: 0, draw_width: 13, draw_height: 40 }); //4
-Spin.createCel({ sX: 196, sY: 0, draw_width: 8, draw_height: 40 }); //5
-Spin.createCel({ sX: 238, sY: 0, draw_width: 13, draw_height: 40 }); //6
-Spin.createCel({ sX: 277, sY: 0, draw_width: 22, draw_height: 40 }); //7
-Spin.createCel({ sX: 317, sY: 0, draw_width: 31, draw_height: 40 }); //8
-Spin.createCel({ sX: 357, sY: 0, draw_width: 38, draw_height: 40 }); //9
-
-var fastSpin = new _animation.AnimationCycle("fastSpin");
-Spin.cels.forEach(function (cel) {
-
-  fastSpin.createCel((0, _merge2.default)({}, cel, { frameCount: 1 }));
-});
-
-var mockAnimator = function mockAnimator() {
-  var _mockAnimator = new _actoranimator2.default({ src: './assets/coin_test.png' });
-  _mockAnimator.add(Spin);
-  _mockAnimator.initialState = "Spin";
-  _mockAnimator.add(noSpin);
-  _mockAnimator.add(fastSpin);
-  return _mockAnimator;
-};
-
-module.exports = mockAnimator;
-
-/***/ }),
-/* 115 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _merge = __webpack_require__(0);
-
-var _merge2 = _interopRequireDefault(_merge);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var actorAnimator = function actorAnimator(options) {
-
-  var image = new Image();
-  image.src = options.src;
-  var animations = {};
-
-  return {
-    name: "actorAnimator",
-    initialState: "idle",
-    image: image,
-    animations: animations,
-    drawCollision: function drawCollision(ctx) {
-      ctx.save();
-      ctx.fillStyle = "#00eeff";
-      ctx.fillRect(this.des.x, this.des.y, this.collision_width, this.collision_height);
-      ctx.restore();
-    },
-
-    draw: function draw(ctx) {
-
-      this.drawCollision(ctx);
-      ctx.save();
-      ctx.translate(this.des.x + this.collision_width * 0.5, this.des.y + this.collision_height * 0.5);
-      ctx.fillStyle = "red";
-      // ctx.fillRect((-this.draw_width * 0.5), (-this.draw_height * 0.5), this.draw_width, this.draw_height);
-      ctx.drawImage(this.image, this.sX, this.sY, this.draw_width, this.draw_height, -this.draw_width * 0.5, -this.draw_height * 0.5, this.draw_width, this.draw_height);
-      ctx.restore();
-    },
-
-    add: function add(cycle) {
-      this.animations[cycle.name] = cycle;
-    },
-
-    moduleStep: function moduleStep() {
-      // debugger
-      // if(!this.animations[this.modules.actoranimator]){
-      //   throw {message: `frame advance error`, data: {this:this.name, state: this.modules.actoranimator, animations:this.animations}};
-      // }
-      // if(this.modules.actorAnimator === "fastSpin"){debugger}
-      var currentCel = this.animations[this.modules.actorAnimator].advance();
-      (0, _merge2.default)(this, currentCel);
-      delete this.frameCount;
-    },
-
-    set: function set(string) {
-      console.log("you should definitely not being seeing this");
-    },
-    get: function get(string) {
-      return this.animations[string];
-    },
-
-    getAnimations: function getAnimations() {
-      return this.animations.keys;
-    }
-  };
-}; //breadcrumbs: Elise said something about a single source of truth for state. Currently the sprite is just a store of animation data. I think what elise is getting at is closer to a redux cycle.
-
-//that is to say, the gameSpaceObject knows what the current frame and frame data is, passes that information to the sprite, and the sprite returns the frame data for the next state.
-
-exports.default = actorAnimator;
-
-/***/ }),
-/* 116 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.AnimationCycle = undefined;
-exports.cel = cel;
-
-var _merge = __webpack_require__(0);
-
-var _merge2 = _interopRequireDefault(_merge);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function cel(options) {
-  return (0, _merge2.default)({ sX: 0, sY: 0, draw_width: 16, draw_height: 16, frameCount: 5 }, options);
-}
-
-var AnimationCycle = exports.AnimationCycle = function AnimationCycle() {
-  var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
-
-  return {
-    cels: [],
-    celIdx: 0,
-    frameIdx: 0,
-    name: name,
-    rightFace: true,
-
-    push: function push(newCel) {
-      this.cels.push(newCel);
-    },
-
-    add: function add(newCel) {
-      this.cels.push(newCel);
-    },
-
-    currentCel: function currentCel() {
-      return this.cels[this.celIdx];
-    },
-
-    incrementIndex: function incrementIndex() {
-      this.frameIdx += 1;
-      if (this.frameIdx > this.currentCel().frameCount) {
-        this.frameIdx = 0;
-        this.celIdx += 1;
-        if (this.celIdx > this.cels.length - 1) {
-          this.celIdx = 0;
-        }
-      }
-    },
-
-    advance: function advance() {
-      this.incrementIndex();
-      return this.currentCel();
-    },
-
-    spawnCel: function spawnCel() {
-      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-      return cel(options);
-    },
-
-    createCel: function createCel() {
-      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-      this.add(cel(options));
-    }
-
-  };
-};
-
-/***/ }),
-/* 117 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _actorController = __webpack_require__(118);
-
-var _actorController2 = _interopRequireDefault(_actorController);
-
-var _verb = __webpack_require__(16);
-
-var _verb2 = _interopRequireDefault(_verb);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function hop(coord, dir) {
-  var cmd = 'this.targets.owner.des.' + coord + ' += 40 * ' + dir;
-  return function () {
-    // debugger
-    if (!this.cooldown) {
-      eval(cmd);
-      this.beginCoolDown();
-    }
-  };
-}
-
-function move(axis, dir) {
-  return function () {
-    this.targets.owner.acc[axis] += 1 * dir;
-  };
-}
-
-var moveVerb = function moveVerb(name, axis, dir) {
-  var _v = new _verb2.default({ name: name });
-
-  // _v.setFunc( hop(axis,dir));
-
-  _v.setFunc(move(axis, dir));
-
-  _v.setTrigger(function (e) {
-    return e.detail.type === "pressdown" && e.detail.payload === name;
-  });
-  return _v;
-};
-
-var right = new moveVerb("right", "x", "1");
-right.addRequirement(function () {
-  var owner = this.targets.owner;
-  return owner.des.x + owner.collision_width < 960;
-});
-
-var left = new moveVerb("left", "x", "-1");
-left.addRequirement(function () {
-  var owner = this.targets.owner;
-  return owner.des.x > 0;
-});
-
-var down = new moveVerb("down", "y", "+1");
-down.addRequirement(function () {
-  var owner = this.targets.owner;
-  return owner.des.y + owner.collision_height < 640;
-});
-
-var up = new moveVerb("up", "y", "-1");
-up.addRequirement(function () {
-  var owner = this.targets.owner;
-  return owner.des.y > 0;
-});
-
-var spinFaster = new _verb2.default({ name: "spinFaster" });
-spinFaster.setFunc(function (e) {
-  this.targets.owner.modules.actorAnimator = "fastSpin";
-});
-spinFaster.setTrigger(function (e) {
-  // debugger
-  return e.detail.keydown === "a";
-});
-
-var spinSlower = new _verb2.default({ name: "spinSlower" });
-spinSlower.setFunc(function (e) {
-  this.targets.owner.modules.actorAnimator = "Spin";
-});
-spinSlower.setTrigger(function (e) {
-  return e.detail.keyup === "a";
-});
-
-var mockController = function mockController() {
-  var _mockController = new _actorController2.default();
-  _mockController.addVerbs(right, left, up, down, spinFaster, spinSlower);
-  return _mockController;
-};
-
-module.exports = mockController;
-
-/***/ }),
-/* 118 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _merge = __webpack_require__(0);
-
-var _merge2 = _interopRequireDefault(_merge);
-
-var _verb2 = __webpack_require__(16);
-
-var _verb3 = _interopRequireDefault(_verb2);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var actorController = function actorController(options) {
-  var _actorController = {
-    name: "actorController",
-    initialState: "idle",
-    verbs: {},
-    events: {},
-
-    handleControllerAction: function handleControllerAction(e) {
-      Object.values(this.verbs).forEach(function (verb) {
-        verb.handleEvent(e);
-      });
-    },
-
-    addVerb: function addVerb(newVerb) {
-      var neoVerb = Object.assign({}, newVerb);
-      if (!this.verbs[newVerb.name]) {
-        this.verbs[newVerb.name] = neoVerb;
-      } else {
-        throw {
-          message: 'Game Object ' + this.name + ' tried to overwrite action',
-          data: { newVerb: newVerb.name, input: newVerb.input }
-        };
-      }
-    },
-
-    addVerbs: function addVerbs() {
-      var _this = this;
-
-      for (var _len = arguments.length, newVerbs = Array(_len), _key = 0; _key < _len; _key++) {
-        newVerbs[_key] = arguments[_key];
-      }
-
-      newVerbs.forEach(function (newVerb) {
-        return _this.addVerb(newVerb);
-      });
-    },
-
-    componentDidMount: function componentDidMount() {
-
-      var verbs = Object.values(this.verbs);
-      verbs.forEach(function (verb) {
-        verb.addTarget("owner", this);
-      }, this);
-    },
-
-    spawnVerb: function spawnVerb(options) {
-      _verb = new _verb3.default.core(options);
-      return _verb;
-    },
-
-    createVerb: function createVerb(options) {
-      this.addVerb(this.spawnVerb());
-    },
-    initializeActorController: function initializeActorController() {
-      var handleControllerAction = this.handleControllerAction.bind(this);
-      document.addEventListener("controllerAction", handleControllerAction);
-    }
-  };
-
-  (0, _merge2.default)(_actorController, options);
-  return _actorController;
-};
-
-module.exports = actorController;
-
-/***/ }),
-/* 119 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _actorPhysics = __webpack_require__(120);
-
-var _actorPhysics2 = _interopRequireDefault(_actorPhysics);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function mockPhysics() {
-  var _mockPhysics = new _actorPhysics2.default();
-
-  return _mockPhysics;
-}
-
-module.exports = mockPhysics;
-
-/***/ }),
-/* 120 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _merge = __webpack_require__(0);
-
-var _merge2 = _interopRequireDefault(_merge);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var actorPhysics = function actorPhysics(options) {
-  var _actorPhysics = {
-    name: "actorPhysics",
-    des: { x: 0, y: 0 },
-    acc: { x: 0, y: 0 },
-    vel: { x: 0, y: 0 },
-    max: { x: 10, y: 10 },
-    terminal: 10, //velocity max
-    friction: 0.03,
-    // environment: "air", //current environments
-
-    applyFriction: function applyFriction(axis) {
-      // if(this.vel[axis] > 0.01){debugger}
-      this.vel[axis] = this.vel[axis] - this.vel[axis] * this.friction;
-      if (0 < this.vel[axis] && this.vel[axis] < 0.2) {
-        this.vel[axis] = 0;
-      }
-      if (0 > this.vel[axis] && this.vel[axis] > -0.2) {
-        this.vel[axis] = 0;
-      }
-    },
-
-    applyAccToVel: function applyAccToVel(axis) {
-      var n = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
-
-      this.vel[axis] = this.vel[axis] + this.acc[axis] * n;
-      if (this.vel[axis] > Math.min(this.max[axis], this.terminal)) {
-        this.vel[axis] = Math.min(this.max[axis], this.terminal);
-      }
-      this.acc[axis] = 0;
-    },
-
-    applyVelToDes: function applyVelToDes(axis) {
-      if (["x", "y"].some(function (x) {
-        return x === axis;
-      })) {
-        this.des[axis] += this.vel[axis];
-      } else {
-        throw "no axis passed to function";
-      }
-    },
-
-    moduleStep: function moduleStep() {
-      var _this = this;
-
-      var axes = ["x", "y"];
-      axes.forEach(function (axis) {
-        //you think fat arrow means you don't have to bind this as the second argument to forEach, but you weren't sure, so you made a note
-        _this.boundaryLoopBack(axis);
-        _this.applyAccToVel(axis, 1);
-        // this.applyFriction(axis);
-        _this.applyVelToDes(axis);
-      });
-    },
-
-    boundaryLoopBack: function boundaryLoopBack(axis) {
-      if (this.des.x < 0) {
-        this.des.x = this.des.x + 960 - this.collision_width;
-      }
-      if (this.des.x > 960) {
-        this.des.x = this.des.x - 960;
-      }
-      if (this.des.y < 0) {
-        this.des.y = this.des.y + 640 - this.collision_height;
-      }
-      if (this.des.y > 640) {
-        this.des.y = this.des.y - 640;
-      }
-    }
-  };
-  (0, _merge2.default)(_actorPhysics, options);
-  return _actorPhysics;
-};
-
-module.exports = actorPhysics;
-
-/***/ }),
-/* 121 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.ggp = ggp;
-exports.getControllerIndex = getControllerIndex;
-exports.getController = getController;
-exports.miniControllerObject = miniControllerObject;
-exports.attachControllerToWindow = attachControllerToWindow;
-
-var _controllerMaps = __webpack_require__(34);
-
-var gpMaps = _interopRequireWildcard(_controllerMaps);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-var gamepadIDs = {
-  "Xbox One": 8,
-  "Joy-Con (L)": 11,
-  "Joy-Con (R)": 11
-};
-
-function ggp() {
-  return navigator.getGamepads();
-}
-
-function getControllerIndex(idstring, endSlice) {
-  var gamepads = Array.from(ggp());
-  for (var i in gamepads) {
-    if (gamepads[i] && gamepads[i].id.slice(0, endSlice) === idstring) {
-      return i;
-    }
-  }
-  console.error("gamepad not found");
-}
-
-function getController(idString) {
-  var id = gamepadIDs[idString];
-  return ggp()[getControllerIndex(idString, gamepadIDs[idString])];
-}
-
-function miniControllerObject(idString) {
-  var _cont = function _cont() {
-    return getController(idString);
-  };
-  _cont.buttons = function () {
-    return getController(idString).buttons.map(function (b) {
-      return b.pressed;
-    });
-  };
-  _cont.axes = function () {
-    return getController(idString).axes;
-  };
-  return _cont;
-}
-
-function attachControllerToWindow(varName, idString) {
-  window[varName] = new miniControllerObject(idString);
-}
-
-//everything below this is disorganized, might be deleted
-
-
-function getAxisVals() {
-  var map = gpMaps.joyconDirectionToFloat;
-  var neutral = map.neutral;
-  var vals = function vals() {
-    Object.values(map);
-  };
-  var keys = Object.keys(map);
-  keys.map(function (key) {
-    if (!vals.some(function (value) {
-      return value === map[key];
-    })) {
-      console.log(key);
-      var val = neutral;
-      while (val === neutral) {
-        val = lcon.axes()[9];
-      }
-      map[key] = val;
-    }
-  });
-  console.log(map);
-} //used to get float values from analogue inputs on joycon
-
-/***/ }),
-/* 122 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-// import {compareSets} from '../../util/util';
-
-// const controllerDebug = ()=>{
-function controllerFeedBack() {
-
-  var controllerDOM = document.getElementById("controlDebug");
-  controllerDOM.innerHTML = "Inputs: ";
-
-  var activeInputs = new Set();
-  document.addEventListener('controllerAction', handleControllerAction);
-
-  function inputFrameAsString(frame) {
-    //converts a set to a string, specifically to be printed to the debug window
-    var str = "";
-
-    if (frame.size > 0) {
-      frame.forEach(function (key) {
-        if (key === " ") {
-          key = "space";
-        }
-        str = str + key + ",";
-      });
-    }
-    str = str.slice(0, -1);
-    return str;
-  }
-
-  function handleControllerAction(e) {
-
-    switch (e.detail.type) {
-      case "pressdown":
-        activeInputs.add(e.detail.payload);
-        break;
-      case "pressup":
-        activeInputs.delete(e.detail.payload);
-        break;
-    }
-    var t = inputFrameAsString(activeInputs);
-    controllerDOM.innerHTML = "Inputs:<br>" + t;
-  }
-
-  //     getGamepadInputs: function(){
-  //       // console.log(this.gamepadConnected);
-  //       if(this.gamepadConnected){
-  //         // let kd = new Event('keydown');
-  //         // let ku = new Event('keyup');
-  //         let buttons = navigator.getGamepads()[0].buttons;
-  //         for(var i in buttons){
-  //           if(buttons[i].pressed){
-  //             console.log(i);
-  //             // kd.key = xboxIndexToKey[i];
-  //             this.gamepadLastStep.add(xboxIndexToButton[i]);
-  //             // document.dispatchEvent(kd);
-  //           } else {
-  //             if(this.gamepadLastStep.has(xboxIndexToButton[i]) ){
-  //               this.gamepadLastStep.delete(xboxIndexToButton[i]);
-  //               // ku.key = xboxIndexToKey[i];navigat
-  //               // document.dispatchEvent(ku);
-  //             }
-  //           }
-  //         }
-  //       }
-  //     },
-  //
-  //
-  //
-  //     // onNewActor(actor){
-  //     //   if(actor.modules.actorController){
-  //     //     actor.initializeSubscriptions();
-  //     //   }
-  //     // },
-  //
-  //     moduleStep: function(){
-  //       this.getGamepadInputs();
-  //       this.recordHistory();
-  // this.controllerDOM.innerHTML = "Inputs: <br>" +
-  // this.getHistoryTailAsString(5) + "<br/>";
-  //     },
-  //
-  //
-  //
-  //   };
-  //   // _controller.bindKeys();
-  //   return _controller;
-  //
-  // };
-}
-module.exports = controllerFeedBack;
 
 /***/ })
 /******/ ]);
