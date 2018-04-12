@@ -764,8 +764,6 @@ var Verb = function Verb(options) {
     handleEvent: function handleEvent(e) {
       var _this = this;
 
-      // debugger
-
       if (this.requirements.length === 0) {
         console.error("no requirements given to verb " + this.name);
       }
