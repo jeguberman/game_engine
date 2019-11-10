@@ -27,7 +27,7 @@
     "babel-loader": "^7.1.2",
     "babel-preset-env": "^1.6.1",
     "file-loader": "^1.1.11",
-    "jquery": "^3.3.1",
+    "jquery": "^3.4.0",
     "keymaster": "^1.6.2",
     "lodash": "^4.17.4",
     "npm": "^5.7.1",
